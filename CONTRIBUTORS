@@ -1,0 +1,25 @@
+# This is the official list of people who can contribute
+# (and typically have contributed) code to the project repository.
+# The AUTHORS file lists the copyright holders; this file
+# lists people.  For example, Red Hat employees are listed here
+# but not in AUTHORS, because Red Hat holds the copyright.
+#
+# When adding J Random Contributor's name to this file,
+# either J's name or J's organization's name should be
+# added to the AUTHORS file, depending on whether the
+# individual or the organization holds the copyright.
+
+# Names should be added to this file like so:
+#     Individual's name <submission email address>
+#     Individual's name <submission email address> <email2> <emailN>
+
+# Please keep the list sorted.
+
+Dmitrii Puzikov <dpuzikov@redhat.com>
+Frantisek Reznicek <freznice@redhat.com>
+Michal Toth <mtoth @redhat.com>
+Jiri Danek <jdanek@redhat.com>
+Jiri Prajzner <jprajzner@redhat.com>
+Otavio Rodolfo Piske <opiske@redhat.com>
+Tomas Kratky <tkratky@redhat.com>
+Zdenek Kraus <zkraus@redhat.com>
