@@ -61,7 +61,9 @@ public class ConnectorClient extends CoreClient {
     }
     closeConnObjects(this,
         Double.parseDouble(this.getClientOptions().getOption(ClientOptions.CLOSE_SLEEP).getValue()));
-    System.exit(exceptions.size());
+    if (exceptions.size() > 0) {
+        System.exit(exceptions.size());
+    }
   }
 
   /**
