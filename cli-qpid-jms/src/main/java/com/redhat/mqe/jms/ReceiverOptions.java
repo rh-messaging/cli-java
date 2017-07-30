@@ -31,9 +31,9 @@ import java.util.*;
 public class ReceiverOptions extends ClientOptions {
   private List<com.redhat.mqe.lib.Option> options = null;
   private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
-  private static final List<com.redhat.mqe.lib.Option> receiverDefaultOptions = new ArrayList<com.redhat.mqe.lib.Option>();
+  private final List<com.redhat.mqe.lib.Option> receiverDefaultOptions = new ArrayList<com.redhat.mqe.lib.Option>();
 
-  static {
+  {
     receiverDefaultOptions.addAll(Arrays.asList(
             // 
         new com.redhat.mqe.lib.Option(ADDRESS, "a", "ADDRESS", "", "Queue/Topic destination"),

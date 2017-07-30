@@ -33,9 +33,9 @@ public class SenderOptions extends ClientOptions {
 
   private List<com.redhat.mqe.lib.Option> options = new LinkedList<com.redhat.mqe.lib.Option>();
   private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
-  private static final List<com.redhat.mqe.lib.Option> senderDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
+  private final List<com.redhat.mqe.lib.Option> senderDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
 
-  static {
+  {
     senderDefaultOptions.addAll(Arrays.asList(
         new com.redhat.mqe.lib.Option(ADDRESS, "a", "ADDRESS", "", "Queue/Topic destination"),
         new com.redhat.mqe.lib.Option(TIMEOUT, "t", "TIMEOUT", "0", "timeout in seconds to wait before exiting. Use -1 to wait forever."),

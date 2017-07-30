@@ -31,9 +31,9 @@ import java.util.*;
 public class ReceiverOptions extends ClientOptions {
   private List<Option> options = null;
   private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
-  private static final List<Option> receiverDefaultOptions = new ArrayList<Option>();
+  private final List<Option> receiverDefaultOptions = new ArrayList<Option>();
 
-  static {
+  {
     receiverDefaultOptions.addAll(Arrays.asList(
             // 
         new Option(ADDRESS, "a", "ADDRESS", "", "Queue/Topic destination"),

@@ -32,9 +32,9 @@ import java.util.List;
 public class ConnectorOptions extends ClientOptions {
   private List<Option> options = new LinkedList<Option>();
   private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
-  private static final List<Option> connectorDefaultOptions = new LinkedList<Option>();
+  private final List<Option> connectorDefaultOptions = new LinkedList<Option>();
 
-  static {
+  {
     connectorDefaultOptions.addAll(Arrays.asList(
         new Option(ADDRESS, "a", "CCADDRESS", "?", "If specified the C senders and receivers are created for this address"),
         new Option(OBJ_CTRL, "", "OBJCTRL", "C", "Optional creation object control (syntax C/E/S/R stands for Connection, sEssion, Sender, Receiver)"),

@@ -33,9 +33,9 @@ public class SenderOptions extends ClientOptions {
 
   private List<Option> options = new LinkedList<Option>();
   private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
-  private static final List<Option> senderDefaultOptions = new LinkedList<Option>();
+  private final List<Option> senderDefaultOptions = new LinkedList<Option>();
 
-  static {
+  {
     senderDefaultOptions.addAll(Arrays.asList(
         new Option(ADDRESS, "a", "ADDRESS", "", "Queue/Topic destination"),
         new Option(TIMEOUT, "t", "TIMEOUT", "0", "timeout in seconds to wait before exiting"),

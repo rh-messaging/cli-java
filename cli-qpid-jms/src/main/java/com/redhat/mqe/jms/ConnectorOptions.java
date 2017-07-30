@@ -32,9 +32,9 @@ import java.util.List;
 public class ConnectorOptions extends ClientOptions {
   private List<com.redhat.mqe.lib.Option> options = new LinkedList<com.redhat.mqe.lib.Option>();
   private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
-  private static final List<com.redhat.mqe.lib.Option> connectorDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
+  private final List<com.redhat.mqe.lib.Option> connectorDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
 
-  static {
+  {
     connectorDefaultOptions.addAll(Arrays.asList(
         new com.redhat.mqe.lib.Option(ADDRESS, "a", "CCADDRESS", "?", "If specified the C senders and receivers are created for this address"),
         new com.redhat.mqe.lib.Option(OBJ_CTRL, "", "OBJCTRL", "C", "Optional creation object control (syntax C/E/S/R/Q stands for Connection, sEssion, Sender, Receiver, Queue)"),
