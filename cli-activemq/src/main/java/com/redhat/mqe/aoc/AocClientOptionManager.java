@@ -82,13 +82,13 @@ class AocClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_KEYALIAS, "");
 
         // http://activemq.apache.org/tcp-transport-reference.html
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SEND_BUF_SIZE, "transport.socketBufferSize");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_RECV_BUF_SIZE, "transport.socketBufferSize");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_TRAFFIC_CLASS, "transport.trafficClass");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_CON_TIMEOUT, "transport.connectionTimeout");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SOCK_TIMEOUT, "transport.soTimeout");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SOCK_LINGER, "transport.soLinger");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_KEEP_ALIVE, "transport.keepAlive");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SEND_BUF_SIZE, "socketBufferSize");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_RECV_BUF_SIZE, "socketBufferSize");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_TRAFFIC_CLASS, "trafficClass");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_CON_TIMEOUT, "connectionTimeout");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SOCK_TIMEOUT, "soTimeout");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SOCK_LINGER, "soLinger");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_KEEP_ALIVE, "keepAlive");
 
         // http://activemq.apache.org/configuring-wire-formats.html
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_CACHE_ENA, "wireFormat.cacheEnabled");
