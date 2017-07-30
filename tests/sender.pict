@@ -1,0 +1,12 @@
+--log-msgs:                 dict, interop, upstream, none, body
+msg-content:                --msg-content aString, --msg-content %d, --msg-content 42, --msg-content 69.1, --msg-content-list-item "", --msg-content-list-item "string", --msg-content-list-item 42, --msg-content-map-item "", --msg-content-map-item key=value, --msg-content-map-item key~value, --msg-content-map-item key~42, --msg-content-map-item 42~key
+--msg-property:             key=value, key~value, key~42
+--duration-mode:            before-send, after-send, after-send-tx-action
+--log-lib:                  trace, debug, info, warn, error, all, fatal, off, aLogLibValue
+--msg-id:                   ID:aMsgId, noid
+--ssn-ack-mode:             auto, client, dups_ok
+--sync-mode:                none, session, action, persistent, transient
+--tx-action: commit,        rollback, recover, None
+--tx-endloop-action:        commit, rollback, recover, None
+--duration:                 1, (100)
+--close-sleep:              1, (100)

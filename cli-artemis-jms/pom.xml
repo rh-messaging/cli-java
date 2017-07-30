@@ -45,6 +45,12 @@
             <artifactId>jmslib</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>tests</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jms_2.0_spec</artifactId>
         </dependency>

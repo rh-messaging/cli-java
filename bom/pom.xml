@@ -31,10 +31,13 @@
         <slfj.version>1.7.21</slfj.version>
         <jopt.version>4.8</jopt.version>
 
-        <kotlin.version>1.1.0</kotlin.version>
+        <kotlin.version>1.1.3</kotlin.version>
         <junit.version>4.12</junit.version>
-        <junit.jupiter.version>5.0.0-M4</junit.jupiter.version>
+        <junit.jupiter.version>5.0.0-M6</junit.jupiter.version>
+        <junit.platform.version>1.0.0-M6</junit.platform.version>
+        <junit.platform.launcher.version>1.0.0-M6</junit.platform.launcher.version>
         <truth.version>0.31</truth.version>
+        <system.rules.version>1.16.0</system.rules.version>
 
         <plugin.compiler.version>3.5.1</plugin.compiler.version>
         <plugin.assembly.version>2.6</plugin.assembly.version>
@@ -72,6 +75,13 @@
                 <artifactId>jmslib</artifactId>
                 <version>1.2.2-SNAPSHOT</version>
             </dependency>
+            <dependency>
+                <groupId>com.redhat.cli-java</groupId>
+                <artifactId>tests</artifactId>
+                <version>1.2.2-SNAPSHOT</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
 
             <!--test dependencies-->
             <dependency>
@@ -94,6 +104,11 @@
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-params</artifactId>
+                <version>${junit.jupiter.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.jupiter.version}</version>
                 <scope>test</scope>
@@ -108,6 +123,12 @@
                 <groupId>com.google.truth</groupId>
                 <artifactId>truth</artifactId>
                 <version>${truth.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.stefanbirkner</groupId>
+                <artifactId>system-rules</artifactId>
+                <version>${system.rules.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

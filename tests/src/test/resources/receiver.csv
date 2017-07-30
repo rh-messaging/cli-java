@@ -1,0 +1,9 @@
+--close-sleep 1.0 --tx-endloop-action recover --tx-action None --sync-mode session --ssn-ack-mode client --log-lib trace --duration-mode before-receive --log-msgs interop
+--duration 1.0 --tx-endloop-action commit --tx-action rollback --sync-mode transient --ssn-ack-mode dups_ok --log-lib warn --duration-mode after-receive-tx-action --log-msgs none
+--tx-endloop-action None --tx-action commit --sync-mode none --ssn-ack-mode auto --log-lib error --duration-mode after-receive --log-msgs upstream
+--tx-endloop-action rollback --tx-action recover --sync-mode persistent --ssn-ack-mode dups_ok --log-lib fatal --duration-mode after-receive --log-msgs dict
+--tx-endloop-action None --tx-action rollback --sync-mode action --ssn-ack-mode auto --log-lib aLogLibValue --duration-mode before-receive --log-msgs body
+--tx-endloop-action None --tx-action recover --sync-mode none --ssn-ack-mode client --log-lib off --duration-mode after-receive --log-msgs interop
+--tx-endloop-action None --tx-action commit --sync-mode none --ssn-ack-mode dups_ok --log-lib info --duration-mode after-receive-tx-action --log-msgs upstream
+--tx-endloop-action rollback --tx-action recover --sync-mode session --ssn-ack-mode client --log-lib all --duration-mode after-receive --log-msgs none
+--tx-endloop-action recover --tx-action commit --sync-mode transient --ssn-ack-mode client --log-lib debug --duration-mode after-receive --log-msgs interop

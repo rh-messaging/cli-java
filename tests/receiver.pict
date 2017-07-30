@@ -1,0 +1,9 @@
+--log-msgs:                 dict, interop, upstream, none, body
+--duration-mode:            before-receive, after-receive, after-receive-tx-action
+--log-lib:                  trace, debug, info, warn, error, all, fatal, off, aLogLibValue
+--ssn-ack-mode:             auto, client, dups_ok
+--sync-mode:                none, session, action, persistent, transient
+--tx-action: commit,        rollback, recover, None
+--tx-endloop-action:        commit, rollback, recover, None
+--duration:                 1, (100)
+--close-sleep:              1, (100)
