@@ -448,7 +448,7 @@ public class SenderClient extends CoreClient {
       }
       // Set relative position of this message within its group
       if (senderOptions.getOption(ClientOptions.MSG_GROUP_SEQ).hasParsedValue()) {
-        message.setStringProperty("JMSXGroupSequence", senderOptions.getOption(ClientOptions.MSG_GROUP_SEQ).getValue());
+        message.setIntProperty("JMSXGroupSeq", Integer.parseInt(senderOptions.getOption(ClientOptions.MSG_GROUP_SEQ).getValue()));
       }
 
       // JMS AMQP specific reply-to-group-id mapping
