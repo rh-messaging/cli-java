@@ -410,7 +410,11 @@ public class SenderClient extends CoreClient {
     try {
       // Set message ID if provided or use default one
       if (senderOptions.getOption(ClientOptions.MSG_ID).hasParsedValue()) {
-        message.setJMSMessageID(senderOptions.getOption(ClientOptions.MSG_ID).getValue());
+          final String id = senderOptions.getOption(ClientOptions.MSG_ID).getValue();
+          // producer.setDisableMessageID(true) is called elsewhere
+          if (!id.equals("noid")) {
+              message.setJMSMessageID(id);
+          }
       }
       // Set message Correlation ID
       if (senderOptions.getOption(ClientOptions.MSG_CORRELATION_ID).hasParsedValue()) {
