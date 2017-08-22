@@ -18,7 +18,6 @@
  */
 
 import com.redhat.mqe.acc.Main
-import org.junit.jupiter.api.Test
 
 class AccMainTest : AbstractMainTest() {
 
@@ -87,9 +86,7 @@ class AccMainTest : AbstractMainTest() {
 --property-type String
 """.split(" ", "\n").toTypedArray()
 
-    override fun main(args: Array<String>) {
-        return Main.main(args)
-    }
+    override fun main(args: Array<String>) = Main.main(args)
 
 //    @Test fun sendAndReceiveSingleMessage() {
 ////        val address = "tcp://127.0.0.1:5445"

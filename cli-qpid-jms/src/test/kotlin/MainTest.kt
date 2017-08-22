@@ -18,8 +18,6 @@
  */
 
 import com.redhat.mqe.jms.Main
-import org.junit.jupiter.api.Test
-import java.util.*
 
 class AacMainTest : AbstractMainTest() {
 
@@ -81,9 +79,7 @@ class AacMainTest : AbstractMainTest() {
 --property-type String
 """.split(" ", "\n").toTypedArray()
 
-    override fun main(args: Array<String>) {
-        return Main.main(args)
-    }
+    override fun main(args: Array<String>) = Main.main(args)
 }
 
 //class MainTest {

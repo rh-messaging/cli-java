@@ -17,10 +17,7 @@
  * limitations under the License.
  */
 
-import com.google.common.truth.Truth
 import com.redhat.mqe.aoc.Main
-import com.redhat.mqe.lib.*
-import org.junit.jupiter.api.Test
 
 class AocMainTest : AbstractMainTest() {
 

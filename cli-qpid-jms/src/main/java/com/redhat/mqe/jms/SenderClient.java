@@ -21,6 +21,7 @@ package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.Utils;
 import com.redhat.mqe.lib.Content;
+import org.apache.qpid.jms.message.JmsMessage;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
