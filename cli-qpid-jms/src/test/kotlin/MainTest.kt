@@ -23,6 +23,8 @@ class AacMainTest : AbstractMainTest() {
 
     override val brokerUrl = "amqp://127.0.0.1:5672"
 
+    // TODO(jdanek) re-enable when https://issues.apache.org/jira/browse/QPIDJMS-314 is fixed
+    //    --conn-tcp-sock-linger 1000
     override val senderAdditionalOptions = """
 --capacity 1
 --conn-async-send true
@@ -57,7 +59,6 @@ class AacMainTest : AbstractMainTest() {
 --conn-tcp-conn-timeout 1000
 --conn-tcp-keep-alive true
 --conn-tcp-no-delay false
---conn-tcp-sock-linger 1000
 --conn-tcp-sock-timeout 1000
 --conn-tcp-traffic-class 1
 --conn-topic-prefix aTopicPrefix
