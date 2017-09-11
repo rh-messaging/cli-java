@@ -24,21 +24,19 @@ class AocMainTest : AbstractMainTest() {
     override val brokerUrl = "tcp://127.0.0.1:61616"
 
     override val senderAdditionalOptions =
-        //--conn-tcp-tr//"""
-//        --conn-prefix-packet-size-ena false
-// affic-class 0
+// TODO(jdanek): uncomment when we can handle mixing regular and reconnect options
 //--conn-reconnect true
-//--conn-reconnect-backoff false
-//--conn-reconnect-backoff-multiplier 1
 //--conn-reconnect-initial-delay 1
 //--conn-reconnect-interval 1000
 //--conn-reconnect-limit 1000
+//--conn-reconnect-backoff-multiplier 1
+//--conn-reconnect-backoff false
 //--conn-reconnect-start-limit 1000
 //--conn-reconnect-warn-attempts 1
 //--conn-reconnect-timeout 1000
-
-//        """
         """
+--conn-tcp-traffic-class 2
+--conn-prefix-packet-size-ena false
 --capacity 1
 --conn-async-send true
 --conn-cache-ena false
@@ -80,73 +78,5 @@ class AocMainTest : AbstractMainTest() {
 --property-type String
 """.split(" ", "\n").toTypedArray()
 
-    override fun main(args: Array<String>) {
-        return Main.main(args)
-    }
-
-    @Test fun triggerFail() {
-        val senderArguments = "sender --broker $brokerUrl --address $address".split(" ").toTypedArray() + "--tx-endloop-action recover --tx-action None --sync-mode none --ssn-ack-mode client --msg-id ID:aMsgId --log-lib error --duration-mode before-send --msg-property key~42 --msg-content-map-item key~42 --log-msgs body".split(" ").toTypedArray() + senderAdditionalOptions
-
-        val receiverParameters =
-            "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
-
-        main(senderArguments)
-        main(receiverParameters)
-    }
-
+    override fun main(args: Array<String>) = Main.main(args)
 }
-//
-
-//class AocMainTest {
-//  class AccMainTest : AbstractMainTest() {
-//
-//    override val brokerUrl = "tcp://127.0.0.1:61616"
-//
-//    override fun main(args: Array<String>) {
-//        return Main.main(args)
-//    }uu  @Test fun sendAndReceiveSingleMessage() {
-//        val senderParameters =
-//                "sender --log-msgs dict --broker tcp://127.0.0.1:61616 --address lalaLand --count 1".split(" ").toTypedArray()
-//        val receiverParameters =
-//                "receiver --log-msgs dict --broker tcp://127.0.0.1:61616 --address lalaLand --count 1".split(" ").toTypedArray()
-//        print("Sending: ")
-//        Main.main(senderParameters)
-//        print("Receiving: ")
-//        Main.main(receiverParameters)
-//    }
-//
-//    @Test fun sendSingleMessageTls() {
-//        System.setProperty("javax.net.debug", "all")
-//        val senderParameters =
-//                "sender --log-msgs dict --broker ssl://127.0.0.1:61616 --address lalaLand --conn-ssl-keystore-password secureexample --count 1 --conn-ssl-truststore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/ikeysiold/client-side-truststore.jks --conn-ssl-truststore-password secureexample --conn-ssl-keystore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/ikeysiold/client-side-keystore.jks".split(" ").toTypedArray()
-////                "sender --log-msgs dict --broker ssl://127.0.0.1:61616 --address lalaLand --count 1 --conn-ssl-truststore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/redhatqe.truststore --conn-ssl-truststore-password password --conn-ssl-keystore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/client.keystore --conn-ssl-keystore-password password".split(" ").toTypedArray()
-//        print(senderParameters.joinToString(separator = ", "))
-//        print("Sending: ")
-//        Main.main(senderParameters)
-//    }
-//
-//    @Test fun `--conn-ssl-keystore-password,`() {
-//        CoreClient.setClientType(CoreClient.CORE_CLIENT_TYPE)
-//        val clientOptionManager = AocClientOptionManager()
-//        val options = SenderOptions()
-//        val args = "sender --log-msgs dict --broker ssl://127.0.0.1:61616 --address lalaLand --count 1 --conn-ssl-truststore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/ikeysiold/client-side-truststore.jks --conn-ssl-truststore-password secureexample --conn-ssl-keystore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/ikeysiold/client-side-keystore.jks --conn-ssl-keystore-password secureexamples".split(" ").toTypedArray()
-//        clientOptionManager.applyClientArguments(options, args)
-//        print(options.getOption(ClientOptions.CON_SSL_KEYSTORE_PASS).value)
-////        Truth.assertThat()
-//    }
-//
-//    @Test fun sendSingleMessage() {
-//        val senderParameters =
-//                ("sender --log-msgs dict --broker tcp://127.0.0.1:61616 --address topic://topic --count 1 ".split(" ").toTypedArray())
-//        print("Sending: ")
-//        Main.main(senderParameters)
-//    }
-//
-//    @Test fun receiveSingleMessage() {
-//        val address = "target"
-//        val parameters =
-//                ("receiver --log-msgs dict --broker tcp://127.0.0.1:61616 --address $address --count 1 ".split(" ").toTypedArray())
-//        print("Sending: ")
-//        Main.main(parameters)
-//    }
-//}

@@ -84,7 +84,7 @@ class AocClientOptionManager extends ClientOptionManager {
         // http://activemq.apache.org/tcp-transport-reference.html
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SEND_BUF_SIZE, "socketBufferSize");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_RECV_BUF_SIZE, "socketBufferSize");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_TRAFFIC_CLASS, "trafficClass");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_TRAFFIC_CLASS, "diffServ");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_CON_TIMEOUT, "connectionTimeout");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SOCK_TIMEOUT, "soTimeout");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SOCK_LINGER, "soLinger");
@@ -97,7 +97,7 @@ class AocClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_MAX_INACTITVITY_DUR, "wireFormat.maxInactivityDuration");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_MAX_INACTITVITY_DUR_INIT_DELAY, "wireFormat.maxInactivityDurationInitalDelay");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_MAX_FRAME_SIZE, "wireFormat.maxFrameSize");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_PREFIX_PACKET_SIZE_ENA, "wireFormat.prefixPacketSize");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_PREFIX_PACKET_SIZE_ENA, "wireFormat.sizePrefixDisabled");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_SERVER_STACK_TRACE_ENA, "wireFormat.stackTraceEnabled");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_TCP_NO_DELAY, "wireFormat.tcpNoDelayEnabled");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_TIGHT_ENCODING_ENA, "wireFormat.tightEncodingEnabled");
