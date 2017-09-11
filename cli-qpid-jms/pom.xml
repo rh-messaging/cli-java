@@ -61,11 +61,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.redhat.cli-java</groupId>
             <artifactId>tests</artifactId>
             <type>test-jar</type>

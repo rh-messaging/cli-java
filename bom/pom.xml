@@ -33,9 +33,8 @@
 
         <kotlin.version>1.1.3</kotlin.version>
         <junit.version>4.12</junit.version>
-        <junit.jupiter.version>5.0.0-M6</junit.jupiter.version>
-        <junit.platform.version>1.0.0-M6</junit.platform.version>
-        <junit.platform.launcher.version>1.0.0-M6</junit.platform.launcher.version>
+        <junit.jupiter.version>5.0.0</junit.jupiter.version>
+        <junit.platform.version>1.0.0</junit.platform.version>
         <truth.version>0.31</truth.version>
         <system.rules.version>1.16.0</system.rules.version>
 
