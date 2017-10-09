@@ -34,7 +34,7 @@ import javax.naming.NamingException;
 
 public class ConnectionManager {
   private ConnectionFactory factory;
-  private static Context context;
+  private Context context;
   private Destination destination;
   private Connection connection;
   private String customConnectionFactory = "connectionfactory.amqFactory";

@@ -32,6 +32,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -42,8 +43,9 @@ import java.util.List;
 
 public class Utils {
   private static Logger LOG = LoggerFactory.getLogger(Utils.class);
-  public static List<Class<?>> CLASSES = Arrays.asList(
-      new Class<?>[]{Integer.class, Long.class, Float.class, Double.class, Boolean.class, String.class});
+
+  public static final List<? extends Class<?>> CLASSES = Collections.unmodifiableList(Arrays.asList(
+      Integer.class, Long.class, Float.class, Double.class, Boolean.class, String.class));
   // todo Short.class, Byte.class ?
 
   /**
