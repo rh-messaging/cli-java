@@ -35,8 +35,10 @@ class AccClientOptionManager extends ClientOptionManager {
         // artemis-core-client/org/apache/activemq/artemis/core/protocol/core/impl/RemotingConnectionImpl.java
         // tests/activemq5-unit-tests/src/main/java/org/apache/activemq/ActiveMQConnectionFactory.java
         // artemis-jms-client/src/test/java/org/apache/activemq/artemis/uri/ConnectionFactoryURITest.java
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.USERNAME, "jms.userName");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.PASSWORD, "jms.password");
+
+        // artemis-jms-client/src/main/java/org/apache/activemq/artemis/jms/client/ActiveMQConnectionFactory.java
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.USERNAME, "user");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.PASSWORD, "password");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_VHOST, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SASL_MECHS, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SASL_LAYER, "");
