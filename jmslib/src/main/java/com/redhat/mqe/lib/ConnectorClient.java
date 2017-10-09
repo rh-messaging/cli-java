@@ -32,8 +32,8 @@ import javax.jms.*;
 public class ConnectorClient extends CoreClient {
 
   private ClientOptions connectorOptions;
-  private static int connectionsOpened = 0;
-  private static Logger LOG_CLEAN = LoggerFactory.getLogger(MessageFormatter.class);
+  private int connectionsOpened = 0;
+  private Logger LOG_CLEAN = LoggerFactory.getLogger(MessageFormatter.class);
 
   public ConnectorClient(String[] arguments, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, ClientOptions options) {
     this.connectionManagerFactory = connectionManagerFactory;

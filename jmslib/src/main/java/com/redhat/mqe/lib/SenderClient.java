@@ -39,11 +39,11 @@ import javax.jms.*;
  */
 public class SenderClient extends CoreClient {
   private ClientOptions senderOptions;
-  protected static List<Content> content;
-  private static boolean isEmptyMessage = false;
+  protected List<Content> content;
+  private boolean isEmptyMessage = false;
   private boolean userMessageCounter = false;
   private String userMessageCounterText;
-  private static byte[] binaryMessageData;
+  private byte[] binaryMessageData;
   static final String QPID_SUBJECT = "qpid.subject";
   static final String AMQ_SUBJECT = "JMS_AMQP_Subject";
   static final String QPID_USERID = ""; // TODO
@@ -521,7 +521,7 @@ public class SenderClient extends CoreClient {
    * @param senderOptions use provided input option
    * @return list of created options with at least one value
    */
-  static void createMessageContent(ClientOptions senderOptions) {
+  private void createMessageContent(ClientOptions senderOptions) {
     List<Content> contentList = new ArrayList<>();
     String globalContentType = null;
     // Set global content value
