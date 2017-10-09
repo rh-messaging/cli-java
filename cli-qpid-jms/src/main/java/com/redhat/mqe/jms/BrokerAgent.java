@@ -24,13 +24,13 @@ import java.util.Map;
 
 public class BrokerAgent extends CoreClient {
 
-  @Override
-  ClientOptions getClientOptions() {
-    return null;
-  }
+    @Override
+    ClientOptions getClientOptions() {
+        return null;
+    }
 
-  @Override
-  void startClient() {
-    // TODO if needed?
-  }
+    @Override
+    void startClient() {
+        // TODO if needed?
+    }
 }

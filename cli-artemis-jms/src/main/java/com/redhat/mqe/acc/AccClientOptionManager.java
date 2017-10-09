@@ -27,6 +27,7 @@ import java.util.Map;
 
 class AccClientOptionManager extends ClientOptionManager {
     private Map<String, String> CTL_SSL_OPTIONS = new HashMap<>();
+
     {
         // Core
         // org/apache/activemq/artemis/core/remoting/impl/netty/TransportConstants.java

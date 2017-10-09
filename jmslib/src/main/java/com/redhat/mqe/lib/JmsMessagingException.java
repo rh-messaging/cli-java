@@ -25,15 +25,18 @@ import java.io.ObjectOutputStream;
 @SuppressWarnings("serial")
 public class JmsMessagingException extends Exception {
 
-  private void writeObject(ObjectOutputStream out)
-     throws IOException {}
-  
-  public JmsMessagingException(String message) {
-    super(message);
-  };
+    private void writeObject(ObjectOutputStream out)
+        throws IOException {
+    }
 
-  public JmsMessagingException(String message, Throwable cause) {
-    super(message, cause);
-  }
+    public JmsMessagingException(String message) {
+        super(message);
+    }
+
+    ;
+
+    public JmsMessagingException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

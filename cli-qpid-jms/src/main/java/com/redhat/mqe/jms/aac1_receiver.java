@@ -21,16 +21,16 @@ package com.redhat.mqe.jms;
 
 public class aac1_receiver {
 
-  public static void main(String[] args) {
-    CoreClient.setClientType(CoreClient.AMQ_CLIENT_TYPE);
-    ReceiverClient receiverClient = new ReceiverClient(args);
-    String browsingMode = receiverClient.getClientOptions().getOption(ClientOptions.BROWSER).getValue();
-    if (Boolean.parseBoolean(browsingMode)) {
-      CoreClient.LOG.debug("Browsing mode");
-      MessageBrowser msgBrowser = new MessageBrowser(receiverClient.getClientOptions());
-      msgBrowser.startClient();
-    } else {
-      receiverClient.startClient();
+    public static void main(String[] args) {
+        CoreClient.setClientType(CoreClient.AMQ_CLIENT_TYPE);
+        ReceiverClient receiverClient = new ReceiverClient(args);
+        String browsingMode = receiverClient.getClientOptions().getOption(ClientOptions.BROWSER).getValue();
+        if (Boolean.parseBoolean(browsingMode)) {
+            CoreClient.LOG.debug("Browsing mode");
+            MessageBrowser msgBrowser = new MessageBrowser(receiverClient.getClientOptions());
+            msgBrowser.startClient();
+        } else {
+            receiverClient.startClient();
+        }
     }
-  }
 }

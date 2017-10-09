@@ -30,65 +30,65 @@ import java.util.List;
  * Default options for ConnectorClient.
  */
 public class ConnectorOptions extends ClientOptions {
-  private List<com.redhat.mqe.lib.Option> options = new LinkedList<com.redhat.mqe.lib.Option>();
-  private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
-  private final List<com.redhat.mqe.lib.Option> connectorDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
+    private List<com.redhat.mqe.lib.Option> options = new LinkedList<com.redhat.mqe.lib.Option>();
+    private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
+    private final List<com.redhat.mqe.lib.Option> connectorDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
 
-  {
-    connectorDefaultOptions.addAll(Arrays.asList(
-        new com.redhat.mqe.lib.Option(ADDRESS, "a", "CCADDRESS", "?", "If specified the C senders and receivers are created for this address"),
-        new com.redhat.mqe.lib.Option(OBJ_CTRL, "", "OBJCTRL", "C", "Optional creation object control (syntax C/E/S/R/Q stands for Connection, sEssion, Sender, Receiver, Queue)"),
-        new com.redhat.mqe.lib.Option(COUNT, "c", "CONNCOUNT", "1", "Specify how many connections will make"),
-        new com.redhat.mqe.lib.Option(Q_COUNT, "", "QCOUNT", "1", "Specify amount of queues created"),
-        // TODO JMS+SYNC_MODE?
-        new com.redhat.mqe.lib.Option(SYNC_MODE, "", "SMODE", "action", "Optional action synchronization mode: none/session/action (JMS does not support none & session modes)")
-    ));
-  }
-
-  ConnectorOptions() {
-    this.options = ClientOptionManager.mergeOptionLists(super.getDefaultOptions(), connectorDefaultOptions);
-  }
-
-  @Override
-  public com.redhat.mqe.lib.Option getOption(String name) {
-    if (name != null) {
-      for (com.redhat.mqe.lib.Option option : options) {
-        if (name.equals(option.getName()))
-          return option;
-      }
-    } else {
-      LOG.error("Accessing client options map with null key.");
-      throw new IllegalArgumentException("Null name is not allowed!");
+    {
+        connectorDefaultOptions.addAll(Arrays.asList(
+            new com.redhat.mqe.lib.Option(ADDRESS, "a", "CCADDRESS", "?", "If specified the C senders and receivers are created for this address"),
+            new com.redhat.mqe.lib.Option(OBJ_CTRL, "", "OBJCTRL", "C", "Optional creation object control (syntax C/E/S/R/Q stands for Connection, sEssion, Sender, Receiver, Queue)"),
+            new com.redhat.mqe.lib.Option(COUNT, "c", "CONNCOUNT", "1", "Specify how many connections will make"),
+            new com.redhat.mqe.lib.Option(Q_COUNT, "", "QCOUNT", "1", "Specify amount of queues created"),
+            // TODO JMS+SYNC_MODE?
+            new com.redhat.mqe.lib.Option(SYNC_MODE, "", "SMODE", "action", "Optional action synchronization mode: none/session/action (JMS does not support none & session modes)")
+        ));
     }
-    return null;
-  }
 
-  @Override
-  public List<com.redhat.mqe.lib.Option> getClientDefaultOptions() {
-    return connectorDefaultOptions;
-  }
+    ConnectorOptions() {
+        this.options = ClientOptionManager.mergeOptionLists(super.getDefaultOptions(), connectorDefaultOptions);
+    }
 
-  @Override
-  public List<com.redhat.mqe.lib.Option> getClientOptions() {
-    return options;
-  }
+    @Override
+    public com.redhat.mqe.lib.Option getOption(String name) {
+        if (name != null) {
+            for (com.redhat.mqe.lib.Option option : options) {
+                if (name.equals(option.getName()))
+                    return option;
+            }
+        } else {
+            LOG.error("Accessing client options map with null key.");
+            throw new IllegalArgumentException("Null name is not allowed!");
+        }
+        return null;
+    }
 
-  @Override
-  public String toString() {
-    return "ConnectorOptions{" +
-        "options=" + options +
-        '}';
-  }
-  /**
-   -h, --help                                            show this help message and exit
-   -b USER/PASS@HOST:PORT, --broker USER/PASS@HOST:PORT  connect to specified broker (default guest/guest@localhost:5672)
-   --duration DURATION                                   Opened objects will be held until duration passes by, Also the sessions if exists will be synced every T=1s (default 0)
-   -a CCADDRESS, --address CCADDRESS                     If specified the C senders and receivers are created for this address (default )
-   --obj-ctrl OBJCTRL                                    Optional creation object control (syntax C/E/S/R stands for Connection, sEssion, Sender, Receiver) (default C)
-   --sync-mode SMODE                                     Optional action synchronization mode: none/session/action (JMS does not support none & session modes) (default action)
-   -c CONN_CNT, --conn-cnt CONN_CNT                      Specify how many connections will make (default 1)
-   --con-option NAME=VALUE                               JMS Connection URL options. Ex sync_ack=true sync_publish=all
-   --broker-option NAME=VALUE                            JMS Broker URL options. Ex ssl=true sasl_mechs=GSSAPI
-   --connection-options {NAME=VALUE,NAME=VALUE..}        QPID Connection URL options. (c++ style)
-   */
+    @Override
+    public List<com.redhat.mqe.lib.Option> getClientDefaultOptions() {
+        return connectorDefaultOptions;
+    }
+
+    @Override
+    public List<com.redhat.mqe.lib.Option> getClientOptions() {
+        return options;
+    }
+
+    @Override
+    public String toString() {
+        return "ConnectorOptions{" +
+            "options=" + options +
+            '}';
+    }
+    /**
+     -h, --help                                            show this help message and exit
+     -b USER/PASS@HOST:PORT, --broker USER/PASS@HOST:PORT  connect to specified broker (default guest/guest@localhost:5672)
+     --duration DURATION                                   Opened objects will be held until duration passes by, Also the sessions if exists will be synced every T=1s (default 0)
+     -a CCADDRESS, --address CCADDRESS                     If specified the C senders and receivers are created for this address (default )
+     --obj-ctrl OBJCTRL                                    Optional creation object control (syntax C/E/S/R stands for Connection, sEssion, Sender, Receiver) (default C)
+     --sync-mode SMODE                                     Optional action synchronization mode: none/session/action (JMS does not support none & session modes) (default action)
+     -c CONN_CNT, --conn-cnt CONN_CNT                      Specify how many connections will make (default 1)
+     --con-option NAME=VALUE                               JMS Connection URL options. Ex sync_ack=true sync_publish=all
+     --broker-option NAME=VALUE                            JMS Broker URL options. Ex ssl=true sasl_mechs=GSSAPI
+     --connection-options {NAME=VALUE,NAME=VALUE..}        QPID Connection URL options. (c++ style)
+     */
 }

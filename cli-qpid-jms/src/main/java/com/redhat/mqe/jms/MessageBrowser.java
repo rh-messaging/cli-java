@@ -35,58 +35,58 @@ import static com.redhat.mqe.jms.ClientOptions.*;
  */
 public class MessageBrowser extends CoreClient {
 
-  private boolean transacted;
-  private String msgSelector;
-  ClientOptions clientOptions;
+    private boolean transacted;
+    private String msgSelector;
+    ClientOptions clientOptions;
 
-  MessageBrowser(ClientOptions clientOptions) {
-    this.clientOptions = clientOptions;
-  }
-
-  @Override
-  ClientOptions getClientOptions() {
-    return this.clientOptions;
-  }
-
-  void setMessageBrowser(ClientOptions options) {
-    if (options != null) {
-      transacted = Boolean.parseBoolean(options.getOption(TRANSACTED).getValue());
-      if (options.getOption(ClientOptions.MSG_SELECTOR).hasParsedValue()) {
-        msgSelector = options.getOption(ClientOptions.MSG_SELECTOR).getValue();
-      }
+    MessageBrowser(ClientOptions clientOptions) {
+        this.clientOptions = clientOptions;
     }
-  }
 
-  @Override
-  void startClient() {
-    this.setMessageBrowser(clientOptions);
-    this.browseMessages();
-  }
-
-  /**
-   * Browse messages using Queue Browser.
-   * By default, you browse all actual messages in the queue.
-   * Messages may be arriving and expiring while the scan is done.
-   */
-  void browseMessages() {
-    Connection conn = createConnection(clientOptions);
-    Session ssn = createSession(clientOptions, conn, transacted);
-    try {
-      QueueBrowser qBrowser = ssn.createBrowser((Queue) getDestination(), msgSelector);
-
-      conn.start();
-
-      Enumeration<?> enumMsgs = qBrowser.getEnumeration();
-      while (enumMsgs.hasMoreElements()) {
-        Message msg = (Message) enumMsgs.nextElement();
-        CoreClient.printMessage(clientOptions, msg);
-      }
-    } catch (JMSException jmse) {
-      LOG.trace("Exception while browsing messages", jmse);
-      jmse.printStackTrace();
-      System.exit(1);
-    } finally {
-      close(conn);
+    @Override
+    ClientOptions getClientOptions() {
+        return this.clientOptions;
     }
-  }
+
+    void setMessageBrowser(ClientOptions options) {
+        if (options != null) {
+            transacted = Boolean.parseBoolean(options.getOption(TRANSACTED).getValue());
+            if (options.getOption(ClientOptions.MSG_SELECTOR).hasParsedValue()) {
+                msgSelector = options.getOption(ClientOptions.MSG_SELECTOR).getValue();
+            }
+        }
+    }
+
+    @Override
+    void startClient() {
+        this.setMessageBrowser(clientOptions);
+        this.browseMessages();
+    }
+
+    /**
+     * Browse messages using Queue Browser.
+     * By default, you browse all actual messages in the queue.
+     * Messages may be arriving and expiring while the scan is done.
+     */
+    void browseMessages() {
+        Connection conn = createConnection(clientOptions);
+        Session ssn = createSession(clientOptions, conn, transacted);
+        try {
+            QueueBrowser qBrowser = ssn.createBrowser((Queue) getDestination(), msgSelector);
+
+            conn.start();
+
+            Enumeration<?> enumMsgs = qBrowser.getEnumeration();
+            while (enumMsgs.hasMoreElements()) {
+                Message msg = (Message) enumMsgs.nextElement();
+                CoreClient.printMessage(clientOptions, msg);
+            }
+        } catch (JMSException jmse) {
+            LOG.trace("Exception while browsing messages", jmse);
+            jmse.printStackTrace();
+            System.exit(1);
+        } finally {
+            close(conn);
+        }
+    }
 }

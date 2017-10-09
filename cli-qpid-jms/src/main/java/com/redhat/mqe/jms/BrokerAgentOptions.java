@@ -27,18 +27,18 @@ import java.util.List;
  */
 public class BrokerAgentOptions extends ClientOptions {
 
-  @Override
-  public com.redhat.mqe.lib.Option getOption(String name) {
-    return null;
-  }
+    @Override
+    public com.redhat.mqe.lib.Option getOption(String name) {
+        return null;
+    }
 
-  @Override
-  public List<com.redhat.mqe.lib.Option> getClientDefaultOptions() {
-    return null;
-  }
+    @Override
+    public List<com.redhat.mqe.lib.Option> getClientDefaultOptions() {
+        return null;
+    }
 
-  @Override
-  public List<com.redhat.mqe.lib.Option> getClientOptions() {
-    return null;
-  }
+    @Override
+    public List<com.redhat.mqe.lib.Option> getClientOptions() {
+        return null;
+    }
 }
