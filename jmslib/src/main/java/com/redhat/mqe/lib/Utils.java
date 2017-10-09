@@ -343,14 +343,15 @@ public class Utils {
       }
 
       LOG.debug("Write binary content to file '" + writeBinaryFile.getPath() + "'.");
-      FileOutputStream fos = new FileOutputStream(writeBinaryFile);
       if (message instanceof BytesMessage) {
         BytesMessage bm = (BytesMessage) message;
         readByteArray = new byte[(int) bm.getBodyLength()];
         bm.reset(); // added to be able to read message content
         bm.readBytes(readByteArray);
-        fos.write(readByteArray);
-        fos.close();
+          try (FileOutputStream fos = new FileOutputStream(writeBinaryFile)) {
+            fos.write(readByteArray);
+            fos.close();
+          }
 
       } else if (message instanceof StreamMessage) {
         LOG.debug("Writing StreamMessage to");

@@ -565,27 +565,23 @@ public class SenderClient extends CoreClient {
    */
   private static byte[] readBinaryContentFromFile(String binaryFileName) {
     File binaryFile = new File(binaryFileName);
-    byte[] bytesOut = null;
-    if (binaryFile.canRead()) {
-      bytesOut = new byte[(int) binaryFile.length()];
-      try {
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(binaryFile))) {
-          int totalBytesRead = 0;
-          while (totalBytesRead < bytesOut.length) {
-            int bytesRemaining = bytesOut.length - totalBytesRead;
-            //input.read() returns -1, 0, or more :
-            int bytesRead = bis.read(bytesOut, totalBytesRead, bytesRemaining);
-            if (bytesRead > 0) {
-              totalBytesRead = totalBytesRead + bytesRead;
-            }
-          }
+    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(binaryFile))) {
+      byte[] bytesOut = new byte[(int) binaryFile.length()];
+      int totalBytesRead = 0;
+      while (totalBytesRead < bytesOut.length) {
+        int bytesRemaining = bytesOut.length - totalBytesRead;
+        //input.read() returns -1, 0, or more :
+        int bytesRead = bis.read(bytesOut, totalBytesRead, bytesRemaining);
+        if (bytesRead > 0) {
+          totalBytesRead = totalBytesRead + bytesRead;
         }
-      } catch (IOException e) {
-        e.printStackTrace();
       }
+      LOG.error("ToSend=" + new String(bytesOut));
+      return bytesOut;
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    LOG.error("ToSend=" + new String(bytesOut));
-    return bytesOut;
+    return null;
   }
 
 
@@ -594,7 +590,7 @@ public class SenderClient extends CoreClient {
    * as a string representation of all lines.
    *
    * @param path path to file to read input from
-   * @return the concatenad
+   * @return the concatenated lines
    */
   private static String readContentFromFile(String path) {
     StringBuilder fileContent = new StringBuilder();
