@@ -78,5 +78,34 @@ class AocMainTest : AbstractMainTest() {
 --property-type String
 """.split(" ", "\n").toTypedArray()
 
+    override val connectorAdditionalOptions =
+        """
+--conn-tcp-traffic-class 2
+--conn-prefix-packet-size-ena false
+--conn-async-send true
+--conn-cache-ena false
+--conn-cache-size 1
+--conn-clientid aClientId
+--conn-close-timeout 1000
+--conn-heartbeat 1000
+--conn-max-frame-size 4096
+--conn-prefetch 1
+--conn-prefetch-browser 1
+--conn-prefetch-queue 1
+--conn-prefetch-topic 1
+--conn-prefetch-topic-dur 1
+--conn-redeliveries-max 1
+--conn-server-stack-trace-ena false
+--conn-sync-send true
+--conn-tcp-buf-size-recv 1
+--conn-tcp-buf-size-send 1
+--conn-tcp-conn-timeout 1000
+--conn-tcp-keep-alive true
+--conn-tcp-no-delay false
+--conn-tcp-sock-linger 1000
+--conn-tcp-sock-timeout 1000
+--conn-tight-encoding-ena false
+""".split(" ", "\n").toTypedArray()
+
     override fun main(args: Array<String>) = Main.main(args)
 }
