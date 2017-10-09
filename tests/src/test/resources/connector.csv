@@ -1,0 +1,9 @@
+--close-sleep 1.0 --sync-mode session --ssn-ack-mode auto --obj-ctrl S --log-stats all --log-lib trace
+--sync-mode none --ssn-ack-mode dups_ok 1.0 --obj-ctrl C --log-stats warn --log-lib all
+--sync-mode transient --ssn-ack-mode client --obj-ctrl E --log-stats debug --log-lib off
+--sync-mode action --ssn-ack-mode client --obj-ctrl Q --log-stats fatal --log-lib error
+--sync-mode persistent --ssn-ack-mode auto --obj-ctrl R --log-stats error --log-lib info
+--sync-mode action --ssn-ack-mode auto --obj-ctrl R --log-stats off --log-lib fatal
+--sync-mode session --ssn-ack-mode client --obj-ctrl C --log-stats trace --log-lib warn
+--sync-mode action --ssn-ack-mode auto --obj-ctrl C --log-stats info --log-lib aLogLibValue
+--sync-mode session --ssn-ack-mode auto 1.0 --obj-ctrl C --log-stats aLogLibValue --log-lib debug
