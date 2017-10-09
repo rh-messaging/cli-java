@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 import javax.jms.*;
 import javax.naming.Context;
@@ -65,12 +66,15 @@ public class ConnectionManager {
       String jndiFilePath;
       if ((jndiFilePath = System.getProperty(EXTERNAL_JNDI_PROPERTY)) != null) {
         // load property file from an absolute path to the file
-        FileInputStream fileInputStream = new FileInputStream(new File(jndiFilePath));
-        props.load(fileInputStream);
+        try (FileInputStream fileInputStream = new FileInputStream(new File(jndiFilePath))) {
+          props.load(fileInputStream);
+        }
       } else {
         // fallback to use resources/jndi.properties file
         jndiFilePath = "/jndi.properties";
-        props.load(this.getClass().getResourceAsStream(jndiFilePath));
+        try (InputStream inputStream = this.getClass().getResourceAsStream(jndiFilePath)) {
+          props.load(inputStream);
+        }
       }
       if (connectionFactory.contains("://")) {
         // override connectionFactory by this option in jndi/properties

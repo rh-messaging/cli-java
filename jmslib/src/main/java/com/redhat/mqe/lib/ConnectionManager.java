@@ -160,7 +160,9 @@ abstract public class ConnectionManager {
             String jndiFilePath;
             if ((jndiFilePath = System.getProperty(EXTERNAL_JNDI_PROPERTY)) != null) {
                 // load property file from an absolute path to the file
-                properties.load(new FileInputStream(jndiFilePath));
+                try (FileInputStream stream = new FileInputStream(jndiFilePath)) {
+                    properties.load(stream);
+                }
             } else {
                 ClassLoader classloader = Thread.currentThread().getContextClassLoader();
                 String JNDIFile;
