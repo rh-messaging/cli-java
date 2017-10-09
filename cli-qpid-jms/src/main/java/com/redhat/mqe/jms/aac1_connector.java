@@ -24,9 +24,9 @@ package com.redhat.mqe.jms;
  */
 public class aac1_connector {
 
-  public static void main(String[] args) {
-    CoreClient.setClientType(CoreClient.AMQ_CLIENT_TYPE);
-    ConnectorClient connectorClient = new ConnectorClient(args);
-    connectorClient.startClient();
-  }
+    public static void main(String[] args) {
+        CoreClient.setClientType(CoreClient.AMQ_CLIENT_TYPE);
+        ConnectorClient connectorClient = new ConnectorClient(args);
+        connectorClient.startClient();
+    }
 }

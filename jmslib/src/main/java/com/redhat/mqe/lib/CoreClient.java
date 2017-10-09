@@ -36,417 +36,417 @@ import java.util.Map;
  * Core implementation of creating various connections to brokers using clients.
  */
 public abstract class CoreClient {
-  public static final String AMQP_CLIENT_TYPE = "amqp";
-  static final String QPID_CLIENT_TYPE = "qpid";
-  public static final String WIRE_CLIENT_TYPE = "openwire";
-  public static final String CORE_CLIENT_TYPE = "core";
-  static Logger LOG = LoggerFactory.getLogger(CoreClient.class);
-  private ConnectionManager connectionManager;
-  private static final Map<String, Integer> SESSION_ACK_MAP = new HashMap<>(5);
+    public static final String AMQP_CLIENT_TYPE = "amqp";
+    static final String QPID_CLIENT_TYPE = "qpid";
+    public static final String WIRE_CLIENT_TYPE = "openwire";
+    public static final String CORE_CLIENT_TYPE = "core";
+    static Logger LOG = LoggerFactory.getLogger(CoreClient.class);
+    private ConnectionManager connectionManager;
+    private static final Map<String, Integer> SESSION_ACK_MAP = new HashMap<>(5);
 
-  static  {
+    static {
 //    SESSION_ACK_MAP.put("transacted", Session.SESSION_TRANSACTED); // This is handled by TRANSACTED option
-    SESSION_ACK_MAP.put("auto", Session.AUTO_ACKNOWLEDGE);
-    SESSION_ACK_MAP.put("client", Session.CLIENT_ACKNOWLEDGE);
-    SESSION_ACK_MAP.put("dups_ok", Session.DUPS_OK_ACKNOWLEDGE);
+        SESSION_ACK_MAP.put("auto", Session.AUTO_ACKNOWLEDGE);
+        SESSION_ACK_MAP.put("client", Session.CLIENT_ACKNOWLEDGE);
+        SESSION_ACK_MAP.put("dups_ok", Session.DUPS_OK_ACKNOWLEDGE);
 //    SESSION_ACK_MAP.put("individual", Session.INDIVIDUAL_ACKNOWLEDGE); // ActiveMQSpecific?
-  }
+    }
 
-  private List<Connection> connections;
-  private List<Session> sessions;
-  private List<MessageProducer> messageProducers;
-  private List<MessageConsumer> messageConsumers;
-  private static String clientType;
+    private List<Connection> connections;
+    private List<Session> sessions;
+    private List<MessageProducer> messageProducers;
+    private List<MessageConsumer> messageConsumers;
+    private static String clientType;
 
-  protected ConnectionManagerFactory connectionManagerFactory;
-  protected MessageFormatter messageFormatter;
+    protected ConnectionManagerFactory connectionManagerFactory;
+    protected MessageFormatter messageFormatter;
 
-  /**
-   * Method starts the given client. Serves as entry point.
-   */
-  public abstract void startClient() throws Exception;
+    /**
+     * Method starts the given client. Serves as entry point.
+     */
+    public abstract void startClient() throws Exception;
 
-  /**
-   * Create @Connection for given client from provided client options.
-   * By default, we prefer to use brokerUrl to not set up anything.
-   * Also, no brokerUrl can be provided, but we need all the other connection
-   * options to create @Connection.
-   *
-   * @param clientOptions options of given client
-   * @return newly created Connection from provided client options
-   */
-  public Connection createConnection(ClientOptions clientOptions) {
+    /**
+     * Create @Connection for given client from provided client options.
+     * By default, we prefer to use brokerUrl to not set up anything.
+     * Also, no brokerUrl can be provided, but we need all the other connection
+     * options to create @Connection.
+     *
+     * @param clientOptions options of given client
+     * @return newly created Connection from provided client options
+     */
+    public Connection createConnection(ClientOptions clientOptions) {
 //    Map<String, Option> updatedOptions = clientOptions.getUpdatedOptions();
-    String brokerUrl;
-    if (clientOptions.getOption(ClientOptions.BROKER_URI).hasParsedValue()) {
-      // Use the whole provided broker-url string with options
-      brokerUrl = clientOptions.getOption(ClientOptions.BROKER_URI).getValue();
-    } else {
-      // Use only protocol,credentials,host and port
-      brokerUrl = clientOptions.getOption(ClientOptions.BROKER).getValue();
-      if (clientOptions.getOption(ClientOptions.BROKER_OPTIONS).hasParsedValue()) {
-        brokerUrl += "?" + clientOptions.getOption(ClientOptions.BROKER_OPTIONS).getValue();
-      }
+        String brokerUrl;
+        if (clientOptions.getOption(ClientOptions.BROKER_URI).hasParsedValue()) {
+            // Use the whole provided broker-url string with options
+            brokerUrl = clientOptions.getOption(ClientOptions.BROKER_URI).getValue();
+        } else {
+            // Use only protocol,credentials,host and port
+            brokerUrl = clientOptions.getOption(ClientOptions.BROKER).getValue();
+            if (clientOptions.getOption(ClientOptions.BROKER_OPTIONS).hasParsedValue()) {
+                brokerUrl += "?" + clientOptions.getOption(ClientOptions.BROKER_OPTIONS).getValue();
+            }
+        }
+        connectionManager = connectionManagerFactory.make(clientOptions, brokerUrl);
+        Connection connection = connectionManager.getConnection();
+        addConnection(connection);
+        return connection;
     }
-    connectionManager = connectionManagerFactory.make(clientOptions, brokerUrl);
-    Connection connection = connectionManager.getConnection();
-    addConnection(connection);
-    return connection;
-  }
 
-  /**
-   * Abstract method, returns the current client Options.
-   *
-   * @return the given ClientOption list
-   */
-  abstract ClientOptions getClientOptions();
+    /**
+     * Abstract method, returns the current client Options.
+     *
+     * @return the given ClientOption list
+     */
+    abstract ClientOptions getClientOptions();
 
-  /**
-   * Create session for  client on provided connection using clientOptions
-   *
-   * @param clientOptions options of the client
-   * @param connection    to be created session on
-   * @param transacted    defines whether create transacted session or not
-   * @return created session object
-   */
-  Session createSession(ClientOptions clientOptions, Connection connection, boolean transacted) {
-    Session session = null;
+    /**
+     * Create session for  client on provided connection using clientOptions
+     *
+     * @param clientOptions options of the client
+     * @param connection    to be created session on
+     * @param transacted    defines whether create transacted session or not
+     * @return created session object
+     */
+    Session createSession(ClientOptions clientOptions, Connection connection, boolean transacted) {
+        Session session = null;
 //    boolean transacted = Boolean.parseBoolean(clientOptions.getOption(ClientOptions.TRANSACTED).getValue());
-    int acknowledgeMode = SESSION_ACK_MAP.get(clientOptions.getOption(ClientOptions.SSN_ACK_MODE).getValue());
-    try {
-      // if transacted is true, acknowledgeMode is ignored
-      session = connection.createSession(transacted, acknowledgeMode);
-    } catch (JMSException e) {
-      LOG.error("Error while creating session! " + e.getMessage());
-      e.printStackTrace();
-      System.exit(1);
-    }
-    if (sessions == null) {
-      sessions = new ArrayList<>();
-    }
-    sessions.add(session);
-    return session;
-  }
-
-  protected Destination getDestination() {
-    return this.connectionManager.getDestination();
-  }
-
-  String getDestinationType() {
-    return getClientOptions().getOption(ClientOptions.DESTINATION_TYPE).getValue();
-  }
-
-  /**
-   * Returns the list of connections for this client
-   *
-   * @return list of Connections
-   */
-  List<Connection> getConnections() {
-    return connections;
-  }
-
-  /**
-   * After creation of new connection, this connection
-   * is automatically added to the list of connections.
-   * No need to use it explicitly.
-   *
-   * @param connection to be added to the list
-   */
-  void addConnection(Connection connection) {
-    if (connections == null) {
-      connections = new ArrayList<>(getCount());
-    }
-    connections.add(connection);
-  }
-
-  /**
-   * Returns the list of sessions for this client
-   *
-   * @return list of Sessions
-   */
-  List<Session> getSessions() {
-    return sessions;
-  }
-
-  /**
-   * Add this session to the list of sessions.
-   *
-   * @param session to be added to session list
-   */
-  void addSession(Session session) {
-    if (sessions == null) {
-      sessions = new ArrayList<>(getCount());
-    }
-    sessions.add(session);
-  }
-
-  /**
-   * Returns the list of MessageProducers for this client
-   *
-   * @return list of MessageProducers
-   */
-  List<MessageProducer> getProducers() {
-    return messageProducers;
-  }
-
-  /**
-   * Add this producer to the list of messageProducers.
-   *
-   * @param messageProducer to be added to messageProducers list
-   */
-  void addMessageProducer(MessageProducer messageProducer) {
-    if (messageProducers == null) {
-      messageProducers = new ArrayList<>(getCount());
-    }
-    messageProducers.add(messageProducer);
-  }
-
-  /**
-   * Returns the list of MessageConsumers for this client
-   *
-   * @return list of MessageConsumers
-   */
-  List<MessageConsumer> getConsumers() {
-    return messageConsumers;
-  }
-
-  /**
-   * Add this consumer to the list of messageConsumer.
-   *
-   * @param messageConsumer to be added to messageConsumers list
-   */
-  void addMessageConsumer(MessageConsumer messageConsumer) {
-    if (messageConsumers == null) {
-      messageConsumers = new ArrayList<>(getCount());
-    }
-    messageConsumers.add(messageConsumer);
-  }
-
-  /**
-   * Returns the number of "count" argument.
-   *
-   * @return number of messages/connections depending on client
-   */
-  int getCount() {
-    return Integer.parseInt(getClientOptions().getOption(ClientOptions.COUNT).getValue());
-  }
-
-  /**
-   * Close objects for given Client.
-   * Sleep for given period of time before closing MessageProducer/Consumer,
-   * Session and Connection.
-   *
-   * @param client     holding all the open connection objects
-   * @param closeSleep sleep for given period of time between closings objects
-   */
-  static void closeConnObjects(CoreClient client, double closeSleep) {
-    long sleepMs = Math.round(closeSleep * 1000);
-    if (client.getProducers() != null) {
-      if (closeSleep > 0) {
-        LOG.debug("Sleeping before closing producers for " + closeSleep + " seconds.");
-        Utils.sleep(sleepMs);
-      }
-      for (MessageProducer producer : client.getProducers()) {
-        client.close(producer);
-      }
+        int acknowledgeMode = SESSION_ACK_MAP.get(clientOptions.getOption(ClientOptions.SSN_ACK_MODE).getValue());
+        try {
+            // if transacted is true, acknowledgeMode is ignored
+            session = connection.createSession(transacted, acknowledgeMode);
+        } catch (JMSException e) {
+            LOG.error("Error while creating session! " + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        if (sessions == null) {
+            sessions = new ArrayList<>();
+        }
+        sessions.add(session);
+        return session;
     }
 
-    if (client.getConsumers() != null) {
-      if (closeSleep > 0) {
-        LOG.debug("Sleeping before closing consumers for " + closeSleep + " seconds.");
-        Utils.sleep(sleepMs);
-      }
-      for (MessageConsumer consumer : client.getConsumers()) {
-        client.close(consumer);
-      }
+    protected Destination getDestination() {
+        return this.connectionManager.getDestination();
     }
 
-    if (client.getSessions() != null) {
-      if (closeSleep > 0) {
-        LOG.debug("Sleeping before closing sessions for " + closeSleep + " seconds.");
-        Utils.sleep(sleepMs);
-      }
-      for (Session session : client.getSessions()) {
-        client.close(session);
-      }
+    String getDestinationType() {
+        return getClientOptions().getOption(ClientOptions.DESTINATION_TYPE).getValue();
     }
 
-    if (closeSleep > 0) {
-      LOG.debug("Sleeping before closing connections for " + closeSleep + " seconds.");
-      Utils.sleep(sleepMs);
+    /**
+     * Returns the list of connections for this client
+     *
+     * @return list of Connections
+     */
+    List<Connection> getConnections() {
+        return connections;
     }
-    for (Connection connection : client.getConnections()) {
-      client.close(connection);
+
+    /**
+     * After creation of new connection, this connection
+     * is automatically added to the list of connections.
+     * No need to use it explicitly.
+     *
+     * @param connection to be added to the list
+     */
+    void addConnection(Connection connection) {
+        if (connections == null) {
+            connections = new ArrayList<>(getCount());
+        }
+        connections.add(connection);
     }
-  }
 
-  void close(Connection connection) {
-    try {
-      LOG.trace("Closing connection " + connection.toString());
-      connection.close();
-    } catch (JMSException e) {
-      e.printStackTrace();
-      System.exit(1);
+    /**
+     * Returns the list of sessions for this client
+     *
+     * @return list of Sessions
+     */
+    List<Session> getSessions() {
+        return sessions;
     }
-  }
 
-  void close(Session session) {
-    try {
-      LOG.trace("Closing session " + session.toString());
-      session.close();
-    } catch (JMSException e) {
-      e.printStackTrace();
-      System.exit(1);
+    /**
+     * Add this session to the list of sessions.
+     *
+     * @param session to be added to session list
+     */
+    void addSession(Session session) {
+        if (sessions == null) {
+            sessions = new ArrayList<>(getCount());
+        }
+        sessions.add(session);
     }
-  }
 
-  void close(MessageProducer messageProducer) {
-    try {
-      LOG.trace("Closing sender " + messageProducer.toString());
-      messageProducer.close();
-    } catch (JMSException e) {
-      e.printStackTrace();
-      System.exit(1);
+    /**
+     * Returns the list of MessageProducers for this client
+     *
+     * @return list of MessageProducers
+     */
+    List<MessageProducer> getProducers() {
+        return messageProducers;
     }
-  }
 
-  void close(MessageConsumer messageConsumer) {
-    try {
-      LOG.trace("Closing receiver " + messageConsumer.toString());
-      messageConsumer.close();
-    } catch (JMSException e) {
-      e.printStackTrace();
-      System.exit(1);
+    /**
+     * Add this producer to the list of messageProducers.
+     *
+     * @param messageProducer to be added to messageProducers list
+     */
+    void addMessageProducer(MessageProducer messageProducer) {
+        if (messageProducers == null) {
+            messageProducers = new ArrayList<>(getCount());
+        }
+        messageProducers.add(messageProducer);
     }
-  }
 
-  /**
-   * Print message using MessageFormatter in given format.
-   * Printing format is specified using LOG_MSGS value
-   * as (dict|body|upstream|none).
-   *
-   * @param clientOptions options of the client
-   * @param message       to be printed
-   */
-  void printMessage(ClientOptions clientOptions, Message message) {
-    switch (clientOptions.getOption(ClientOptions.LOG_MSGS).getValue()) {
-      case "dict":
-        messageFormatter.printMessageAsDict(message);
-        break;
-      case "body":
-        messageFormatter.printMessageBodyAsText(message);
-        break;
-      case "interop":
-        messageFormatter.printMessageAsInterop(message);
-        break;
-      case "none":
-      default:
-        break;
+    /**
+     * Returns the list of MessageConsumers for this client
+     *
+     * @return list of MessageConsumers
+     */
+    List<MessageConsumer> getConsumers() {
+        return messageConsumers;
     }
-  }
 
-  // TODO - make it better, easily extensible for future clients
-  static boolean isAMQClient() {
-    return clientType.equals(AMQP_CLIENT_TYPE);
-  }
-
-  static boolean isQpidClient() {
-    return clientType.equals(QPID_CLIENT_TYPE);
-  }
-
-  static boolean isWireClient() {
-    return clientType.equals(WIRE_CLIENT_TYPE);
-  }
-  
-  /**
-   * Supported client types are 'qpid' and 'amq'.
-   * Specific broker-related data types are different among different
-   * brokers.
-   *
-   * @param client to which broker will connect. Supported amq/qpid values.
-   */
-  public static void setClientType(String client) {
-    clientType = client.toLowerCase();
-  }
-
-  /**
-   * Do the given transaction.
-   *
-   * @param session     to do transaction on this session
-   * @param transaction transaction action type to perform
-   */
-  static void doTransaction(Session session, String transaction) {
-    try {
-      StringBuilder txLog = new StringBuilder("Performed ");
-      switch (transaction.toLowerCase()) {
-        case "commit":
-          session.commit();
-          txLog.append("Commit");
-          break;
-        case "rollback":
-          session.rollback();
-          txLog.append("Rollback");
-          break;
-        case "recover":
-          session.recover();
-          txLog.append("Recover");
-          break;
-        case "none":
-          txLog.append("None");
-          break;
-        default:
-          LOG.error("Unknown tx action: '" + transaction + "'! Exiting");
-          System.exit(2);
-      }
-      LOG.trace(txLog.append(" TX action").toString());
-    } catch (JMSException e) {
-      e.printStackTrace();
+    /**
+     * Add this consumer to the list of messageConsumer.
+     *
+     * @param messageConsumer to be added to messageConsumers list
+     */
+    void addMessageConsumer(MessageConsumer messageConsumer) {
+        if (messageConsumers == null) {
+            messageConsumers = new ArrayList<>(getCount());
+        }
+        messageConsumers.add(messageConsumer);
     }
-  }
 
-  /**
-   * Set global options applicable to all clients.
-   * Only Logging for now.
-   *
-   * @param clientOptions options of the client
-   */
-  static void setGlobalClientOptions(ClientOptions clientOptions) {
-    if (clientOptions.getOption(ClientOptions.LOG_LEVEL).hasParsedValue()) {
-      Utils.setLogLevel(clientOptions.getOption(ClientOptions.LOG_LEVEL).getValue());
+    /**
+     * Returns the number of "count" argument.
+     *
+     * @return number of messages/connections depending on client
+     */
+    int getCount() {
+        return Integer.parseInt(getClientOptions().getOption(ClientOptions.COUNT).getValue());
     }
-  }
 
-  /**
-   * Format broker connection strictly for 'broker' argument.
-   * Url consists of protocol, (username+password), hostname and port.
-   *
-   * @param clientOptions
-   * @return
-   */
-  static String formBrokerUrl(ClientOptions clientOptions) {
-    StringBuilder brkCon = new StringBuilder();
-    brkCon.append(clientOptions.getOption(ClientOptions.PROTOCOL).getValue());
-    if (clientOptions.getOption(ClientOptions.FAILOVER_URL).hasParsedValue()) {
+    /**
+     * Close objects for given Client.
+     * Sleep for given period of time before closing MessageProducer/Consumer,
+     * Session and Connection.
+     *
+     * @param client     holding all the open connection objects
+     * @param closeSleep sleep for given period of time between closings objects
+     */
+    static void closeConnObjects(CoreClient client, double closeSleep) {
+        long sleepMs = Math.round(closeSleep * 1000);
+        if (client.getProducers() != null) {
+            if (closeSleep > 0) {
+                LOG.debug("Sleeping before closing producers for " + closeSleep + " seconds.");
+                Utils.sleep(sleepMs);
+            }
+            for (MessageProducer producer : client.getProducers()) {
+                client.close(producer);
+            }
+        }
+
+        if (client.getConsumers() != null) {
+            if (closeSleep > 0) {
+                LOG.debug("Sleeping before closing consumers for " + closeSleep + " seconds.");
+                Utils.sleep(sleepMs);
+            }
+            for (MessageConsumer consumer : client.getConsumers()) {
+                client.close(consumer);
+            }
+        }
+
+        if (client.getSessions() != null) {
+            if (closeSleep > 0) {
+                LOG.debug("Sleeping before closing sessions for " + closeSleep + " seconds.");
+                Utils.sleep(sleepMs);
+            }
+            for (Session session : client.getSessions()) {
+                client.close(session);
+            }
+        }
+
+        if (closeSleep > 0) {
+            LOG.debug("Sleeping before closing connections for " + closeSleep + " seconds.");
+            Utils.sleep(sleepMs);
+        }
+        for (Connection connection : client.getConnections()) {
+            client.close(connection);
+        }
+    }
+
+    void close(Connection connection) {
+        try {
+            LOG.trace("Closing connection " + connection.toString());
+            connection.close();
+        } catch (JMSException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    void close(Session session) {
+        try {
+            LOG.trace("Closing session " + session.toString());
+            session.close();
+        } catch (JMSException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    void close(MessageProducer messageProducer) {
+        try {
+            LOG.trace("Closing sender " + messageProducer.toString());
+            messageProducer.close();
+        } catch (JMSException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    void close(MessageConsumer messageConsumer) {
+        try {
+            LOG.trace("Closing receiver " + messageConsumer.toString());
+            messageConsumer.close();
+        } catch (JMSException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+    /**
+     * Print message using MessageFormatter in given format.
+     * Printing format is specified using LOG_MSGS value
+     * as (dict|body|upstream|none).
+     *
+     * @param clientOptions options of the client
+     * @param message       to be printed
+     */
+    void printMessage(ClientOptions clientOptions, Message message) {
+        switch (clientOptions.getOption(ClientOptions.LOG_MSGS).getValue()) {
+            case "dict":
+                messageFormatter.printMessageAsDict(message);
+                break;
+            case "body":
+                messageFormatter.printMessageBodyAsText(message);
+                break;
+            case "interop":
+                messageFormatter.printMessageAsInterop(message);
+                break;
+            case "none":
+            default:
+                break;
+        }
+    }
+
+    // TODO - make it better, easily extensible for future clients
+    static boolean isAMQClient() {
+        return clientType.equals(AMQP_CLIENT_TYPE);
+    }
+
+    static boolean isQpidClient() {
+        return clientType.equals(QPID_CLIENT_TYPE);
+    }
+
+    static boolean isWireClient() {
+        return clientType.equals(WIRE_CLIENT_TYPE);
+    }
+
+    /**
+     * Supported client types are 'qpid' and 'amq'.
+     * Specific broker-related data types are different among different
+     * brokers.
+     *
+     * @param client to which broker will connect. Supported amq/qpid values.
+     */
+    public static void setClientType(String client) {
+        clientType = client.toLowerCase();
+    }
+
+    /**
+     * Do the given transaction.
+     *
+     * @param session     to do transaction on this session
+     * @param transaction transaction action type to perform
+     */
+    static void doTransaction(Session session, String transaction) {
+        try {
+            StringBuilder txLog = new StringBuilder("Performed ");
+            switch (transaction.toLowerCase()) {
+                case "commit":
+                    session.commit();
+                    txLog.append("Commit");
+                    break;
+                case "rollback":
+                    session.rollback();
+                    txLog.append("Rollback");
+                    break;
+                case "recover":
+                    session.recover();
+                    txLog.append("Recover");
+                    break;
+                case "none":
+                    txLog.append("None");
+                    break;
+                default:
+                    LOG.error("Unknown tx action: '" + transaction + "'! Exiting");
+                    System.exit(2);
+            }
+            LOG.trace(txLog.append(" TX action").toString());
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Set global options applicable to all clients.
+     * Only Logging for now.
+     *
+     * @param clientOptions options of the client
+     */
+    static void setGlobalClientOptions(ClientOptions clientOptions) {
+        if (clientOptions.getOption(ClientOptions.LOG_LEVEL).hasParsedValue()) {
+            Utils.setLogLevel(clientOptions.getOption(ClientOptions.LOG_LEVEL).getValue());
+        }
+    }
+
+    /**
+     * Format broker connection strictly for 'broker' argument.
+     * Url consists of protocol, (username+password), hostname and port.
+     *
+     * @param clientOptions
+     * @return
+     */
+    static String formBrokerUrl(ClientOptions clientOptions) {
+        StringBuilder brkCon = new StringBuilder();
+        brkCon.append(clientOptions.getOption(ClientOptions.PROTOCOL).getValue());
+        if (clientOptions.getOption(ClientOptions.FAILOVER_URL).hasParsedValue()) {
 //      return clientOptions.getOption(ClientOptions.FAILOVER_URL).getValue();
-      brkCon.append(":(").append(clientOptions.getOption(ClientOptions.FAILOVER_URL).getValue()).append(")");
-    } else {
-      brkCon.append("://");
-      if (isQpidClient()) {
-        if (clientOptions.getOption(ClientOptions.USERNAME).hasParsedValue()) {
-          brkCon.append(clientOptions.getOption(ClientOptions.USERNAME).getValue()).append(":");
+            brkCon.append(":(").append(clientOptions.getOption(ClientOptions.FAILOVER_URL).getValue()).append(")");
+        } else {
+            brkCon.append("://");
+            if (isQpidClient()) {
+                if (clientOptions.getOption(ClientOptions.USERNAME).hasParsedValue()) {
+                    brkCon.append(clientOptions.getOption(ClientOptions.USERNAME).getValue()).append(":");
+                }
+                if (clientOptions.getOption(ClientOptions.PASSWORD).hasParsedValue()) {
+                    brkCon.append(clientOptions.getOption(ClientOptions.PASSWORD).getValue());
+                }
+                if (clientOptions.getOption(ClientOptions.USERNAME).hasParsedValue()
+                    || clientOptions.getOption(ClientOptions.PASSWORD).hasParsedValue()) {
+                    brkCon.append("@");
+                }
+            }
+            brkCon.append(clientOptions.getOption(ClientOptions.BROKER_HOST).getValue()).append(":")
+                .append(clientOptions.getOption(ClientOptions.BROKER_PORT).getValue());
         }
-        if (clientOptions.getOption(ClientOptions.PASSWORD).hasParsedValue()) {
-          brkCon.append(clientOptions.getOption(ClientOptions.PASSWORD).getValue());
-        }
-        if (clientOptions.getOption(ClientOptions.USERNAME).hasParsedValue()
-            || clientOptions.getOption(ClientOptions.PASSWORD).hasParsedValue()) {
-          brkCon.append("@");
-        }
-      }
-      brkCon.append(clientOptions.getOption(ClientOptions.BROKER_HOST).getValue()).append(":")
-          .append(clientOptions.getOption(ClientOptions.BROKER_PORT).getValue());
+        LOG.trace("BrokerUrl=" + brkCon.toString());
+        return brkCon.toString();
     }
-    LOG.trace("BrokerUrl=" + brkCon.toString());
-    return brkCon.toString();
-  }
 }

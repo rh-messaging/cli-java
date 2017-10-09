@@ -24,14 +24,14 @@ import javax.jms.MessageListener;
 
 public class MessageListenerImpl implements MessageListener {
 
-  private ReceiverClient rcvrClient;
+    private ReceiverClient rcvrClient;
 
-  MessageListenerImpl(ReceiverClient rcvrClient) {
-    this.rcvrClient = rcvrClient;
-  }
+    MessageListenerImpl(ReceiverClient rcvrClient) {
+        this.rcvrClient = rcvrClient;
+    }
 
-  @Override
-  public synchronized void onMessage(Message msg) {
-    CoreClient.printMessage(rcvrClient.getClientOptions(), msg);
-  }
+    @Override
+    public synchronized void onMessage(Message msg) {
+        CoreClient.printMessage(rcvrClient.getClientOptions(), msg);
+    }
 }

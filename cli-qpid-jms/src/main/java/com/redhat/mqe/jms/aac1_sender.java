@@ -21,9 +21,9 @@ package com.redhat.mqe.jms;
 
 public class aac1_sender {
 
-  public static void main(String[] args) {
-    CoreClient.setClientType(CoreClient.AMQ_CLIENT_TYPE);
-    SenderClient senderClient = new SenderClient(args);
-    senderClient.startClient();
-  }
+    public static void main(String[] args) {
+        CoreClient.setClientType(CoreClient.AMQ_CLIENT_TYPE);
+        SenderClient senderClient = new SenderClient(args);
+        senderClient.startClient();
+    }
 }

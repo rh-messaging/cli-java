@@ -33,11 +33,11 @@ import java.util.Properties;
 /**
  * Subclasses are responsible for assigning to attributes
  * factory, initialContext
- *
+ * <p>
  * TODO: clarify purpose of this class, now it looks like a factory for factory to me
  * This class initializes attributes connection and destination,
  * which will be pulled by the client.
- *
+ * <p>
  * session, creates queues and topics on that session and ?? sends messages?
  */
 abstract public class ConnectionManager {
@@ -54,17 +54,17 @@ abstract public class ConnectionManager {
     protected static final String QUEUE_OBJECT = "javax.jms.Queue";
     protected static final String TOPIC_OBJECT = "javax.jms.Topic";
     /**
-        private static final String AMQ_INITIAL_CONTEXT = "org.apache.qpid.jms.jndi.JmsInitialContextFactory";
-        private static final String QPID_INITIAL_CONTEXT = "org.apache.qpid.jndi.PropertiesFileInitialContextFactory";
-        private static final String WIRE_INITIAL_CONTEXT = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";
-        private static final String ARTEMIS_INITIAL_CONTEXT = "org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory";
+     * private static final String AMQ_INITIAL_CONTEXT = "org.apache.qpid.jms.jndi.JmsInitialContextFactory";
+     * private static final String QPID_INITIAL_CONTEXT = "org.apache.qpid.jndi.PropertiesFileInitialContextFactory";
+     * private static final String WIRE_INITIAL_CONTEXT = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";
+     * private static final String ARTEMIS_INITIAL_CONTEXT = "org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory";
      */
 
     private static final String EXTERNAL_JNDI_PROPERTY = "aoc7.jndi";
     private Logger LOG = LoggerFactory.getLogger(ConnectionManager.class.getName());
 
     public ConnectionManager() {
-       // FIXME(jdanek): empty constructor, before I change the hierarchy
+        // FIXME(jdanek): empty constructor, before I change the hierarchy
     }
 
     Connection getConnection() {
@@ -173,7 +173,7 @@ abstract public class ConnectionManager {
                 } else {
                     JNDIFile = "JAMQ6JNDI.properties";
                 }
-                LOG.trace("Using "+ JNDIFile);
+                LOG.trace("Using " + JNDIFile);
                 // fallback to use resources/ArtemisJNDI.properties file
                 properties.load(classloader.getResourceAsStream(JNDIFile));
                 LOG.trace(properties.toString());

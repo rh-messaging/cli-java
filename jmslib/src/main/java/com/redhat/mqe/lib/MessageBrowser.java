@@ -32,51 +32,51 @@ import javax.jms.Session;
  */
 public class MessageBrowser extends CoreClient {
 
-  private boolean transacted;
-  private String msgSelector;
-  ClientOptions clientOptions;
+    private boolean transacted;
+    private String msgSelector;
+    ClientOptions clientOptions;
 
-  public MessageBrowser(ClientOptions clientOptions, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter) {
-    this.connectionManagerFactory = connectionManagerFactory;
-    this.messageFormatter = messageFormatter;
-    this.clientOptions = clientOptions;
-  }
-
-  @Override
-  ClientOptions getClientOptions() {
-    return this.clientOptions;
-  }
-
-  void setMessageBrowser(ClientOptions options) {
-    if (options != null) {
-      transacted = Boolean.parseBoolean(options.getOption(ClientOptions.TRANSACTED).getValue());
-      if (options.getOption(ClientOptions.MSG_SELECTOR).hasParsedValue()) {
-        msgSelector = options.getOption(ClientOptions.MSG_SELECTOR).getValue();
-      }
+    public MessageBrowser(ClientOptions clientOptions, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter) {
+        this.connectionManagerFactory = connectionManagerFactory;
+        this.messageFormatter = messageFormatter;
+        this.clientOptions = clientOptions;
     }
-  }
 
-  @Override
-  public void startClient() throws Exception {
-    this.setMessageBrowser(clientOptions);
-    this.browseMessages();
-  }
-
-  /**
-   * Browse messages using Queue Browser.
-   * By default, you browse all actual messages in the queue.
-   * Messages may be arriving and expiring while the scan is done.
-   */
-  void browseMessages() throws Exception {
-    Connection conn = createConnection(clientOptions);
-    Session ssn = createSession(clientOptions, conn, transacted);
-    QueueBrowser qBrowser = ssn.createBrowser((Queue) getDestination(), msgSelector);
-    conn.start();
-    Enumeration<?> enumMsgs = qBrowser.getEnumeration();
-    while (enumMsgs.hasMoreElements()) {
-      Message msg = (Message) enumMsgs.nextElement();
-      printMessage(clientOptions, msg);
+    @Override
+    ClientOptions getClientOptions() {
+        return this.clientOptions;
     }
-    close(conn);
-  }
+
+    void setMessageBrowser(ClientOptions options) {
+        if (options != null) {
+            transacted = Boolean.parseBoolean(options.getOption(ClientOptions.TRANSACTED).getValue());
+            if (options.getOption(ClientOptions.MSG_SELECTOR).hasParsedValue()) {
+                msgSelector = options.getOption(ClientOptions.MSG_SELECTOR).getValue();
+            }
+        }
+    }
+
+    @Override
+    public void startClient() throws Exception {
+        this.setMessageBrowser(clientOptions);
+        this.browseMessages();
+    }
+
+    /**
+     * Browse messages using Queue Browser.
+     * By default, you browse all actual messages in the queue.
+     * Messages may be arriving and expiring while the scan is done.
+     */
+    void browseMessages() throws Exception {
+        Connection conn = createConnection(clientOptions);
+        Session ssn = createSession(clientOptions, conn, transacted);
+        QueueBrowser qBrowser = ssn.createBrowser((Queue) getDestination(), msgSelector);
+        conn.start();
+        Enumeration<?> enumMsgs = qBrowser.getEnumeration();
+        while (enumMsgs.hasMoreElements()) {
+            Message msg = (Message) enumMsgs.nextElement();
+            printMessage(clientOptions, msg);
+        }
+        close(conn);
+    }
 }

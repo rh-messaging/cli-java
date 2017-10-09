@@ -33,89 +33,89 @@ import java.lang.reflect.InvocationTargetException;
  * It is ignored, when content type is provided.
  */
 public class Content {
-  private String key;
-  private Object value;
-  private Class<?> type;
-  private boolean isMap;
+    private String key;
+    private Object value;
+    private Class<?> type;
+    private boolean isMap;
 
-  /**
-   * Create content from defined rules.
-   * Content can be created from single item (value), list of items or
-   * a list of items as map (key=value).
-   * If content type is explicitly provided no casting is done and content type is used.
-   * Otherwise we use String as default content type.
-   * Special scenario is when value is prepended with '~'. In this case, we try to
-   * auto-typecast the value to some of the basic data types (see field Utils.CLASSES).
-   *
-   * @param contentType type of the content (String or auto-typecasted if not provided)
-   * @param parsedValue value to be used for casting
-   * @param isMap       whether we set key or not
-   */
-  public Content(String contentType, String parsedValue, boolean isMap) {
-    String val;
-    boolean allowExplicitRetype = true;
-    this.isMap = isMap;
-    try {
-      if (isMap) {
-        String splitValue = null;
-        String splitter = "=";
-        if (parsedValue.contains("=") && parsedValue.contains("~")) {
-          if (parsedValue.indexOf("=") < parsedValue.indexOf("~")) {
-            allowExplicitRetype = false;
-            splitValue = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
-          }
-        } else if (parsedValue.contains("=")) {
-          // last argument 'allowExplicityRetype' can be omitted as parsedValue will not by autotypecasted - no '~'
-          splitValue = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
-        } else {
-          splitter = "~";
-          splitValue = parsedValue.substring(parsedValue.indexOf(splitter));
-        }
-        this.type = Utils.getClassType(contentType, splitValue, allowExplicitRetype);
-        // TODO fix this?
+    /**
+     * Create content from defined rules.
+     * Content can be created from single item (value), list of items or
+     * a list of items as map (key=value).
+     * If content type is explicitly provided no casting is done and content type is used.
+     * Otherwise we use String as default content type.
+     * Special scenario is when value is prepended with '~'. In this case, we try to
+     * auto-typecast the value to some of the basic data types (see field Utils.CLASSES).
+     *
+     * @param contentType type of the content (String or auto-typecasted if not provided)
+     * @param parsedValue value to be used for casting
+     * @param isMap       whether we set key or not
+     */
+    public Content(String contentType, String parsedValue, boolean isMap) {
+        String val;
+        boolean allowExplicitRetype = true;
+        this.isMap = isMap;
+        try {
+            if (isMap) {
+                String splitValue = null;
+                String splitter = "=";
+                if (parsedValue.contains("=") && parsedValue.contains("~")) {
+                    if (parsedValue.indexOf("=") < parsedValue.indexOf("~")) {
+                        allowExplicitRetype = false;
+                        splitValue = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
+                    }
+                } else if (parsedValue.contains("=")) {
+                    // last argument 'allowExplicityRetype' can be omitted as parsedValue will not by autotypecasted - no '~'
+                    splitValue = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
+                } else {
+                    splitter = "~";
+                    splitValue = parsedValue.substring(parsedValue.indexOf(splitter));
+                }
+                this.type = Utils.getClassType(contentType, splitValue, allowExplicitRetype);
+                // TODO fix this?
 
-        this.key = parsedValue.substring(0, parsedValue.indexOf(splitter));
-        val = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
-      } else {
-        if (parsedValue.startsWith("~~")) {
-          contentType = "String";
+                this.key = parsedValue.substring(0, parsedValue.indexOf(splitter));
+                val = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
+            } else {
+                if (parsedValue.startsWith("~~")) {
+                    contentType = "String";
+                }
+                this.type = Utils.getClassType(contentType, parsedValue, true);
+                val = parsedValue;
+            }
+            try {
+                this.value = Utils.getObjectValue(type, val, allowExplicitRetype);
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } catch (JmsMessagingException e) {
+            e.printStackTrace();
         }
-        this.type = Utils.getClassType(contentType, parsedValue, true);
-        val = parsedValue;
-      }
-      try {
-        this.value = Utils.getObjectValue(type, val, allowExplicitRetype);
-      } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-        e.printStackTrace();
-      }
-    } catch (JmsMessagingException e) {
-      e.printStackTrace();
     }
-  }
 
-  public String getKey() {
-    return key;
-  }
+    public String getKey() {
+        return key;
+    }
 
-  public Object getValue() {
-    return value;
-  }
+    public Object getValue() {
+        return value;
+    }
 
-  public Class<?> getType() {
-    return type;
-  }
+    public Class<?> getType() {
+        return type;
+    }
 
-  public boolean isMap() {
-    return isMap;
-  }
+    public boolean isMap() {
+        return isMap;
+    }
 
-  @Override
-  public String toString() {
-    return "Content{" +
-        "key='" + key + '\'' +
-        ", value=" + value +
-        ", type=" + type +
-        ", isMap=" + isMap +
-        '}';
-  }
+    @Override
+    public String toString() {
+        return "Content{" +
+            "key='" + key + '\'' +
+            ", value=" + value +
+            ", type=" + type +
+            ", isMap=" + isMap +
+            '}';
+    }
 }

@@ -22,8 +22,10 @@ package com.redhat.mqe.aoc;
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManagerFactory;
 
-public class AocConnectionManagerFactory extends ConnectionManagerFactory{
-    AocConnectionManagerFactory() {}
+public class AocConnectionManagerFactory extends ConnectionManagerFactory {
+    AocConnectionManagerFactory() {
+    }
+
     public AocConnectionManager make(ClientOptions clientOptions, String brokerUri) {
         return new AocConnectionManager(clientOptions, brokerUri);
     }

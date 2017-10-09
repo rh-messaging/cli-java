@@ -56,7 +56,7 @@ class AocConnectionManager extends ConnectionManager {
             LOG.debug("Connection=" + connectionFactory);
             LOG.trace("Destination=" + destination);
             if (clientOptions.getOption(ClientOptions.BROKER_URI).hasParsedValue()
-                    || (username == null && password == null)) {
+                || (username == null && password == null)) {
 //          || CoreClient.isAMQClient()) { this will work for Qpid JMS AMQP Client as well, but we will be nicer
                 connection = factory.createConnection();
             } else {

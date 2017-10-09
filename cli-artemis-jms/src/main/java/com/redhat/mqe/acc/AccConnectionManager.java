@@ -66,7 +66,7 @@ public class AccConnectionManager extends ConnectionManager {
             LOG.debug("Connection=" + connectionFactory);
             LOG.trace("Destination=" + destination);
             if (clientOptions.getOption(ClientOptions.BROKER_URI).hasParsedValue()
-                    || (username == null && password == null)) {
+                || (username == null && password == null)) {
 //          || CoreClient.isAMQClient()) { this will work for Qpid JMS AMQP Client as well, but we will be nicer
                 connection = factory.createConnection();
             } else {
@@ -79,7 +79,7 @@ public class AccConnectionManager extends ConnectionManager {
                 @Override
                 public void onException(JMSException exception) {
                     if (clientOptions.getOption(ClientOptions.CON_RECONNECT).getValue().matches("[tT]rue") &&
-                            (exception.getCause() instanceof ActiveMQDisconnectedException ||
+                        (exception.getCause() instanceof ActiveMQDisconnectedException ||
                             exception.getCause() instanceof ActiveMQNotConnectedException)) {
                         return;
                     }
