@@ -253,4 +253,22 @@ abstract class AbstractMainTest {
         print("Receiving: ")
         main(receiverParameters)
     }
+
+    @Test
+    fun sendAndReceiveMessageToTopic() {
+        val senderParameters =
+            "sender --log-msgs dict --broker $brokerUrl --address topic://$address --count 1".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver --log-msgs dict --broker $brokerUrl --address topic://$address --count 1".split(" ").toTypedArray()
+
+        val t = Thread {
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+        t.start()
+        Thread.sleep(1000)
+        print("Sending: ")
+        main(senderParameters)
+        t.join()
+    }
 }
