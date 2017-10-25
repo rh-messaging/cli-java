@@ -86,15 +86,15 @@ class AccMainTest : AbstractMainTest() {
 --property-type String
 """.split(" ", "\n").toTypedArray()
 
-    override val connectorAdditionalOptions =
-        """
+// cannot set Client ID, because more than one connection is created, and these would clash
+//--conn-clientid aClientId
+    override val connectorAdditionalOptions = """
 --conn-async-acks true
 --conn-async-send true
 --conn-auth-mechanisms anonymous
 --conn-auth-sasl false
 --conn-cache-ena false
 --conn-cache-size 1
---conn-clientid aClientId
 --conn-clientid-prefix aClientIdPrefix
 --conn-close-timeout 1000
 --conn-conn-timeout 1000
