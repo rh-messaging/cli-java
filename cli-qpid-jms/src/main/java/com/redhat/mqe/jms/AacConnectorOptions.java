@@ -19,6 +19,7 @@
 
 package com.redhat.mqe.jms;
 
+import com.redhat.mqe.lib.ClientOptionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,9 +30,9 @@ import java.util.List;
 /**
  * Default options for ConnectorClient.
  */
-public class ConnectorOptions extends ClientOptions {
+public class AacConnectorOptions extends AacClientOptions {
     private List<com.redhat.mqe.lib.Option> options = new LinkedList<com.redhat.mqe.lib.Option>();
-    private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
+    private Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
     private final List<com.redhat.mqe.lib.Option> connectorDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
 
     {
@@ -45,7 +46,7 @@ public class ConnectorOptions extends ClientOptions {
         ));
     }
 
-    ConnectorOptions() {
+    AacConnectorOptions() {
         this.options = ClientOptionManager.mergeOptionLists(super.getDefaultOptions(), connectorDefaultOptions);
     }
 
