@@ -19,6 +19,8 @@
 
 package com.redhat.mqe.jms;
 
+import com.redhat.mqe.lib.ClientOptionManager;
+import com.redhat.mqe.lib.ReceiverClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +30,9 @@ import java.util.*;
  * Default options for ReceiverClient.
  * Constructed from CommonOptions and receiverDefaultOptions.
  */
-public class ReceiverOptions extends ClientOptions {
+public class AacReceiverOptions extends AacClientOptions {
     private List<com.redhat.mqe.lib.Option> options = null;
-    private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
+    private Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
     private final List<com.redhat.mqe.lib.Option> receiverDefaultOptions = new ArrayList<com.redhat.mqe.lib.Option>();
 
     {
@@ -68,7 +70,7 @@ public class ReceiverOptions extends ClientOptions {
 
     }
 
-    public ReceiverOptions() {
+    public AacReceiverOptions() {
         this.options = ClientOptionManager.mergeOptionLists(super.getDefaultOptions(), receiverDefaultOptions);
         /**
          -h, --help                                            show this help message and exit

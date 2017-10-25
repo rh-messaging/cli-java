@@ -30,10 +30,10 @@ import static com.redhat.mqe.lib.ClientOptions.*;
  */
 public class ReceiverClient extends CoreClient {
 
-    protected static final String SLEEP_AFTER = "after-receive";
-    protected static final String SLEEP_AFTER_ACTION = "after-receive-action"; // TODO not implemented
-    protected static final String SLEEP_AFTER_TX_ACTION = "after-receive-action-tx-action";
-    protected static final String SLEEP_BEFORE = "before-receive";
+    public static final String SLEEP_AFTER = "after-receive";
+    public static final String SLEEP_AFTER_ACTION = "after-receive-action"; // TODO not implemented
+    public static final String SLEEP_AFTER_TX_ACTION = "after-receive-action-tx-action";
+    public static final String SLEEP_BEFORE = "before-receive";
 
     private boolean msgListener;
     private boolean durableSubscriber;
