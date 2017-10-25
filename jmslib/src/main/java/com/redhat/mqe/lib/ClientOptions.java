@@ -194,6 +194,7 @@ public abstract class ClientOptions {
      * CONNECTOR
      */
     static final String OBJ_CTRL = "obj-ctrl";
+    static final String Q_COUNT = "q-count";
 
     /**
      * QMF Options?

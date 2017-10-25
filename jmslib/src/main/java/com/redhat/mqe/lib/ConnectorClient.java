@@ -23,18 +23,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * ConnectorClient is an Messaging QE client, which is able to
  * create connections to provided brokers. Connector can create multiple
- * Connection, Session, MessageProducer and MessageConsumer objects.
+ * Connection, Session, MessageProducer, MessageConsumer and TemporaryQueue objects.
  * It can wait for given time
  */
 public class ConnectorClient extends CoreClient {
 
     private ClientOptions connectorOptions;
     private int connectionsOpened = 0;
-    private Logger LOG_CLEAN = LoggerFactory.getLogger(MessageFormatter.class);
+    private static List<Throwable> exceptions = new ArrayList<>();
+    private Logger LOG_CLEAN = LoggerFactory.getLogger(MessageFormatter.class); // MessageFormatter?
 
     public ConnectorClient(String[] arguments, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, ClientOptions options) {
         this.connectionManagerFactory = connectionManagerFactory;
@@ -47,14 +50,32 @@ public class ConnectorClient extends CoreClient {
     @Override
     public void startClient() {
         // start all connections
+        createConnectionObjects(connectorOptions.getOption(ClientOptions.OBJ_CTRL).getDefaultValue());
+        if (exceptions.isEmpty()) {
+            startConnections();
+        }
+        int count = Integer.parseInt((this.getClientOptions().getOption(ClientOptions.COUNT).getValue()));
+        LOG_CLEAN.info(connectionsOpened + " " + exceptions.size() + " " + count);
+        for (Throwable t : exceptions) {
+            LOG.error(t.getMessage(), t.getCause());
+        }
+        closeConnObjects(this,
+            Double.parseDouble(this.getClientOptions().getOption(ClientOptions.CLOSE_SLEEP).getValue()));
+        if (exceptions.size() > 0) {
+            System.exit(exceptions.size());
+        }
+    }
+
+    /**
+     * Start connections created by ::createConnectionObject()
+     */
+    private void startConnections() {
         for (Connection connection : this.getConnections()) {
             try {
                 connection.start();
                 connectionsOpened++;
             } catch (JMSException e) {
-                LOG.error("Failed to start a connection.\n" + e.getMessage(), e.getCause());
-                e.printStackTrace();
-                System.exit(1);
+                exceptions.add(new JmsMessagingException("Failed to start a connection.\n" + e.getMessage(), e.getCause()));
             }
         }
 
@@ -67,7 +88,7 @@ public class ConnectorClient extends CoreClient {
 
     /**
      * Create given number of Connection, Session, MessageProducer,
-     * MessageConsumer objects.
+     * MessageConsumer, TemporaryQueue objects.
      *
      * @param objCtrl specifies which objects are to be created
      */
@@ -108,18 +129,34 @@ public class ConnectorClient extends CoreClient {
                         addMessageConsumer(consumer);
                     }
                 }
+                // create temporary queue (the only queue we can create with JMSSession)
+                if (objCtrl.contains("Q")) {
+                    int qCount = Integer.parseInt(connectorOptions.getOption(ClientOptions.Q_COUNT).getValue());
+                    if (qCount > count) {
+                        qCount = count;
+                    }
+                    for (Session session : getSessions()) {
+                        if (qCount > 0) {
+                            Queue queue = session.createTemporaryQueue();
+                            addQueue(queue);
+                            qCount--;
+                        } else {
+                            break;
+                        }
+                    }
+                }
             }
+
             if (LOG.isTraceEnabled()) {
                 int conns = (getConnections() == null) ? 0 : getConnections().size();
                 int sesss = (getSessions() == null) ? 0 : getSessions().size();
                 int sends = (getProducers() == null) ? 0 : getProducers().size();
                 int reces = (getConsumers() == null) ? 0 : getConsumers().size();
-                LOG.trace("\tC={}\tE={}\tS={}\tR={}", conns, sesss, sends, reces);
+                int queues = (getQueues() == null) ? 0 : getQueues().size();
+                LOG.trace("\tC={}\tE={}\tS={}\tR={}\tQ={}", conns, sesss, sends, reces, queues);
             }
-        } catch (JMSException jmse) {
-            LOG.error(jmse.getMessage() + "\n" + jmse.getCause());
-            jmse.printStackTrace();
-            System.exit(1);
+        } catch (JMSException e) {
+            exceptions.add(new JmsMessagingException("Failed to create 'obj-ctrl.\n" + e.getMessage(), e.getCause()));
         }
     }
 
