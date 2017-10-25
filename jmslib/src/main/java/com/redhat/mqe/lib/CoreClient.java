@@ -56,6 +56,7 @@ public abstract class CoreClient {
     private List<Session> sessions;
     private List<MessageProducer> messageProducers;
     private List<MessageConsumer> messageConsumers;
+    private List<Queue > queues;
     private static String clientType;
 
     protected ConnectionManagerFactory connectionManagerFactory;
@@ -223,6 +224,27 @@ public abstract class CoreClient {
     }
 
     /**
+     * Add given queue to queues list
+     *
+     * @param queue to be added to queues list
+     */
+    void addQueue(Queue queue) {
+        if (queues == null) {
+            queues = new ArrayList<>(getCount());
+        }
+        queues.add(queue);
+    }
+
+    /**
+     * Returns the list of queues added
+     *
+     * @return queues added
+     */
+    public List<Queue> getQueues() {
+        return queues;
+    }
+
+    /**
      * Returns the number of "count" argument.
      *
      * @return number of messages/connections depending on client
@@ -347,10 +369,10 @@ public abstract class CoreClient {
 
     // TODO - make it better, easily extensible for future clients
     static boolean isAMQClient() {
-        return clientType.equals(AMQP_CLIENT_TYPE);
+        return clientType.equals(AMQP_CLIENT_TYPE) || clientType.equals("amq");
     }
 
-    static boolean isQpidClient() {
+    public static boolean isQpidClient() {
         return clientType.equals(QPID_CLIENT_TYPE);
     }
 
@@ -427,7 +449,6 @@ public abstract class CoreClient {
         StringBuilder brkCon = new StringBuilder();
         brkCon.append(clientOptions.getOption(ClientOptions.PROTOCOL).getValue());
         if (clientOptions.getOption(ClientOptions.FAILOVER_URL).hasParsedValue()) {
-//      return clientOptions.getOption(ClientOptions.FAILOVER_URL).getValue();
             brkCon.append(":(").append(clientOptions.getOption(ClientOptions.FAILOVER_URL).getValue()).append(")");
         } else {
             brkCon.append("://");
