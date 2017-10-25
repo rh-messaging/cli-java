@@ -19,16 +19,10 @@
 
 package com.redhat.mqe.lib;
 
-public class ClientFactory {
-    public CoreClient makeSenderClient(String[] args, ConnectionManagerFactory connectionManagerFactory) {
-        return null;
-    }
+public abstract class ClientFactory {
+    public abstract CoreClient makeSenderClient(String[] args, ConnectionManagerFactory connectionManagerFactory);
 
-    public CoreClient makeReceiverClient(String[] args, ConnectionManagerFactory connectionManagerFactory) {
-        return null;
-    }
+    public abstract CoreClient makeReceiverClient(String[] args, ConnectionManagerFactory connectionManagerFactory);
 
-    public CoreClient makeConnectorClient(String[] args, ConnectionManagerFactory connectionManagerFactory) {
-        return null;
-    }
+    public abstract CoreClient makeConnectorClient(String[] args, ConnectionManagerFactory connectionManagerFactory);
 }
