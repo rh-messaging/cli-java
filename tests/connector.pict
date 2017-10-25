@@ -1,0 +1,7 @@
+--log-lib:                  trace, debug, info, warn, error, all, fatal, off, aLogLibValue
+--log-stats:                trace, debug, info, warn, error, all, fatal, off, aLogLibValue
+--obj-ctrl:                 C, E, S, R, Q
+// --q-count:                  1, (100)  // not implemented in aoc,acc
+--ssn-ack-mode:             auto, client, dups_ok
+--sync-mode:                none, session, action, persistent, transient
+--close-sleep:              1, (100)

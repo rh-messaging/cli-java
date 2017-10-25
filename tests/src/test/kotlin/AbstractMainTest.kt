@@ -77,6 +77,7 @@ abstract class AbstractMainTest {
      * Used in a test to increase code coverage and catch some unforeseen option interactions.
      */
     abstract val senderAdditionalOptions: Array<String>
+    abstract val connectorAdditionalOptions: Array<String>
 
     val prefix: String = "lalaLand_"
     lateinit var randomSuffix: String
@@ -224,6 +225,19 @@ abstract class AbstractMainTest {
             main(senderParameters + senderDynamicOptions.split(" ").toTypedArray() + senderAdditionalOptions)
             print("Receiving: ")
             main(receiverParameters)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = arrayOf("/connector.csv"))
+    fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {
+        println(senderDynamicOptions)
+        val connectorPrameters =
+            "connector --broker $brokerUrl --address $address".split(" ").toTypedArray()
+
+        assertNoSystemExit {
+            print("Connecting: ")
+            main(connectorPrameters + senderDynamicOptions.split(" ").toTypedArray() + connectorAdditionalOptions)
         }
     }
 

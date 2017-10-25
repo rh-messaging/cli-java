@@ -80,6 +80,46 @@ class AacMainTest : AbstractMainTest() {
 --property-type String
 """.split(" ", "\n").toTypedArray()
 
+
+    override val connectorAdditionalOptions = """
+--conn-async-send true
+--conn-auth-mechanisms anonymous
+--conn-auth-sasl false
+--conn-clientid aClientId
+--conn-clientid-prefix aClientIdPrefix
+--conn-close-timeout 1000
+--conn-conn-timeout 1000
+--conn-connid-prefix aConnIdPrefix
+--conn-heartbeat 1000
+--conn-local-msg-priority true
+--conn-max-frame-size 4096
+--conn-prefetch 1
+--conn-prefetch-browser 1
+--conn-prefetch-queue 1
+--conn-prefetch-topic 1
+--conn-prefetch-topic-dur 1
+--conn-queue-prefix aQueuePrefix
+--conn-reconnect true
+--conn-reconnect-backoff false
+--conn-reconnect-backoff-multiplier 1
+--conn-reconnect-initial-delay 1
+--conn-reconnect-interval 1000
+--conn-reconnect-limit 1000
+--conn-reconnect-start-limit 1000
+--conn-reconnect-timeout 1000
+--conn-reconnect-warn-attempts 1
+--conn-redeliveries-max 1
+--conn-tcp-buf-size-recv 1
+--conn-tcp-buf-size-send 1
+--conn-tcp-conn-timeout 1000
+--conn-tcp-keep-alive true
+--conn-tcp-no-delay false
+--conn-tcp-sock-timeout 1000
+--conn-tcp-traffic-class 1
+--conn-topic-prefix aTopicPrefix
+--conn-valid-prop-names false
+""".split(" ", "\n").toTypedArray()
+
     override fun main(args: Array<String>) = Main.main(args)
 }
 
