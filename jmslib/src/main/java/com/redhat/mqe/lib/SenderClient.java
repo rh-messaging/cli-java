@@ -74,7 +74,6 @@ public class SenderClient extends CoreClient {
         setGlobalClientOptions(senderOptions);
         Connection connection = this.createConnection(senderOptions);
 
-
         // Transactions support
         int transactionSize = 0;
         String transaction = null;
@@ -241,6 +240,7 @@ public class SenderClient extends CoreClient {
                         String pattern = "%[ 0-9]*d";
                         Pattern r = Pattern.compile(pattern);
                         Matcher matcher = r.matcher(textContent);
+
                         if (matcher.find()) {
                             userMessageCounter = true;
                             userMessageCounterText = textContent;
@@ -260,13 +260,11 @@ public class SenderClient extends CoreClient {
                 }
 //        }
             } else if (senderOptions.getOption(ClientOptions.MSG_CONTENT_LIST_ITEM).hasParsedValue()) {
-                // Create "ListMessage" using ObjectMessage
-                ObjectMessage pseudoListMessage = session.createObjectMessage();
-                List<Object> contents = new ArrayList<>();
+                // Create "ListMessage" using StreamMessage
+                StreamMessage pseudoListMessage = session.createStreamMessage();
                 for (Content c : content) {
-                    contents.add(c.getValue());
+                    pseudoListMessage.writeObject(c.getValue());
                 }
-                pseudoListMessage.setObject((Serializable) contents);
                 return (T) pseudoListMessage;
             } else if (senderOptions.getOption(ClientOptions.MSG_CONTENT_MAP_ITEM).hasParsedValue()) {
                 MapMessage mapMessage = session.createMapMessage();
@@ -427,7 +425,7 @@ public class SenderClient extends CoreClient {
             }
             // Set message Subject
             if (senderOptions.getOption(ClientOptions.MSG_SUBJECT).hasParsedValue()) {
-//        message.setJMSType(senderOptions.getOption(ClientOptions.MSG_SUBJECT).getValue());
+                // FIXME? message.setJMSType(senderOptions.getOption(ClientOptions.MSG_SUBJECT).getValue());
                 message.setStringProperty("JMS_AMQP_Subject", senderOptions.getOption(ClientOptions.MSG_SUBJECT).getValue());
             }
             // Set message reply to destination (queue only for now)
@@ -567,25 +565,31 @@ public class SenderClient extends CoreClient {
      */
     private static byte[] readBinaryContentFromFile(String binaryFileName) {
         File binaryFile = new File(binaryFileName);
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(binaryFile))) {
-            byte[] bytesOut = new byte[(int) binaryFile.length()];
-            int totalBytesRead = 0;
-            while (totalBytesRead < bytesOut.length) {
-                int bytesRemaining = bytesOut.length - totalBytesRead;
-                //input.read() returns -1, 0, or more :
-                int bytesRead = bis.read(bytesOut, totalBytesRead, bytesRemaining);
-                if (bytesRead > 0) {
-                    totalBytesRead = totalBytesRead + bytesRead;
+        byte[] bytesOut = null;
+        if (binaryFile.canRead()) {
+            bytesOut = new byte[(int) binaryFile.length()];
+            try {
+                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(binaryFile))) {
+                    int totalBytesRead = 0;
+                    while (totalBytesRead < bytesOut.length) {
+                        int bytesRemaining = bytesOut.length - totalBytesRead;
+                        //input.read() returns -1, 0, or more
+                        int bytesRead = bis.read(bytesOut, totalBytesRead, bytesRemaining);
+                        if (bytesRead > 0) {
+                            totalBytesRead = totalBytesRead + bytesRead;
+                        }
+                    }
                 }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            LOG.error("ToSend=" + new String(bytesOut));
-            return bytesOut;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } else {
+            LOG.error("Unable to access file " + binaryFileName);
+            System.exit(2);
         }
-        return null;
+        LOG.debug("ToSend=" + new String(bytesOut));
+        return bytesOut;
     }
-
 
     /**
      * Read content from provided file path. File content is returned
