@@ -19,10 +19,8 @@ if [ ! "$(ls -A /var/lib/amq7/etc)" ]; then
 		--role $ENV_AMQ7_ROLE \
         --allow-anonymous \
 		--cluster-user $ENV_AMQ7_CLUSTER_USER \
-		--cluster-password $ENV_AMQ7_CLUSTER_PASSWORD
-
-	# Get managment accesible from the outside
-	sed -ie 's/localhost:8161/0.0.0.0:8161/g' amq7/etc/bootstrap.xml
+		--cluster-password $ENV_AMQ7_CLUSTER_PASSWORD \
+        --http-host 0.0.0.0
 
   chown -R amq7:amq7 /var/lib/amq7
 
