@@ -19,6 +19,7 @@
 
 package com.redhat.mqe.jms;
 
+import com.redhat.mqe.lib.ClientOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,9 +29,8 @@ import java.util.*;
  * Interface provides support for manipulating
  * with default options for clients.
  */
-public abstract class ClientOptions {
-
-    protected static final Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
+public abstract class AacClientOptions extends ClientOptions {
+    protected static final Logger LOG = LoggerFactory.getLogger(AacClientOptions.class);
     private static final Map<String, String> translationDtestJmsMap = new HashMap<String, String>();
     private final List<com.redhat.mqe.lib.Option> defaultOptions = new ArrayList<>();
     private List<com.redhat.mqe.lib.Option> updatedOptions = new ArrayList<>();
@@ -198,14 +198,14 @@ public abstract class ClientOptions {
      * TODO qmf options
      */
 
-    public ClientOptions() {
+    public AacClientOptions() {
         defaultOptions.addAll(Arrays.asList(
             // Options updated by parsing broker/broker-url
             new com.redhat.mqe.lib.Option(PROTOCOL, "amqp"),
             new com.redhat.mqe.lib.Option(BROKER_HOST, "localhost"),
             new com.redhat.mqe.lib.Option(BROKER_PORT, "5672"),
             new com.redhat.mqe.lib.Option(BROKER_OPTIONS, ""),
-            new com.redhat.mqe.lib.Option(DESTINATION_TYPE, ConnectionManager.QUEUE_OBJECT),
+            new com.redhat.mqe.lib.Option(DESTINATION_TYPE, AacConnectionManager.QUEUE_OBJECT),
 
             new com.redhat.mqe.lib.Option(USERNAME, "", "USERNAME", "", "jms.username (not defined before host:port in qpid-jms-client)"),
             new com.redhat.mqe.lib.Option(PASSWORD, "", "PASSWORD", "", "jms.password (not defined before host:port in qpid-jms-client)"),

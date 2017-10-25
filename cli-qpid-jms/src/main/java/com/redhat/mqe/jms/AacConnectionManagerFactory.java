@@ -19,26 +19,14 @@
 
 package com.redhat.mqe.jms;
 
-import java.util.List;
+import com.redhat.mqe.lib.ClientOptions;
+import com.redhat.mqe.lib.ConnectionManagerFactory;
 
-/**
- * Default options for BrokerAgent,
- * QMF/Management tools.
- */
-public class BrokerAgentOptions extends ClientOptions {
-
-    @Override
-    public com.redhat.mqe.lib.Option getOption(String name) {
-        return null;
+public class AacConnectionManagerFactory extends ConnectionManagerFactory {
+    AacConnectionManagerFactory() {
     }
 
-    @Override
-    public List<com.redhat.mqe.lib.Option> getClientDefaultOptions() {
-        return null;
-    }
-
-    @Override
-    public List<com.redhat.mqe.lib.Option> getClientOptions() {
-        return null;
+    public AacConnectionManager make(ClientOptions clientOptions, String brokerUri) {
+        return new AacConnectionManager(clientOptions, brokerUri);
     }
 }
