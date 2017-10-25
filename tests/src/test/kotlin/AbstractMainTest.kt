@@ -152,6 +152,47 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Test
+    fun sendAndReceiveSingleMessageUsingCredentials() {
+        val senderParameters =
+            "sender --log-msgs dict --broker $brokerUrl --address $address --conn-username admin --conn-password admin --count 1".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver --log-msgs dict --broker $brokerUrl --address $address --conn-username admin --conn-password admin --count 1".split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+    }
+
+    @Test
+    fun sendBrowseAndReceiveSingleMessageWithEmptySelector() {
+        val senderParameters =
+            "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver --log-msgs dict --broker $brokerUrl --address $address --msg-selector '' --count 1".split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+            print("Browsing: ")
+            main(receiverParameters + "--recv-browse true".split(" ").toTypedArray())
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+    }
+
+    @Test
+    fun sendSingleMessageWithoutProtocolInBrokerUrl() {
+        val brokerUrl = brokerUrl.substringAfter(":")
+        val senderParameters =
+            "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+        }
+    }
+
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/receiver.csv"))
     fun sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions: String) {
