@@ -81,11 +81,12 @@ class AacMainTest : AbstractMainTest() {
 """.split(" ", "\n").toTypedArray()
 
 
+// cannot set Client ID, because more than one connection is created, and these would clash
+//--conn-clientid aClientId
     override val connectorAdditionalOptions = """
 --conn-async-send true
 --conn-auth-mechanisms anonymous
 --conn-auth-sasl false
---conn-clientid aClientId
 --conn-clientid-prefix aClientIdPrefix
 --conn-close-timeout 1000
 --conn-conn-timeout 1000
