@@ -77,6 +77,7 @@ abstract class AbstractMainTest {
      * Used in a test to increase code coverage and catch some unforeseen option interactions.
      */
     abstract val senderAdditionalOptions: Array<String>
+    abstract val connectorAdditionalOptions: Array<String>
 
     val prefix: String = "lalaLand_"
     lateinit var randomSuffix: String
@@ -152,6 +153,47 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Test
+    fun sendAndReceiveSingleMessageUsingCredentials() {
+        val senderParameters =
+            "sender --log-msgs dict --broker $brokerUrl --address $address --conn-username admin --conn-password admin --count 1".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver --log-msgs dict --broker $brokerUrl --address $address --conn-username admin --conn-password admin --count 1".split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+    }
+
+    @Test
+    fun sendBrowseAndReceiveSingleMessageWithEmptySelector() {
+        val senderParameters =
+            "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver --log-msgs dict --broker $brokerUrl --address $address --msg-selector '' --count 1".split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+            print("Browsing: ")
+            main(receiverParameters + "--recv-browse true".split(" ").toTypedArray())
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+    }
+
+    @Test
+    fun sendSingleMessageWithoutProtocolInBrokerUrl() {
+        val brokerUrl = brokerUrl.substringAfter(":")
+        val senderParameters =
+            "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+        }
+    }
+
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/receiver.csv"))
     fun sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions: String) {
@@ -183,6 +225,19 @@ abstract class AbstractMainTest {
             main(senderParameters + senderDynamicOptions.split(" ").toTypedArray() + senderAdditionalOptions)
             print("Receiving: ")
             main(receiverParameters)
+        }
+    }
+
+    @ParameterizedTest
+    @CsvFileSource(resources = arrayOf("/connector.csv"))
+    fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {
+        println(senderDynamicOptions)
+        val connectorPrameters =
+            "connector --broker $brokerUrl --address $address".split(" ").toTypedArray()
+
+        assertNoSystemExit {
+            print("Connecting: ")
+            main(connectorPrameters + senderDynamicOptions.split(" ").toTypedArray() + connectorAdditionalOptions)
         }
     }
 

@@ -35,6 +35,20 @@
         <library.version></library.version>
     </properties>
 
+    <dependencies>
+        <!--scope provided means that it is a compileOnly dependency-->
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jms_2.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>jmslib</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <plugins>
             <plugin>

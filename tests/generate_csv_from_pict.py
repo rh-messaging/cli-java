@@ -1,6 +1,5 @@
 from __future__ import print_function
 
-
 import pandas
 
 # ./pict model.pict /o:1
@@ -18,7 +17,7 @@ def add_option(options, option):
     if not option[0].startswith('--'):
         return (option[1],) + options
     # default case
-    return option+options
+    return option + options
 
 
 def convert(source_filename, destination_filename):
@@ -31,6 +30,6 @@ def convert(source_filename, destination_filename):
 
 
 if __name__ == '__main__':
-    files = ['sender', 'receiver']
+    files = ['sender', 'receiver', 'connector']
     for file in files:
         convert(file + '.out', file + '.csv')
