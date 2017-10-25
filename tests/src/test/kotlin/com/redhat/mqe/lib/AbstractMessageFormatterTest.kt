@@ -20,20 +20,22 @@
 package com.redhat.mqe.lib
 
 import com.google.common.truth.Truth.assertThat
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import javax.jms.BytesMessage
 import javax.jms.Message
 
 class Formatter : MessageFormatter() {
-    override fun printMessageBodyAsText(message: Message?) {
+    override fun formatMessageBody(message: Message?): MutableMap<String, Any> {
         TODO("not implemented")
     }
 
-    override fun printMessageAsDict(msg: Message?) {
+    override fun formatMessageAsDict(msg: Message?): MutableMap<String, Any> {
         TODO("not implemented")
     }
 
-    override fun printMessageAsInterop(msg: Message?) {
+    override fun formatMessageAsInterop(msg: Message?): MutableMap<String, Any> {
         TODO("not implemented")
     }
 }
@@ -44,9 +46,25 @@ abstract class AbstractMessageFormatterTest {
     abstract fun getBytesMessage(): BytesMessage
 
     @Test
-    fun formatContentOfBytesMessage_empty() {
+    fun `format content of empty bytes message`() {
         val bytesMessage = getBytesMessage()
         bytesMessage.reset()
-        assertThat(formatter.formatContent(bytesMessage).toString()).isEqualTo("None")
+        assertThat(formatter.formatContent(bytesMessage)).isNull()
+    }
+
+    @Test
+    fun `test python formatString`() {
+        val assertions = listOf(
+            "" to "''",
+            "a" to "'a'",
+            "\"" to "'\"'",
+            "'" to "'\\''"
+//            "\\" to "'\\\\'" // FIXME: does not work
+        )
+        Assertions.assertAll(assertions.map {
+            Executable {
+                assertThat(formatter.formatString(it.first).toString()).isEqualTo(it.second)
+            }
+        }.stream())
     }
 }

@@ -27,19 +27,15 @@ import java.security.InvalidParameterException;
 
 public class AccCoreMessageFormatter extends CoreMessageFormatter {
     @Override
-    protected StringBuilder formatAddress(Destination destination) {
+    protected String formatAddress(Destination destination) {
         if (destination == null) {
-            return new StringBuilder("None");
+            return null;
         }
         if (!(destination instanceof ActiveMQDestination)) {
             throw new InvalidParameterException("Destination must be a Core destination, was " + destination.getClass());
         }
 
-        String name = ((ActiveMQDestination) destination).getName();
-        String address = dropDestinationPrefix(name);
-        if (address == null) {
-            return new StringBuilder("None");
-        }
-        return formatString(address);
+        String address = ((ActiveMQDestination) destination).getName();
+        return dropDestinationPrefix(address);
     }
 }

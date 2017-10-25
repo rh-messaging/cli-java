@@ -28,6 +28,9 @@ import java.util.*;
 
 /**
  * MessageFormatter abstraction layer for all protocols.
+ * <p>
+ * Subclasses of MessageFormatter produce data structures containing message data. Use the Formatter classes to print as Python objects,
+ * JSON, and so on.
  */
 public abstract class MessageFormatter {
 
@@ -53,26 +56,36 @@ public abstract class MessageFormatter {
 
     /**
      * Print message body as text.
-     *
-     * @param message message to print
      */
-    public abstract void printMessageBodyAsText(Message message);
+    public Map<String, Object> formatMessageBody(Message message) {
+        String content = null;
+        if (message instanceof TextMessage) {
+            TextMessage textMessage = (TextMessage) message;
+            try {
+                content = textMessage.getText();
+            } catch (JMSException e) {
+                LOG.error("Unable to retrieve text from message.\n" + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
+        }
+
+        Map<String, Object> messageData = new HashMap<>();
+        messageData.put("content", content);
+        return messageData;
+    }
 
     /**
      * Print message with as many as possible known client properties.
-     *
-     * @param msg message to print
      */
-    public abstract void printMessageAsDict(Message msg);
+    public abstract Map<String, Object> formatMessageAsDict(Message msg);
 
     /**
      * Print message in interoperable way for comparing with other clients.
-     *
-     * @param msg message to print
      */
-    public abstract void printMessageAsInterop(Message msg);
+    public abstract Map<String, Object> formatMessageAsInterop(Message msg);
 
-    protected String getGroupSequenceNunmber(Message message, String propertyName) {
+    protected String getGroupSequenceNumber(Message message, String propertyName) {
         try {
             if (message.getStringProperty(propertyName) == null) {
                 return formatInt(0).toString();
@@ -184,15 +197,13 @@ public abstract class MessageFormatter {
         return int_res;
     }
 
-    protected StringBuilder formatAddress(Destination in_data) {
-        if (in_data == null) {
-            return new StringBuilder("None");
+    protected String formatAddress(Destination destination) {
+        if (destination == null) {
+            return null;
         }
-        String address = dropDestinationPrefix(in_data.toString());
-        if (address == null) {
-            return new StringBuilder("None");
-        }
-        return formatString(address);
+
+        final String address = destination.toString();
+        return dropDestinationPrefix(address);
     }
 
     @SuppressWarnings("unchecked")
@@ -233,27 +244,22 @@ public abstract class MessageFormatter {
     }
 
     @SuppressWarnings("unchecked")
-    protected StringBuilder formatProperties(Message msg) {
-        StringBuilder int_res = new StringBuilder();
+    protected Map<String, Object> formatProperties(Message msg) {
+        Map<String, Object> format = new HashMap<>();
         try {
             Enumeration<String> props = msg.getPropertyNames();
             String pVal;
-            int_res.append('{');
 
             while (props.hasMoreElements()) {
                 pVal = props.nextElement();
-                int_res.append("'").append(pVal).append("': ").append(formatObject(msg.getObjectProperty(pVal)));
-                if (props.hasMoreElements()) {
-                    int_res.append(", ");
-                }
+                format.put(pVal, msg.getObjectProperty(pVal));
             }
         } catch (JMSException jmse) {
             LOG.error("Error while getting message properties!", jmse.getMessage());
             jmse.printStackTrace();
             System.exit(1);
         }
-        int_res.append('}');
-        return int_res;
+        return format;
     }
 
     protected StringBuilder formatList(List<Object> objectsList) {
@@ -310,36 +316,22 @@ public abstract class MessageFormatter {
     }
 
     @SuppressWarnings("unchecked")
-    protected StringBuilder formatContent(Message msg) {
-        StringBuilder int_res = new StringBuilder();
+    protected Object formatContent(Message msg) {
         try {
             if (msg instanceof TextMessage) {
-                int_res.append(formatString(((TextMessage) msg).getText()));
-                // TODO remove dependency on qpid.ListMessage
-//    } else if (msg instanceof ListMessage) {
-//      return formatList(((ListMessage) msg).asList());
+                return ((TextMessage) msg).getText();
             } else if (msg instanceof MapMessage) {
-                return formatMap(extractMap((MapMessage) msg));
+                return extractMap((MapMessage) msg);
             } else if (msg instanceof ObjectMessage) {
-                Object obj = ((ObjectMessage) msg).getObject();
-                if (obj instanceof List) {
-                    return formatList((List) obj);
-                } else if (obj instanceof Map) {
-                    // TODO this might not be necessary as Object should not have MapMessage
-                    return formatMap((Map) obj);
-                } else {
-                    return formatObject(obj);
-                }
+                return ((ObjectMessage) msg).getObject();
             } else if (msg instanceof BytesMessage) {
                 BytesMessage bmsg = (BytesMessage) msg;
                 if (bmsg.getBodyLength() > 0) {
                     byte[] readBytes = new byte[(int) bmsg.getBodyLength()];
                     bmsg.readBytes(readBytes);
-                    return new StringBuilder(readBytes.toString());
+                    return readBytes.toString();
 //          return new StringBuilder(bmsg.readUTF());
 //          return new StringBuilder(new String(readBytes));
-                } else {
-                    return new StringBuilder("None");
                 }
             } else if (msg instanceof StreamMessage) {
                 StreamMessage streamMessage = (StreamMessage) msg;
@@ -349,20 +341,16 @@ public abstract class MessageFormatter {
                         Object o = streamMessage.readObject();
                         list.add(o);
                     } catch (MessageEOFException e) {
-                        return formatList(list);
+                        return list;
                     }
                 }
-            } else if (msg instanceof Message) {
-                return new StringBuilder("None");
-            } else {
-                return new StringBuilder("UnknownMsgType");
             }
         } catch (JMSException ex) {
             LOG.error("Error while printing content from message");
             ex.printStackTrace();
             System.exit(1);
         }
-        return int_res;
+        return null;
     }
 
 
@@ -379,4 +367,23 @@ public abstract class MessageFormatter {
         return int_result;
     }
 
+    public void printMessageAsPython(Map<String, Object> format) {
+        StringBuilder msgString = new StringBuilder();
+        msgString.append("{");
+
+        boolean first = true;
+        for (Map.Entry<String, Object> entry : format.entrySet()) {
+            if (!first) {
+                msgString.append(", ");
+            } else {
+                first = false;
+            }
+            msgString.append("'");
+            msgString.append(entry.getKey());
+            msgString.append("': ");
+            msgString.append(formatObject(entry.getValue()));
+        }
+        msgString.append("}");
+        LOG.info(msgString.toString());
+    }
 }

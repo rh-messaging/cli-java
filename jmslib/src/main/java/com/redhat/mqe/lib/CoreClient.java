@@ -351,19 +351,23 @@ public abstract class CoreClient {
      * @param message       to be printed
      */
     void printMessage(ClientOptions clientOptions, Message message) {
+        Map<String, Object> messageData = null;
         switch (clientOptions.getOption(ClientOptions.LOG_MSGS).getValue()) {
             case "dict":
-                messageFormatter.printMessageAsDict(message);
+                messageData = messageFormatter.formatMessageAsDict(message);
                 break;
             case "body":
-                messageFormatter.printMessageBodyAsText(message);
+                messageData = messageFormatter.formatMessageBody(message);
                 break;
             case "interop":
-                messageFormatter.printMessageAsInterop(message);
+                messageData = messageFormatter.formatMessageAsInterop(message);
                 break;
             case "none":
             default:
                 break;
+        }
+        if (messageData != null) {
+            messageFormatter.printMessageAsPython(messageData);
         }
     }
 
