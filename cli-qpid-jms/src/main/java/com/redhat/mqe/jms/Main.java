@@ -19,38 +19,13 @@
 
 package com.redhat.mqe.jms;
 
-import java.util.Arrays;
+import com.redhat.mqe.lib.ConnectionManagerFactory;
+import com.redhat.mqe.lib.CoreClient;
 
 public class Main {
-    private static final String SENDER = "sender";
-    private static final String RECEIVER = "receiver";
-    private static final String CONNECTOR = "connector";
-
-    public static void main(String[] args) {
-        String startHelp = "first argument must be sender, receiver OR connector";
-        if (args.length > 0) {
-            String[] subArgs;
-            if (args.length > 1) {
-                int startIndex = 1;
-                subArgs = Arrays.copyOfRange(args, startIndex, args.length);
-            } else {
-                subArgs = new String[0];
-            }
-            switch (args[0]) {
-                case SENDER:
-                    aac1_sender.main(subArgs);
-                    break;
-                case RECEIVER:
-                    aac1_receiver.main(subArgs);
-                    break;
-                case CONNECTOR:
-                    aac1_connector.main(subArgs);
-                    break;
-                default:
-                    System.out.println(startHelp);
-            }
-        } else {
-            System.out.println(startHelp);
-        }
+    public static void main(String[] args) throws Exception {
+        CoreClient.setClientType(CoreClient.AMQP_CLIENT_TYPE);
+        ConnectionManagerFactory connectionManagerFactory = new AacConnectionManagerFactory();
+        com.redhat.mqe.lib.Main.main(args, new AacClientFactory(), connectionManagerFactory);
     }
 }

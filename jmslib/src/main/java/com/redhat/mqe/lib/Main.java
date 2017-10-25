@@ -27,8 +27,6 @@ public class Main {
         if (args.length > 0) {
             String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
 
-            CoreClient.setClientType(CoreClient.WIRE_CLIENT_TYPE);
-
             switch (args[0]) {
                 case "sender":
                     client = clientFactory.makeSenderClient(subArgs, connectionManagerFactory);

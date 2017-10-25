@@ -19,24 +19,24 @@
 
 package com.redhat.mqe.jms;
 
+import com.redhat.mqe.lib.ClientOptions;
+import com.redhat.mqe.lib.ConnectionManager;
+import com.redhat.mqe.lib.CoreClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jms.*;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import javax.jms.*;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
-public class ConnectionManager {
-    private ConnectionFactory factory;
+public class AacConnectionManager extends ConnectionManager {
     private Context context;
-    private Destination destination;
-    private Connection connection;
     private String customConnectionFactory = "connectionfactory.amqFactory";
     private String customQueue = "queue.amqQueue";
     private String customTopic = "topic.amqTopic";
@@ -52,14 +52,14 @@ public class ConnectionManager {
     private static final String QPID_INITIAL_CONTEXT = "org.apache.qpid.jndi.PropertiesFileInitialContextFactory";
 
     private static final String EXTERNAL_JNDI_PROPERTY = "aac1.jndi";
-    private Logger LOG = LoggerFactory.getLogger(ConnectionManager.class.getName());
+    private Logger LOG = LoggerFactory.getLogger(AacConnectionManager.class.getName());
 
-    ConnectionManager(ClientOptions clientOptions, String connectionFactory) {
-        if (clientOptions.getOption(ClientOptions.USERNAME).hasParsedValue()) {
-            username = clientOptions.getOption(ClientOptions.USERNAME).getValue();
+    AacConnectionManager(ClientOptions clientOptions, String connectionFactory) {
+        if (clientOptions.getOption(AacClientOptions.USERNAME).hasParsedValue()) {
+            username = clientOptions.getOption(AacClientOptions.USERNAME).getValue();
         }
-        if (clientOptions.getOption(ClientOptions.PASSWORD).hasParsedValue()) {
-            password = clientOptions.getOption(ClientOptions.PASSWORD).getValue();
+        if (clientOptions.getOption(AacClientOptions.PASSWORD).hasParsedValue()) {
+            password = clientOptions.getOption(AacClientOptions.PASSWORD).getValue();
         }
         try {
             Properties props = new Properties();
@@ -87,10 +87,10 @@ public class ConnectionManager {
             context = new InitialContext(props);
             factory = (ConnectionFactory) context.lookup(this.connectionFactory);
 
-            if (clientOptions.getOption(ClientOptions.DESTINATION_TYPE).getValue().equals(TOPIC_OBJECT)) {
-                destination = createTopic(clientOptions.getOption(ClientOptions.ADDRESS).getValue());
-            } else if (clientOptions.getOption(ClientOptions.DESTINATION_TYPE).getValue().equals(QUEUE_OBJECT)) {
-                destination = createQueue(clientOptions.getOption(ClientOptions.ADDRESS).getValue());
+            if (clientOptions.getOption(AacClientOptions.DESTINATION_TYPE).getValue().equals(TOPIC_OBJECT)) {
+                destination = createTopic(clientOptions.getOption(AacClientOptions.ADDRESS).getValue());
+            } else if (clientOptions.getOption(AacClientOptions.DESTINATION_TYPE).getValue().equals(QUEUE_OBJECT)) {
+                destination = createQueue(clientOptions.getOption(AacClientOptions.ADDRESS).getValue());
             } else {
                 // reserved for future other destination types
                 LOG.warn("Not sure what type of Destination to create. Falling back to Destination");
@@ -99,7 +99,7 @@ public class ConnectionManager {
 
             LOG.debug("Connection=" + connectionFactory);
             LOG.trace("Destination=" + destination);
-            if (clientOptions.getOption(ClientOptions.BROKER_URI).hasParsedValue()
+            if (clientOptions.getOption(AacClientOptions.BROKER_URI).hasParsedValue()
                 || (username == null && password == null)) {
 //          || CoreClient.isAMQClient()) { this will work for Qpid JMS AMQP Client as well, but we will be nicer
                 connection = factory.createConnection();
@@ -166,7 +166,7 @@ public class ConnectionManager {
      * @param queueName name of the queue to be created
      * @return created Queue object
      */
-    Queue createQueue(String queueName) {
+    protected Queue createQueue(String queueName) {
         return (Queue) createJMSProviderObject("queue", queueName);
     }
 
@@ -176,7 +176,7 @@ public class ConnectionManager {
      * @param topicName name of the topic to be created
      * @return created Topic object
      */
-    Topic createTopic(String topicName) {
+    protected Topic createTopic(String topicName) {
         return (Topic) createJMSProviderObject("topic", topicName);
     }
 
