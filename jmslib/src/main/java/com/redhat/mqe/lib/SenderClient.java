@@ -39,11 +39,11 @@ import javax.jms.*;
  */
 public class SenderClient extends CoreClient {
   private ClientOptions senderOptions;
-  protected static List<Content> content;
-  private static boolean isEmptyMessage = false;
+  protected List<Content> content;
+  private boolean isEmptyMessage = false;
   private boolean userMessageCounter = false;
   private String userMessageCounterText;
-  private static byte[] binaryMessageData;
+  private byte[] binaryMessageData;
   static final String QPID_SUBJECT = "qpid.subject";
   static final String AMQ_SUBJECT = "JMS_AMQP_Subject";
   static final String QPID_USERID = ""; // TODO
@@ -521,7 +521,7 @@ public class SenderClient extends CoreClient {
    * @param senderOptions use provided input option
    * @return list of created options with at least one value
    */
-  static void createMessageContent(ClientOptions senderOptions) {
+  private void createMessageContent(ClientOptions senderOptions) {
     List<Content> contentList = new ArrayList<>();
     String globalContentType = null;
     // Set global content value
@@ -565,27 +565,23 @@ public class SenderClient extends CoreClient {
    */
   private static byte[] readBinaryContentFromFile(String binaryFileName) {
     File binaryFile = new File(binaryFileName);
-    byte[] bytesOut = null;
-    if (binaryFile.canRead()) {
-      bytesOut = new byte[(int) binaryFile.length()];
-      try {
-        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(binaryFile))) {
-          int totalBytesRead = 0;
-          while (totalBytesRead < bytesOut.length) {
-            int bytesRemaining = bytesOut.length - totalBytesRead;
-            //input.read() returns -1, 0, or more :
-            int bytesRead = bis.read(bytesOut, totalBytesRead, bytesRemaining);
-            if (bytesRead > 0) {
-              totalBytesRead = totalBytesRead + bytesRead;
-            }
-          }
+    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(binaryFile))) {
+      byte[] bytesOut = new byte[(int) binaryFile.length()];
+      int totalBytesRead = 0;
+      while (totalBytesRead < bytesOut.length) {
+        int bytesRemaining = bytesOut.length - totalBytesRead;
+        //input.read() returns -1, 0, or more :
+        int bytesRead = bis.read(bytesOut, totalBytesRead, bytesRemaining);
+        if (bytesRead > 0) {
+          totalBytesRead = totalBytesRead + bytesRead;
         }
-      } catch (IOException e) {
-        e.printStackTrace();
       }
+      LOG.error("ToSend=" + new String(bytesOut));
+      return bytesOut;
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    LOG.error("ToSend=" + new String(bytesOut));
-    return bytesOut;
+    return null;
   }
 
 
@@ -594,7 +590,7 @@ public class SenderClient extends CoreClient {
    * as a string representation of all lines.
    *
    * @param path path to file to read input from
-   * @return the concatenad
+   * @return the concatenated lines
    */
   private static String readContentFromFile(String path) {
     StringBuilder fileContent = new StringBuilder();
