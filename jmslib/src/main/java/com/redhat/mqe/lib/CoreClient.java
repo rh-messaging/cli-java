@@ -56,7 +56,7 @@ public abstract class CoreClient {
     private List<Session> sessions;
     private List<MessageProducer> messageProducers;
     private List<MessageConsumer> messageConsumers;
-    private List<Queue > queues;
+    private List<Queue> queues;
     private static String clientType;
 
     protected ConnectionManagerFactory connectionManagerFactory;
@@ -352,19 +352,25 @@ public abstract class CoreClient {
      */
     void printMessage(ClientOptions clientOptions, Message message) {
         Map<String, Object> messageData = null;
-        switch (clientOptions.getOption(ClientOptions.LOG_MSGS).getValue()) {
-            case "dict":
-                messageData = messageFormatter.formatMessageAsDict(message);
-                break;
-            case "body":
-                messageData = messageFormatter.formatMessageBody(message);
-                break;
-            case "interop":
-                messageData = messageFormatter.formatMessageAsInterop(message);
-                break;
-            case "none":
-            default:
-                break;
+        try {
+            switch (clientOptions.getOption(ClientOptions.LOG_MSGS).getValue()) {
+                case "dict":
+                    messageData = messageFormatter.formatMessageAsDict(message);
+                    break;
+                case "body":
+                    messageData = messageFormatter.formatMessageBody(message);
+                    break;
+                case "interop":
+                    messageData = messageFormatter.formatMessageAsInterop(message);
+                    break;
+                case "none":
+                default:
+                    break;
+            }
+        } catch (JMSException e) {
+            LOG.error("Unable to retrieve text from message.\n" + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
         }
         if (messageData != null) {
             messageFormatter.printMessageAsPython(messageData);

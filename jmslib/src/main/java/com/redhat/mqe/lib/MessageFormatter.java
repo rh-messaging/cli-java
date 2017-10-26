@@ -33,21 +33,13 @@ import java.util.*;
  * JSON, and so on.
  */
 public abstract class MessageFormatter {
-
-    String AMQP_FIRST_ACQUIRER = "JMS_AMQP_FIRST_ACQUIRER";
-    String AMQP_CONTENT_TYPE = "JMS_AMQP_CONTENT_TYPE";
-    String AMQP_CONTENT_ENCODING = "JMS_AMQP_CONTENT_ENCODING";
-    String AMQP_JMSX_GROUP_SEQ = "JMSXGroupSeq";
-    String AMQP_REPLY_TO_GROUP_ID = "JMS_AMQP_REPLY_TO_GROUP_ID";
-
+    String AMQP_CONTENT_TYPE = "JMS_AMQP_ContentType";
     String OWIRE_AMQP_FIRST_ACQUIRER = "JMS_AMQP_FirstAcquirer";
     String OWIRE_AMQP_SUBJECT = "JMS_AMQP_Subject";
-    String OWIRE_AMQP_CONTENT_TYPE = "JMS_AMQP_ContentType";
     String OWIRE_AMQP_CONTENT_ENCODING = "JMS_AMQP_ContentEncoding";
     String OWIRE_AMQP_REPLY_TO_GROUP_ID = "JMS_AMQP_ReplyToGroupID";
-    String OWIRE_GROUP_SEQ = "JMSXGroupSequence";
 
-
+    String AMQP_JMSX_GROUP_SEQ = "JMSXGroupSeq";
     String JMSX_DELIVERY_COUNT = "JMSXDeliveryCount";
     String JMSX_USER_ID = "JMSXUserID";
     String JMSX_GROUP_ID = "JMSXGroupID";
@@ -76,14 +68,72 @@ public abstract class MessageFormatter {
     }
 
     /**
+     * Returns a Map that is a common foundation for Dict and Interop outputs
+     */
+    public abstract Map<String, Object> formatMessage(Message msg) throws JMSException;
+
+    public void addFormatInterop(Message msg, Map<String, Object> result) throws JMSException {
+        result.put("delivery-count", substractJMSDeliveryCount(msg.getIntProperty(JMSX_DELIVERY_COUNT)));
+        result.put("first-acquirer", msg.getBooleanProperty(OWIRE_AMQP_FIRST_ACQUIRER));
+    }
+
+    public void addFormatJMS11(Message msg, Map<String, Object> result) throws JMSException {
+        // Header
+        result.put("durable", msg.getJMSDeliveryMode() == DeliveryMode.PERSISTENT);
+        result.put("priority", msg.getJMSPriority());
+        result.put("ttl", Utils.getTtl(msg));
+
+        // Delivery Annotations
+
+        // Properties
+        result.put("id", removeIDprefix(msg.getJMSMessageID()));
+        result.put("user-id", msg.getStringProperty(JMSX_USER_ID));
+        result.put("address", formatAddress(msg.getJMSDestination()));
+        result.put("subject", msg.getObjectProperty(OWIRE_AMQP_SUBJECT));
+        result.put("reply-to", formatAddress(msg.getJMSReplyTo()));
+        result.put("correlation-id", removeIDprefix(msg.getJMSCorrelationID()));
+        result.put("content-type", msg.getStringProperty(AMQP_CONTENT_TYPE));
+        result.put("content-encoding", msg.getStringProperty(OWIRE_AMQP_CONTENT_ENCODING));
+        result.put("absolute-expiry-time", msg.getJMSExpiration());
+        result.put("creation-time", msg.getJMSTimestamp());
+        result.put("group-id", msg.getStringProperty(JMSX_GROUP_ID));
+        result.put("group-sequence", getGroupSequenceNumber(msg, AMQP_JMSX_GROUP_SEQ));
+        result.put("reply-to-group-id", msg.getStringProperty(OWIRE_AMQP_REPLY_TO_GROUP_ID));
+
+        // Application Properties
+        result.put("properties", formatProperties(msg));
+
+        // Application Data
+        result.put("content", formatContent(msg));
+        result.put("type", msg.getJMSType()); // not everywhere, amqp does not have it
+    }
+
+    public void addFormatJMS20(Message msg, Map<String, Object> result) throws JMSException {
+        // Delivery Annotations
+        result.put("redelivered", msg.getJMSRedelivered());
+        result.put("delivery-time", msg.getJMSDeliveryTime());
+    }
+
+    /**
      * Print message with as many as possible known client properties.
      */
-    public abstract Map<String, Object> formatMessageAsDict(Message msg);
+    public Map<String, Object> formatMessageAsDict(Message msg) throws JMSException {
+        Map<String, Object> result = formatMessage(msg);
+        result.put("redelivered", msg.getJMSRedelivered());
+        return result;
+    }
 
     /**
      * Print message in interoperable way for comparing with other clients.
      */
-    public abstract Map<String, Object> formatMessageAsInterop(Message msg);
+    public Map<String, Object> formatMessageAsInterop(Message msg) throws JMSException {
+        Map<String, Object> result = formatMessage(msg);
+        addFormatInterop(msg, result);
+        result.put("id", removeIDprefix((String) result.get("id")));
+        result.put("user-id", removeIDprefix((String) result.get("user-id")));
+        result.put("correlation-id", removeIDprefix((String) result.get("correlation-id")));
+        return result;
+    }
 
     protected String getGroupSequenceNumber(Message message, String propertyName) {
         try {

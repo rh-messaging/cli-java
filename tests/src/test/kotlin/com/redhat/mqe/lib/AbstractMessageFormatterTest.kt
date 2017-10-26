@@ -27,15 +27,7 @@ import javax.jms.BytesMessage
 import javax.jms.Message
 
 class Formatter : MessageFormatter() {
-    override fun formatMessageBody(message: Message?): MutableMap<String, Any> {
-        TODO("not implemented")
-    }
-
-    override fun formatMessageAsDict(msg: Message?): MutableMap<String, Any> {
-        TODO("not implemented")
-    }
-
-    override fun formatMessageAsInterop(msg: Message?): MutableMap<String, Any> {
+    override fun formatMessage(msg: Message?): MutableMap<String, Any> {
         TODO("not implemented")
     }
 }
