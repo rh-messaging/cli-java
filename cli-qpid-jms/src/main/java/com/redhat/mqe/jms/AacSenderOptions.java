@@ -20,6 +20,7 @@
 package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.ClientOptionManager;
+import com.redhat.mqe.lib.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,46 +33,46 @@ import java.util.List;
  */
 public class AacSenderOptions extends AacClientOptions {
 
-    private List<com.redhat.mqe.lib.Option> options = new LinkedList<com.redhat.mqe.lib.Option>();
+    private List<Option> options = new LinkedList<>();
     private Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
-    private final List<com.redhat.mqe.lib.Option> senderDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
+    private final List<Option> senderDefaultOptions = new LinkedList<>();
 
     {
         senderDefaultOptions.addAll(Arrays.asList(
-            new com.redhat.mqe.lib.Option(ADDRESS, "a", "ADDRESS", "", "Queue/Topic destination"),
-            new com.redhat.mqe.lib.Option(TIMEOUT, "t", "TIMEOUT", "0", "timeout in seconds to wait before exiting. Use -1 to wait forever."),
-            new com.redhat.mqe.lib.Option(COUNT, "c", "MESSAGES", "1", "stop after count messages have been sent, zero disables"),
-            new com.redhat.mqe.lib.Option(DURATION, "d", "DURATION", "0", "message actions total duration in seconds (defines msg-rate together with count)"),
-            new com.redhat.mqe.lib.Option(DURATION_MODE, "", "VALUE", "after-send", "specifies where to wait (before-send/after-send/after-send-tx-action"),
-            new com.redhat.mqe.lib.Option(MSG_ID, "i", "MSG_ID", "", "use the supplied id instead of generating one. use \'noid\' to not generate IDs"),
-            new com.redhat.mqe.lib.Option(PROPERTY_TYPE, "", "PTYPE", "String", "specify the type of message property"),
-            new com.redhat.mqe.lib.Option(MSG_PROPERTY, "", "KEY=PVALUE", "", "specify message property as KEY=VALUE (use '~' instead of '=' for auto-casting)"),
-            new com.redhat.mqe.lib.Option(CONTENT_TYPE, "", "CTYPE", "String", "specify type of the actual content type"),
-            new com.redhat.mqe.lib.Option(MSG_CONTENT_TYPE, "", "MSGTYPE", "", "type of message body to use in header (JMSType)"),
-            new com.redhat.mqe.lib.Option(MSG_CONTENT_FROM_FILE, "", "PATH", "", "specify filename to load content from"),
-            new com.redhat.mqe.lib.Option(MSG_CONTENT, "", "CONTENT", "", "actual content fed to message body"),
-            new com.redhat.mqe.lib.Option(MSG_CONTENT_BINARY, "false", "BIN_CONTENT", "", "is message content binary"),
-            new com.redhat.mqe.lib.Option(MSG_CONTENT_LIST_ITEM, "L", "VALUE", "", "item from list"),
-            new com.redhat.mqe.lib.Option(MSG_CONTENT_MAP_ITEM, "M", "KEY=VALUE", "", "Map item specified as KEY=VALUE (use '~' instead of '=' for auto-casting)"),
-            new com.redhat.mqe.lib.Option(MSG_NOTIMESTAMP, "", "TIMESTAMP", "false", "producer do not create timestamps for messages"),
-            new com.redhat.mqe.lib.Option(MSG_REPLY_TO, "", "QUEUE", "", "reply to provided queue"),
-            new com.redhat.mqe.lib.Option(MSG_SUBJECT, "", "SUBJECT", "", "specify message subject"),
-            new com.redhat.mqe.lib.Option(MSG_DURABLE, "", "MSG_DURABLE", "yes", "send durable messages: yes/no|true/false"),
-            new com.redhat.mqe.lib.Option(LOG_MSGS, "", "LOGMSGFMT", "upstream", "message[s] reporting style (dict|body|upstream|none)"),
-            new com.redhat.mqe.lib.Option(LOG_STATS, "", "LEVEL", "upstream", "report various statistic/debug information"),
-            new com.redhat.mqe.lib.Option(MSG_TTL, "", "TTL", "0", "message time-to-live (ms)"),
-            new com.redhat.mqe.lib.Option(MSG_PRIORITY, "", "MSG_PRIORITY", "4", "message priority"),
-            new com.redhat.mqe.lib.Option(MSG_CORRELATION_ID, "", "MSGCORRID", "", "message correlation id"),
-            new com.redhat.mqe.lib.Option(MSG_USER_ID, "", "USER", "", "obsolete! use '" + CON_POPULATE_JMSXUSERID + "'"),
-            new com.redhat.mqe.lib.Option(MSG_GROUP_ID, "", "GROUPID", "", "message group id - JMSXGroupID"),
-            new com.redhat.mqe.lib.Option(MSG_GROUP_SEQ, "", "SEQUENCE", "", "message group sequence - JMSXGroupSeq"),
-            new com.redhat.mqe.lib.Option(MSG_REPLY_TO_GROUP_ID, "", "GROUPID", "", "reply to message group id"),
-            new com.redhat.mqe.lib.Option(TX_SIZE, "", "TXSIZE", "0", "transactional mode: batch message count size"),
-            new com.redhat.mqe.lib.Option(TX_ACTION, "", "TXACTION", "commit", "transactional action at the end of tx batch (commit|rollback|recover|None)"),
-            new com.redhat.mqe.lib.Option(TX_ENDLOOP_ACTION, "", "TXACTION", "None", "transactional action after sending all messages in loop (commit|rollback|recover|None)"),
+            new Option(ADDRESS, "a", "ADDRESS", "", "Queue/Topic destination"),
+            new Option(TIMEOUT, "t", "TIMEOUT", "0", "timeout in seconds to wait before exiting. Use -1 to wait forever."),
+            new Option(COUNT, "c", "MESSAGES", "1", "stop after count messages have been sent, zero disables"),
+            new Option(DURATION, "d", "DURATION", "0", "message actions total duration in seconds (defines msg-rate together with count)"),
+            new Option(DURATION_MODE, "", "VALUE", "after-send", "specifies where to wait (before-send/after-send/after-send-tx-action"),
+            new Option(MSG_ID, "i", "MSG_ID", "", "use the supplied id instead of generating one. use \'noid\' to not generate IDs"),
+            new Option(PROPERTY_TYPE, "", "PTYPE", "String", "specify the type of message property"),
+            new Option(MSG_PROPERTY, "", "KEY=PVALUE", "", "specify message property as KEY=VALUE (use '~' instead of '=' for auto-casting)"),
+            new Option(CONTENT_TYPE, "", "CTYPE", "String", "specify type of the actual content type"),
+            new Option(MSG_CONTENT_TYPE, "", "MSGTYPE", "", "type of message body to use in header (JMSType)"),
+            new Option(MSG_CONTENT_FROM_FILE, "", "PATH", "", "specify filename to load content from"),
+            new Option(MSG_CONTENT, "", "CONTENT", "", "actual content fed to message body"),
+            new Option(MSG_CONTENT_BINARY, "false", "BIN_CONTENT", "", "is message content binary"),
+            new Option(MSG_CONTENT_LIST_ITEM, "L", "VALUE", "", "item from list"),
+            new Option(MSG_CONTENT_MAP_ITEM, "M", "KEY=VALUE", "", "Map item specified as KEY=VALUE (use '~' instead of '=' for auto-casting)"),
+            new Option(MSG_NOTIMESTAMP, "", "TIMESTAMP", "false", "producer do not create timestamps for messages"),
+            new Option(MSG_REPLY_TO, "", "QUEUE", "", "reply to provided queue"),
+            new Option(MSG_SUBJECT, "", "SUBJECT", "", "specify message subject"),
+            new Option(MSG_DURABLE, "", "MSG_DURABLE", "yes", "send durable messages: yes/no|true/false"),
+            new Option(LOG_MSGS, "", "LOGMSGFMT", "upstream", "message[s] reporting style (dict|body|upstream|none)"),
+            new Option(LOG_STATS, "", "LEVEL", "upstream", "report various statistic/debug information"),
+            new Option(MSG_TTL, "", "TTL", "0", "message time-to-live (ms)"),
+            new Option(MSG_PRIORITY, "", "MSG_PRIORITY", "4", "message priority"),
+            new Option(MSG_CORRELATION_ID, "", "MSGCORRID", "", "message correlation id"),
+            new Option(MSG_USER_ID, "", "USER", "", "obsolete! use '" + CON_POPULATE_JMSXUSERID + "'"),
+            new Option(MSG_GROUP_ID, "", "GROUPID", "", "message group id - JMSXGroupID"),
+            new Option(MSG_GROUP_SEQ, "", "SEQUENCE", "", "message group sequence - JMSXGroupSeq"),
+            new Option(MSG_REPLY_TO_GROUP_ID, "", "GROUPID", "", "reply to message group id"),
+            new Option(TX_SIZE, "", "TXSIZE", "0", "transactional mode: batch message count size"),
+            new Option(TX_ACTION, "", "TXACTION", "commit", "transactional action at the end of tx batch (commit|rollback|recover|None)"),
+            new Option(TX_ENDLOOP_ACTION, "", "TXACTION", "None", "transactional action after sending all messages in loop (commit|rollback|recover|None)"),
             // TODO
-            new com.redhat.mqe.lib.Option(SYNC_MODE, "", "SYNCMODE", "action", "synchronization mode: none/session/action/persistent/transient"),
-            new com.redhat.mqe.lib.Option(CAPACITY, "", "CAPACITY", "-1", "sender|receiver capacity (no effect in jms atm)")
+            new Option(SYNC_MODE, "", "SYNCMODE", "action", "synchronization mode: none/session/action/persistent/transient"),
+            new Option(CAPACITY, "", "CAPACITY", "-1", "sender|receiver capacity (no effect in jms atm)")
         ));
     }
 
@@ -80,9 +81,9 @@ public class AacSenderOptions extends AacClientOptions {
     }
 
     @Override
-    public com.redhat.mqe.lib.Option getOption(String name) {
+    public Option getOption(String name) {
         if (name != null) {
-            for (com.redhat.mqe.lib.Option option : options) {
+            for (Option option : options) {
                 if (name.equals(option.getName()))
                     return option;
             }
@@ -95,11 +96,11 @@ public class AacSenderOptions extends AacClientOptions {
     }
 
     @Override
-    public List<com.redhat.mqe.lib.Option> getClientDefaultOptions() {
+    public List<Option> getClientDefaultOptions() {
         return senderDefaultOptions;
     }
 
-    public List<com.redhat.mqe.lib.Option> getClientOptions() {
+    public List<Option> getClientOptions() {
         return options;
     }
 
