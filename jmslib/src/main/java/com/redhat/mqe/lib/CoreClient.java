@@ -373,7 +373,16 @@ public abstract class CoreClient {
             System.exit(1);
         }
         if (messageData != null) {
-            messageFormatter.printMessageAsPython(messageData);
+            switch(clientOptions.getOption(ClientOptions.OUT).getValue()) {
+                case "json": {
+                    messageFormatter.printMessageAsJson(messageData);
+                    break;
+                }
+                default: {
+                    messageFormatter.printMessageAsPython(messageData);
+                    break;
+                }
+            }
         }
     }
 

@@ -31,6 +31,7 @@ import java.util.*;
 public abstract class ClientOptions {
 
     protected static final Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
+    protected static final String OUT = "out";
     private static final Map<String, String> translationDtestJmsMap = new HashMap<String, String>();
     public static final String CON_SSL_ENA = "conn-ssl-ena";
     private final List<Option> defaultOptions = new ArrayList<>();

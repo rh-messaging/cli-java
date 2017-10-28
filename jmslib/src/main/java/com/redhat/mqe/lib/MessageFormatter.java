@@ -19,10 +19,12 @@
 
 package com.redhat.mqe.lib;
 
+import org.glassfish.json.JsonProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
+import javax.json.spi.JsonProvider;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -45,6 +47,7 @@ public abstract class MessageFormatter {
     String JMSX_GROUP_ID = "JMSXGroupID";
 
     static Logger LOG = LoggerFactory.getLogger(MessageFormatter.class);
+    private JsonProvider json = new JsonProviderImpl();
 
     /**
      * Print message body as text.
@@ -435,5 +438,9 @@ public abstract class MessageFormatter {
         }
         msgString.append("}");
         LOG.info(msgString.toString());
+    }
+
+    void printMessageAsJson(Map<String, Object> format) {
+        LOG.info(json.createObjectBuilder(format).build().toString());
     }
 }

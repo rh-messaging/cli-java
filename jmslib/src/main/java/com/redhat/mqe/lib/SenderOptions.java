@@ -58,6 +58,7 @@ public class SenderOptions extends ClientOptions {
             new Option(MSG_DURABLE, "", "MSG_DURABLE", "yes", "send durable messages: yes/no|true/false"),
             new Option(LOG_MSGS, "", "LOGMSGFMT", "upstream", "message[s] reporting style (dict|body|upstream|none)"),
             new Option(LOG_STATS, "", "LEVEL", "upstream", "report various statistic/debug information"),
+            new Option(OUT, "", "FORMAT", "repr", "message[s] reporting format (repr|json)"),
             new Option(MSG_TTL, "", "TTL", "0", "message time-to-live (ms)"),
             new Option(MSG_PRIORITY, "", "MSG_PRIORITY", "4", "message priority"),
             new Option(MSG_CORRELATION_ID, "", "MSGCORRID", "", "message correlation id"),
