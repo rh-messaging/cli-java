@@ -63,11 +63,8 @@ public class AccConnectionManager extends ConnectionManager {
 ////                destination = (Destination) initialContext.lookup(this.queueOrTopic);
             }
 
-            LOG.debug("Connection=" + connectionFactory);
             LOG.trace("Destination=" + destination);
-            if (clientOptions.getOption(ClientOptions.BROKER_URI).hasParsedValue()
-                || (username == null && password == null)) {
-//          || CoreClient.isAMQClient()) { this will work for Qpid JMS AMQP Client as well, but we will be nicer
+            if (clientOptions.getOption(ClientOptions.BROKER_URI).hasParsedValue() || (username == null && password == null)) {
                 connection = factory.createConnection();
             } else {
                 LOG.trace("Using credentials " + username + ":" + password);
@@ -93,12 +90,10 @@ public class AccConnectionManager extends ConnectionManager {
         }
     }
 
-    @Override
     protected Queue createQueue(String queueName) {
         return new ActiveMQQueue(queueName);
     }
 
-    @Override
     protected Topic createTopic(String topicName) {
         return new ActiveMQTopic(topicName);
     }

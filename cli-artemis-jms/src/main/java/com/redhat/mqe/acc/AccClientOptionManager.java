@@ -131,4 +131,9 @@ class AccClientOptionManager extends ClientOptionManager {
         }
         super.createConnectionOptions(clientOptions);
     }
+
+    @Override
+    protected String getUrlProtocol() {
+        return "tcp";
+    }
 }

@@ -24,7 +24,6 @@ import com.redhat.mqe.lib.CoreClient;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        CoreClient.setClientType(CoreClient.AMQP_CLIENT_TYPE);
         ConnectionManagerFactory connectionManagerFactory = new AacConnectionManagerFactory();
         com.redhat.mqe.lib.Main.main(args, new AacClientFactory(), connectionManagerFactory);
     }
