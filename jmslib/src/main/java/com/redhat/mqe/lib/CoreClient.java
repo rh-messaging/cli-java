@@ -36,10 +36,6 @@ import java.util.Map;
  * Core implementation of creating various connections to brokers using clients.
  */
 public abstract class CoreClient {
-    public static final String AMQP_CLIENT_TYPE = "amqp";
-    static final String QPID_CLIENT_TYPE = "qpid";
-    public static final String WIRE_CLIENT_TYPE = "openwire";
-    public static final String CORE_CLIENT_TYPE = "core";
     static Logger LOG = LoggerFactory.getLogger(CoreClient.class);
     private ConnectionManager connectionManager;
     private static final Map<String, Integer> SESSION_ACK_MAP = new HashMap<>(5);
@@ -57,7 +53,6 @@ public abstract class CoreClient {
     private List<MessageProducer> messageProducers;
     private List<MessageConsumer> messageConsumers;
     private List<Queue> queues;
-    private static String clientType;
 
     protected ConnectionManagerFactory connectionManagerFactory;
     protected MessageFormatter messageFormatter;
@@ -384,30 +379,6 @@ public abstract class CoreClient {
         }
     }
 
-    // TODO - make it better, easily extensible for future clients
-    static boolean isAMQClient() {
-        return clientType.equals(AMQP_CLIENT_TYPE) || clientType.equals("amq");
-    }
-
-    public static boolean isQpidClient() {
-        return clientType.equals(QPID_CLIENT_TYPE);
-    }
-
-    static boolean isWireClient() {
-        return clientType.equals(WIRE_CLIENT_TYPE);
-    }
-
-    /**
-     * Supported client types are 'qpid' and 'amq'.
-     * Specific broker-related data types are different among different
-     * brokers.
-     *
-     * @param client to which broker will connect. Supported amq/qpid values.
-     */
-    public static void setClientType(String client) {
-        clientType = client.toLowerCase();
-    }
-
     /**
      * Do the given transaction.
      *
@@ -469,18 +440,6 @@ public abstract class CoreClient {
             brkCon.append(":(").append(clientOptions.getOption(ClientOptions.FAILOVER_URL).getValue()).append(")");
         } else {
             brkCon.append("://");
-            if (isQpidClient()) {
-                if (clientOptions.getOption(ClientOptions.USERNAME).hasParsedValue()) {
-                    brkCon.append(clientOptions.getOption(ClientOptions.USERNAME).getValue()).append(":");
-                }
-                if (clientOptions.getOption(ClientOptions.PASSWORD).hasParsedValue()) {
-                    brkCon.append(clientOptions.getOption(ClientOptions.PASSWORD).getValue());
-                }
-                if (clientOptions.getOption(ClientOptions.USERNAME).hasParsedValue()
-                    || clientOptions.getOption(ClientOptions.PASSWORD).hasParsedValue()) {
-                    brkCon.append("@");
-                }
-            }
             brkCon.append(clientOptions.getOption(ClientOptions.BROKER_HOST).getValue()).append(":")
                 .append(clientOptions.getOption(ClientOptions.BROKER_PORT).getValue());
         }

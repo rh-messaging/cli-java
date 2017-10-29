@@ -22,11 +22,7 @@ package com.redhat.mqe.jms;
 import com.redhat.mqe.lib.ClientOptionManager;
 import com.redhat.mqe.lib.ClientOptions;
 
-import javax.jms.Session;
-import java.util.HashMap;
-import java.util.Map;
-
-class AacClientOptionManager extends ClientOptionManager {
+public class AacClientOptionManager extends ClientOptionManager {
     {
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.CON_HEARTBEAT, "amqp.idleTimeout");
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.USERNAME, "jms.username");
@@ -98,5 +94,10 @@ class AacClientOptionManager extends ClientOptionManager {
             connectionOptionsUrlMap.put("transport.traceBytes", "true");
         }
         super.createConnectionOptions(clientOptions);
+    }
+
+    @Override
+    protected String getUrlProtocol() {
+        return "amqp";
     }
 }

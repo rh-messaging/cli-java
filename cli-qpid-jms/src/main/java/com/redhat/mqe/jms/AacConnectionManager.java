@@ -21,7 +21,6 @@ package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManager;
-import com.redhat.mqe.lib.CoreClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,21 +150,12 @@ public class AacConnectionManager extends ConnectionManager {
     }
 
     /**
-     * Creates a destination for a specified name.
-     *
-     * @param destination for which destination is to be created.
-     * @return created Destination object
-     */
-    Destination createDestination(String destination) {
-        return (Destination) createJMSProviderObject("destination", destination);
-    }
-
-    /**
      * Create queue object
      *
      * @param queueName name of the queue to be created
      * @return created Queue object
      */
+    @Override
     protected Queue createQueue(String queueName) {
         return (Queue) createJMSProviderObject("queue", queueName);
     }
@@ -176,6 +166,7 @@ public class AacConnectionManager extends ConnectionManager {
      * @param topicName name of the topic to be created
      * @return created Topic object
      */
+    @Override
     protected Topic createTopic(String topicName) {
         return (Topic) createJMSProviderObject("topic", topicName);
     }
@@ -184,19 +175,13 @@ public class AacConnectionManager extends ConnectionManager {
      * Creates an object using qpid/amq initial context factory.
      *
      * @param className can be any of the qpid/amq supported JNDI properties:
-     *                  connectionfactory, queue, topic, destination.
+     *                  connectionFactory, queue, topic, destination.
      * @param address   of the connection or node to create.
      */
-    private Object createJMSProviderObject(String className, String address) {
-    /* Eventually maybe needed to be redefined */
-        final String initialContext;
-        if (CoreClient.isQpidClient()) {
-            initialContext = QPID_INITIAL_CONTEXT;
-        } else {
-            initialContext = AMQ_INITIAL_CONTEXT;
-        }
+    protected Object createJMSProviderObject(String className, String address) {
+        final String initialContext = AMQ_INITIAL_CONTEXT;
         Properties properties = new Properties();
-    /* Name of the object is the same as class of the object */
+        /* Name of the object is the same as class of the object */
         String name = className;
         properties.setProperty("java.naming.factory.initial", initialContext);
         properties.setProperty(className + "." + name, address);
