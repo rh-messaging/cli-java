@@ -24,7 +24,6 @@ import com.redhat.mqe.lib.CoreClient;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        CoreClient.setClientType(CoreClient.CORE_CLIENT_TYPE);  //TODO(jdanek): get the value from ConnectionManagerFactory
         ConnectionManagerFactory connectionManagerFactory = new AocConnectionManagerFactory();
         com.redhat.mqe.lib.Main.main(args, new AocClientFactory(), connectionManagerFactory);
     }
