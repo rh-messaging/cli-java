@@ -25,7 +25,7 @@ import com.redhat.mqe.lib.ClientOptions;
 import java.util.HashMap;
 import java.util.Map;
 
-class AccClientOptionManager extends ClientOptionManager {
+public class AccClientOptionManager extends ClientOptionManager {
     private Map<String, String> CTL_SSL_OPTIONS = new HashMap<>();
 
     {

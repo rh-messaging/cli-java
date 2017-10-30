@@ -24,7 +24,7 @@ import com.redhat.mqe.lib.ClientOptions;
 
 import java.nio.file.Paths;
 
-class AocClientOptionManager extends ClientOptionManager {
+public class AocClientOptionManager extends ClientOptionManager {
     {
         // OpenWire
         // http://activemq.apache.org/activemq-connection-uris.html

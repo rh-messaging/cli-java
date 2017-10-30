@@ -23,9 +23,6 @@ import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManagerFactory;
 
 public class AacConnectionManagerFactory extends ConnectionManagerFactory {
-    public AacConnectionManagerFactory() {
-    }
-
     public AacConnectionManager make(ClientOptions clientOptions, String brokerUri) {
         return new AacConnectionManager(clientOptions, brokerUri);
     }

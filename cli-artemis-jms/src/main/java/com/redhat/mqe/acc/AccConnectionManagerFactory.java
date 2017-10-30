@@ -23,9 +23,6 @@ import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManagerFactory;
 
 public class AccConnectionManagerFactory extends ConnectionManagerFactory {
-    AccConnectionManagerFactory() {
-    }
-
     public AccConnectionManager make(ClientOptions clientOptions, String brokerUri) {
         return new AccConnectionManager(clientOptions, brokerUri);
     }

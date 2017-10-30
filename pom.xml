@@ -38,5 +38,6 @@
         <module>cli-activemq</module>
         <module>cli-artemis-jms</module>
         <module>cli-qpid-jms</module>
+        <module>interop-tests</module>
     </modules>
 </project>
