@@ -68,4 +68,13 @@
             <url>https://jcenter.bintray.com</url>
         </pluginRepository>
     </pluginRepositories>
+
+    <profiles>
+        <profile>
+            <id>interop-tests</id>
+            <modules>
+                <module>interop-tests</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

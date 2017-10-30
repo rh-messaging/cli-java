@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 public class AocConnectionManagerFactory extends ConnectionManagerFactory {
     @Inject
-    AocConnectionManagerFactory() {
+    public AocConnectionManagerFactory() {
     }
 
     public AocConnectionManager make(ClientOptions clientOptions, String brokerUri) {

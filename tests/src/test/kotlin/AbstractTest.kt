@@ -1,3 +1,6 @@
+import java.math.BigInteger
+import java.util.*
+
 /*
  * Copyright (c) 2017 Red Hat, Inc.
  *
@@ -17,19 +20,10 @@
  * limitations under the License.
  */
 
-package com.redhat.mqe.acc;
-
-import com.redhat.mqe.lib.ClientOptions;
-import com.redhat.mqe.lib.ConnectionManagerFactory;
-
-import javax.inject.Inject;
-
-public class AccConnectionManagerFactory extends ConnectionManagerFactory {
-    @Inject
-    public AccConnectionManagerFactory() {
-    }
-
-    public AccConnectionManager make(ClientOptions clientOptions, String brokerUri) {
-        return new AccConnectionManager(clientOptions, brokerUri);
-    }
+abstract class AbstractTest {
+    abstract val prefix: String
+    lateinit var randomSuffix: String
+    val random = Random()
+    // https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
+    fun generateRandomSuffix(): String = BigInteger(130, random).toString(32)
 }

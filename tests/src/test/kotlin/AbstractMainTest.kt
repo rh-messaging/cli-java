@@ -35,7 +35,6 @@ import java.security.MessageDigest
 import java.security.Permission
 import java.time.Duration
 import java.time.LocalTime
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.test.fail
 
@@ -88,12 +87,9 @@ abstract class AbstractMainTest {
     abstract val senderAdditionalOptions: Array<String>
     abstract val connectorAdditionalOptions: Array<String>
 
-    val prefix: String = "lalaLand_"
-    lateinit var randomSuffix: String
-    val address: String
-        get() = prefix + randomSuffix
 
-    val random = Random()
+    open val address: String
+        get() = prefix + randomSuffix
 
     abstract fun main_(listener: ClientListener, args: Array<String>)
     fun main(args: Array<String>): List<Map<String, Any>> {
@@ -116,9 +112,8 @@ abstract class AbstractMainTest {
 
     @BeforeEach
     fun setup() {
-        print("${LocalTime.now()} ")
-        // https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
-        randomSuffix = BigInteger(130, random).toString(32)
+        print(LocalTime.now())
+        randomSuffix = generateRandomSuffix()
     }
 
     @Tags(Tag("pairwise"), Tag("external"))

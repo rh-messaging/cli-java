@@ -33,7 +33,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
-class AocClientOptionManager extends ClientOptionManager {
+public class AocClientOptionManager extends ClientOptionManager {
     {
         // OpenWire
         // http://activemq.apache.org/activemq-connection-uris.html
@@ -114,7 +114,7 @@ class AocClientOptionManager extends ClientOptionManager {
     }
 
     @Inject
-    AocClientOptionManager() {
+    public AocClientOptionManager() {
     }
 
     protected void setBrokerOptions(ClientOptions clientOptions, String brokerUrl) {
