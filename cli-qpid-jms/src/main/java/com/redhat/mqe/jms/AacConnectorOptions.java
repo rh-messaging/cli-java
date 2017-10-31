@@ -20,6 +20,7 @@
 package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.ClientOptionManager;
+import com.redhat.mqe.lib.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,18 +32,18 @@ import java.util.List;
  * Default options for ConnectorClient.
  */
 public class AacConnectorOptions extends AacClientOptions {
-    private List<com.redhat.mqe.lib.Option> options = new LinkedList<com.redhat.mqe.lib.Option>();
+    private List<Option> options = new LinkedList<>();
     private Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
-    private final List<com.redhat.mqe.lib.Option> connectorDefaultOptions = new LinkedList<com.redhat.mqe.lib.Option>();
+    private final List<Option> connectorDefaultOptions = new LinkedList<>();
 
     {
         connectorDefaultOptions.addAll(Arrays.asList(
-            new com.redhat.mqe.lib.Option(ADDRESS, "a", "CCADDRESS", "?", "If specified the C senders and receivers are created for this address"),
-            new com.redhat.mqe.lib.Option(OBJ_CTRL, "", "OBJCTRL", "C", "Optional creation object control (syntax C/E/S/R/Q stands for Connection, sEssion, Sender, Receiver, Queue)"),
-            new com.redhat.mqe.lib.Option(COUNT, "c", "CONNCOUNT", "1", "Specify how many connections will make"),
-            new com.redhat.mqe.lib.Option(Q_COUNT, "", "QCOUNT", "1", "Specify amount of queues created"),
+            new Option(ADDRESS, "a", "CCADDRESS", "?", "If specified the C senders and receivers are created for this address"),
+            new Option(OBJ_CTRL, "", "OBJCTRL", "C", "Optional creation object control (syntax C/E/S/R/Q stands for Connection, sEssion, Sender, Receiver, Queue)"),
+            new Option(COUNT, "c", "CONNCOUNT", "1", "Specify how many connections will make"),
+            new Option(Q_COUNT, "", "QCOUNT", "1", "Specify amount of queues created"),
             // TODO JMS+SYNC_MODE?
-            new com.redhat.mqe.lib.Option(SYNC_MODE, "", "SMODE", "action", "Optional action synchronization mode: none/session/action (JMS does not support none & session modes)")
+            new Option(SYNC_MODE, "", "SMODE", "action", "Optional action synchronization mode: none/session/action (JMS does not support none & session modes)")
         ));
     }
 
@@ -51,9 +52,9 @@ public class AacConnectorOptions extends AacClientOptions {
     }
 
     @Override
-    public com.redhat.mqe.lib.Option getOption(String name) {
+    public Option getOption(String name) {
         if (name != null) {
-            for (com.redhat.mqe.lib.Option option : options) {
+            for (Option option : options) {
                 if (name.equals(option.getName()))
                     return option;
             }
@@ -65,12 +66,12 @@ public class AacConnectorOptions extends AacClientOptions {
     }
 
     @Override
-    public List<com.redhat.mqe.lib.Option> getClientDefaultOptions() {
+    public List<Option> getClientDefaultOptions() {
         return connectorDefaultOptions;
     }
 
     @Override
-    public List<com.redhat.mqe.lib.Option> getClientOptions() {
+    public List<Option> getClientOptions() {
         return options;
     }
 

@@ -44,6 +44,7 @@ public class ReceiverOptions extends ClientOptions {
             new Option(DURATION, "d", "DURATION", "0", "message actions total duration in seconds (defines msg-rate together with count)"),
             new Option(LOG_MSGS, "", "LOGMSGFMT", "upstream", "message[s] reporting style (dict|body|upstream|none)"),
             new Option(LOG_STATS, "", "LEVEL", "upstream", "report various statistic/debug information"),
+            new Option(OUT, "", "FORMAT", "repr", "message[s] reporting format (repr|json)"),
             new Option(TX_SIZE, "", "TXBSIZE", "0", "transactional mode: batch message count size (negative skips tx-action before exit)"),
             new Option(TX_ACTION, "", "TXACTION", "commit", "transactional action at the end of tx batch"),
             new Option(TX_ENDLOOP_ACTION, "", "TXACTION", "None", "transactional action after sending all messages in loop (commit|rollback|recover|None)"),

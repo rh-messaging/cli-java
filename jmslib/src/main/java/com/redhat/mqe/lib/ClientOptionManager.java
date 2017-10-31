@@ -392,6 +392,9 @@ public class ClientOptionManager {
                     } else {
                         connectionOptionsUrlMap.put(jmsConOptionName, option.getValue());
                     }
+                    if (jmsConOptionName.equals("")) {
+                        System.out.println("ignored options: " + option.getName());
+                    }
                 }
             }
         } else {

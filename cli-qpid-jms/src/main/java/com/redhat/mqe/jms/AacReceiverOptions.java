@@ -20,6 +20,7 @@
 package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.ClientOptionManager;
+import com.redhat.mqe.lib.Option;
 import com.redhat.mqe.lib.ReceiverClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,39 +32,40 @@ import java.util.*;
  * Constructed from CommonOptions and receiverDefaultOptions.
  */
 public class AacReceiverOptions extends AacClientOptions {
-    private List<com.redhat.mqe.lib.Option> options = null;
+    private List<Option> options = null;
     private Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
-    private final List<com.redhat.mqe.lib.Option> receiverDefaultOptions = new ArrayList<com.redhat.mqe.lib.Option>();
+    private final List<Option> receiverDefaultOptions = new ArrayList<>();
 
     {
         receiverDefaultOptions.addAll(Arrays.asList(
             // 
-            new com.redhat.mqe.lib.Option(ADDRESS, "a", "ADDRESS", "", "Queue/Topic destination"),
-            new com.redhat.mqe.lib.Option(TIMEOUT, "t", "TIMEOUT", "0", "timeout in seconds to wait before exiting"),
-            new com.redhat.mqe.lib.Option("forever", "f", "", "false", "DEPRECATED! use \"timeout -1\" ignore timeout and wait forever"),
-            new com.redhat.mqe.lib.Option(ACTION, "", "ACTION", "acknowledge", "action on acquired message (default ack)"),
-            new com.redhat.mqe.lib.Option(COUNT, "c", "MESSAGES", "0", "read c messages, then exit (default 0 for all messages)"),
-            new com.redhat.mqe.lib.Option(DURATION, "d", "DURATION", "0", "message actions total duration in seconds (defines msg-rate together with count)"),
-            new com.redhat.mqe.lib.Option(LOG_MSGS, "", "LOGMSGFMT", "upstream", "message[s] reporting style (dict|body|upstream|none)"),
-            new com.redhat.mqe.lib.Option(LOG_STATS, "", "LEVEL", "upstream", "report various statistic/debug information"),
-            new com.redhat.mqe.lib.Option(TX_SIZE, "", "TXBSIZE", "0", "transactional mode: batch message count size (negative skips tx-action before exit)"),
-            new com.redhat.mqe.lib.Option(TX_ACTION, "", "TXACTION", "commit", "transactional action at the end of tx batch"),
-            new com.redhat.mqe.lib.Option(TX_ENDLOOP_ACTION, "", "TXACTION", "None", "transactional action after sending all messages in loop (commit|rollback|recover|None)"),
-            new com.redhat.mqe.lib.Option(DURATION_MODE, "", "VALUE", ReceiverClient.SLEEP_AFTER, "specifies where to wait (" + ReceiverClient.SLEEP_BEFORE
+            new Option(ADDRESS, "a", "ADDRESS", "", "Queue/Topic destination"),
+            new Option(TIMEOUT, "t", "TIMEOUT", "0", "timeout in seconds to wait before exiting"),
+            new Option("forever", "f", "", "false", "DEPRECATED! use \"timeout -1\" ignore timeout and wait forever"),
+            new Option(ACTION, "", "ACTION", "acknowledge", "action on acquired message (default ack)"),
+            new Option(COUNT, "c", "MESSAGES", "0", "read c messages, then exit (default 0 for all messages)"),
+            new Option(DURATION, "d", "DURATION", "0", "message actions total duration in seconds (defines msg-rate together with count)"),
+            new Option(LOG_MSGS, "", "LOGMSGFMT", "upstream", "message[s] reporting style (dict|body|upstream|none)"),
+            new Option(LOG_STATS, "", "LEVEL", "upstream", "report various statistic/debug information"),
+            new Option(OUT, "", "FORMAT", "repr", "message[s] reporting format (repr|json)"),
+            new Option(TX_SIZE, "", "TXBSIZE", "0", "transactional mode: batch message count size (negative skips tx-action before exit)"),
+            new Option(TX_ACTION, "", "TXACTION", "commit", "transactional action at the end of tx batch"),
+            new Option(TX_ENDLOOP_ACTION, "", "TXACTION", "None", "transactional action after sending all messages in loop (commit|rollback|recover|None)"),
+            new Option(DURATION_MODE, "", "VALUE", ReceiverClient.SLEEP_AFTER, "specifies where to wait (" + ReceiverClient.SLEEP_BEFORE
                 + "/" + ReceiverClient.SLEEP_AFTER + "/" + ReceiverClient.SLEEP_AFTER_ACTION + "/" + ReceiverClient.SLEEP_AFTER_TX_ACTION + ")"),
-            new com.redhat.mqe.lib.Option(SYNC_MODE, "", "SYNCMODE", "action", "synchronization mode: none/session/action/persistent/transient"),
-            new com.redhat.mqe.lib.Option(MSG_LISTENER, "", "ENABLED", "false", "receive messages using a MessageListener"),
-            new com.redhat.mqe.lib.Option(DURABLE_SUBSCRIBER, "", "ENABLED", "false", "create durable subscription to topic"),
-            new com.redhat.mqe.lib.Option(UNSUBSCRIBE, "", "UNSUBSCRIBE", "false", "unsubscribe durable subscriptor with given name (provide " + DURABLE_SUBSCRIBER_NAME + ")"),
-            new com.redhat.mqe.lib.Option(DURABLE_SUBSCRIBER_PREFIX, "", "PREFIX", "", "prefix to use to identify this connection subscriber"),
-            new com.redhat.mqe.lib.Option(DURABLE_SUBSCRIBER_NAME, "", "PREFIX", "", "name of the durable subscriber to be unsubscribe"),
+            new Option(SYNC_MODE, "", "SYNCMODE", "action", "synchronization mode: none/session/action/persistent/transient"),
+            new Option(MSG_LISTENER, "", "ENABLED", "false", "receive messages using a MessageListener"),
+            new Option(DURABLE_SUBSCRIBER, "", "ENABLED", "false", "create durable subscription to topic"),
+            new Option(UNSUBSCRIBE, "", "UNSUBSCRIBE", "false", "unsubscribe durable subscriptor with given name (provide " + DURABLE_SUBSCRIBER_NAME + ")"),
+            new Option(DURABLE_SUBSCRIBER_PREFIX, "", "PREFIX", "", "prefix to use to identify this connection subscriber"),
+            new Option(DURABLE_SUBSCRIBER_NAME, "", "PREFIX", "", "name of the durable subscriber to be unsubscribe"),
 //        new Option(DURABLE_CONSUMER, "", "ENABLED", "false", "create durable consumer from topic"), JMS 2.0
-            new com.redhat.mqe.lib.Option(MSG_SELECTOR, "", "SELECT", "", "select messages based on the SQL92 subset"),
-            new com.redhat.mqe.lib.Option("verbose", "", "", "false", "DEPRECATED? verbose AMQP message output"),
-            new com.redhat.mqe.lib.Option(CAPACITY, "", "CAPACITY", "-1", "sender|receiver capacity (no effect in jms atm)"),
-            new com.redhat.mqe.lib.Option(BROWSER, "", "ENABLED", "false", "if true, browse messages instead of reading"),
-            new com.redhat.mqe.lib.Option(PROCESS_REPLY_TO, "", null, "", "whether to process reply to (true) or ignore it"),
-            new com.redhat.mqe.lib.Option(MSG_BINARY_CONTENT_TO_FILE, "", "FILEPATH", "", "write binary data to provided file with prefix")
+            new Option(MSG_SELECTOR, "", "SELECT", "", "select messages based on the SQL92 subset"),
+            new Option("verbose", "", "", "false", "DEPRECATED? verbose AMQP message output"),
+            new Option(CAPACITY, "", "CAPACITY", "-1", "sender|receiver capacity (no effect in jms atm)"),
+            new Option(BROWSER, "", "ENABLED", "false", "if true, browse messages instead of reading"),
+            new Option(PROCESS_REPLY_TO, "", null, "", "whether to process reply to (true) or ignore it"),
+            new Option(MSG_BINARY_CONTENT_TO_FILE, "", "FILEPATH", "", "write binary data to provided file with prefix")
         ));
 //    receiverDefaultOptions.put("forever", "false"); // drain only option
 //    receiverDefaultOptions.put("action", "acknowledge"); // acknowledge, reject, release, noack
@@ -97,9 +99,9 @@ public class AacReceiverOptions extends AacClientOptions {
     }
 
     @Override
-    public com.redhat.mqe.lib.Option getOption(String name) {
+    public Option getOption(String name) {
         if (name != null) {
-            for (com.redhat.mqe.lib.Option option : options) {
+            for (Option option : options) {
                 if (name.equals(option.getName()))
                     return option;
             }
@@ -111,12 +113,12 @@ public class AacReceiverOptions extends AacClientOptions {
     }
 
     @Override
-    public List<com.redhat.mqe.lib.Option> getClientDefaultOptions() {
+    public List<Option> getClientDefaultOptions() {
         return receiverDefaultOptions;
     }
 
     @Override
-    public List<com.redhat.mqe.lib.Option> getClientOptions() {
+    public List<Option> getClientOptions() {
         return options;
     }
 

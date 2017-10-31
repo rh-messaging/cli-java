@@ -56,7 +56,7 @@ public abstract class CoreClient {
     private List<Session> sessions;
     private List<MessageProducer> messageProducers;
     private List<MessageConsumer> messageConsumers;
-    private List<Queue > queues;
+    private List<Queue> queues;
     private static String clientType;
 
     protected ConnectionManagerFactory connectionManagerFactory;
@@ -351,19 +351,38 @@ public abstract class CoreClient {
      * @param message       to be printed
      */
     void printMessage(ClientOptions clientOptions, Message message) {
-        switch (clientOptions.getOption(ClientOptions.LOG_MSGS).getValue()) {
-            case "dict":
-                messageFormatter.printMessageAsDict(message);
-                break;
-            case "body":
-                messageFormatter.printMessageBodyAsText(message);
-                break;
-            case "interop":
-                messageFormatter.printMessageAsInterop(message);
-                break;
-            case "none":
-            default:
-                break;
+        Map<String, Object> messageData = null;
+        try {
+            switch (clientOptions.getOption(ClientOptions.LOG_MSGS).getValue()) {
+                case "dict":
+                    messageData = messageFormatter.formatMessageAsDict(message);
+                    break;
+                case "body":
+                    messageData = messageFormatter.formatMessageBody(message);
+                    break;
+                case "interop":
+                    messageData = messageFormatter.formatMessageAsInterop(message);
+                    break;
+                case "none":
+                default:
+                    break;
+            }
+        } catch (JMSException e) {
+            LOG.error("Unable to retrieve text from message.\n" + e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        if (messageData != null) {
+            switch(clientOptions.getOption(ClientOptions.OUT).getValue()) {
+                case "json": {
+                    messageFormatter.printMessageAsJson(messageData);
+                    break;
+                }
+                default: {
+                    messageFormatter.printMessageAsPython(messageData);
+                    break;
+                }
+            }
         }
     }
 

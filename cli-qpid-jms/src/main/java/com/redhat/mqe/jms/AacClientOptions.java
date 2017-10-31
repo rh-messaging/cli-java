@@ -20,6 +20,7 @@
 package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.ClientOptions;
+import com.redhat.mqe.lib.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,12 +32,12 @@ import java.util.*;
  */
 public abstract class AacClientOptions extends ClientOptions {
     protected static final Logger LOG = LoggerFactory.getLogger(AacClientOptions.class);
-    private static final Map<String, String> translationDtestJmsMap = new HashMap<String, String>();
-    private final List<com.redhat.mqe.lib.Option> defaultOptions = new ArrayList<>();
-    private List<com.redhat.mqe.lib.Option> updatedOptions = new ArrayList<>();
+    private static final Map<String, String> translationDtestJmsMap = new HashMap<>();
+    private final List<Option> defaultOptions = new ArrayList<>();
+    private List<Option> updatedOptions = new ArrayList<>();
     static List<String> argsAcceptingMultipleValues = new ArrayList<>();
     static List<String> failoverProtocols = new ArrayList<>();
-    static List<com.redhat.mqe.lib.Option> numericArgumentValueOptionList = new ArrayList<>();
+    static List<Option> numericArgumentValueOptionList = new ArrayList<>();
 
     /* Mapping of client option to jms client is done in CoreClient.CONNECTION_TRANSLATION_MAP */
     static final String BROKER = "broker";
@@ -201,94 +202,94 @@ public abstract class AacClientOptions extends ClientOptions {
     public AacClientOptions() {
         defaultOptions.addAll(Arrays.asList(
             // Options updated by parsing broker/broker-url
-            new com.redhat.mqe.lib.Option(PROTOCOL, "amqp"),
-            new com.redhat.mqe.lib.Option(BROKER_HOST, "localhost"),
-            new com.redhat.mqe.lib.Option(BROKER_PORT, "5672"),
-            new com.redhat.mqe.lib.Option(BROKER_OPTIONS, ""),
-            new com.redhat.mqe.lib.Option(DESTINATION_TYPE, AacConnectionManager.QUEUE_OBJECT),
+            new Option(PROTOCOL, "amqp"),
+            new Option(BROKER_HOST, "localhost"),
+            new Option(BROKER_PORT, "5672"),
+            new Option(BROKER_OPTIONS, ""),
+            new Option(DESTINATION_TYPE, AacConnectionManager.QUEUE_OBJECT),
 
-            new com.redhat.mqe.lib.Option(USERNAME, "", "USERNAME", "", "jms.username (not defined before host:port in qpid-jms-client)"),
-            new com.redhat.mqe.lib.Option(PASSWORD, "", "PASSWORD", "", "jms.password (not defined before host:port in qpid-jms-client)"),
-            new com.redhat.mqe.lib.Option(HELP, "h", "", "", "show this help"),
-            new com.redhat.mqe.lib.Option(BROKER, "b", "HOST:5672", "amqp://localhost:5672", "url broker to connect to, default"),
-            new com.redhat.mqe.lib.Option(BROKER_URI, "", "AmqpQpidJmsURL", "amqp://localhost:5672[[?conOpt=val]&conOpt=val]",
+            new Option(USERNAME, "", "USERNAME", "", "jms.username (not defined before host:port in qpid-jms-client)"),
+            new Option(PASSWORD, "", "PASSWORD", "", "jms.password (not defined before host:port in qpid-jms-client)"),
+            new Option(HELP, "h", "", "", "show this help"),
+            new Option(BROKER, "b", "HOST:5672", "amqp://localhost:5672", "url broker to connect to, default"),
+            new Option(BROKER_URI, "", "AmqpQpidJmsURL", "amqp://localhost:5672[[?conOpt=val]&conOpt=val]",
                 "AMQP JMS QPID specific broker uri. NOTE: This options overrides everything related to broker & connection options. " +
                     "It is used as exactly as provided!"),
-            new com.redhat.mqe.lib.Option(LOG_LEVEL, "", "LEVEL", "info", "logging level of the client. trace/debug/info/warn/error"),
-            new com.redhat.mqe.lib.Option(LOG_STATS, "", "LEVEL", "INFO", "report various statistic/debug information"), // ?
-            new com.redhat.mqe.lib.Option(SSN_ACK_MODE, "", "ACKMODE", "auto", "session acknowledge mode auto/client/dups_ok/(individual)"),
-            new com.redhat.mqe.lib.Option(CLOSE_SLEEP, "", "CSLEEP", "0", "sleep before publisher/subscriber/session/connection.close() in floating seconds"),
+            new Option(LOG_LEVEL, "", "LEVEL", "info", "logging level of the client. trace/debug/info/warn/error"),
+            new Option(LOG_STATS, "", "LEVEL", "INFO", "report various statistic/debug information"), // ?
+            new Option(SSN_ACK_MODE, "", "ACKMODE", "auto", "session acknowledge mode auto/client/dups_ok/(individual)"),
+            new Option(CLOSE_SLEEP, "", "CSLEEP", "0", "sleep before publisher/subscriber/session/connection.close() in floating seconds"),
 
-            new com.redhat.mqe.lib.Option(CON_HEARTBEAT, "", "SECONDS", "60", "frequency of heartbeat messages (in seconds)"),
-            new com.redhat.mqe.lib.Option(CON_VHOST, "", "VHOST", "", "virtual hostname to connect to. (Default: main from URI)"),
-            new com.redhat.mqe.lib.Option(CON_SASL_LAYER, "", "ENABLED", "true", "choose whether SASL layer should be used"),
-            new com.redhat.mqe.lib.Option(CON_SASL_MECHS, "", "MECHS", "all", "comma separated list of SASL mechanisms allowed by client for authentication (plain/anonymous/external/cram-md5?/digest-md5?)"),
-            new com.redhat.mqe.lib.Option(CON_MAX_FRAME_SIZE, "", "BYTES", "1048576", "The max-frame-size value in bytes that is advertised to the peer. Default is 1048576"),
-            new com.redhat.mqe.lib.Option(CON_DRAIN_TIMEOUT, "", "MS", "60000", "The time in milliseconds that the client will wait for a response from the remote when a drain request is made. (Default 60000ms)"),
+            new Option(CON_HEARTBEAT, "", "SECONDS", "60", "frequency of heartbeat messages (in seconds)"),
+            new Option(CON_VHOST, "", "VHOST", "", "virtual hostname to connect to. (Default: main from URI)"),
+            new Option(CON_SASL_LAYER, "", "ENABLED", "true", "choose whether SASL layer should be used"),
+            new Option(CON_SASL_MECHS, "", "MECHS", "all", "comma separated list of SASL mechanisms allowed by client for authentication (plain/anonymous/external/cram-md5?/digest-md5?)"),
+            new Option(CON_MAX_FRAME_SIZE, "", "BYTES", "1048576", "The max-frame-size value in bytes that is advertised to the peer. Default is 1048576"),
+            new Option(CON_DRAIN_TIMEOUT, "", "MS", "60000", "The time in milliseconds that the client will wait for a response from the remote when a drain request is made. (Default 60000ms)"),
 
-            new com.redhat.mqe.lib.Option(CON_CLIENTID, "", "CLIENTID", "", "clientID value that is applied to the connection."),
-            new com.redhat.mqe.lib.Option(CON_ASYNC_SEND, "", "ENABLED", "false", "send all messages asynchronously (if false only non-persistent and transacted are send asynchronously"),
-            new com.redhat.mqe.lib.Option(CON_SYNC_SEND, "", "ENABLED", "false", "send all messages synchronously"),
-            new com.redhat.mqe.lib.Option(CON_ASYNC_ACKS, "", "ENABLED", "false", "causes all Message acknowledgments to be sent asynchronously"),
-            new com.redhat.mqe.lib.Option(CON_LOC_MSG_PRIO, "", "ENABLED", "false", "prefetched messages are reordered locally based on their given priority"),
-            new com.redhat.mqe.lib.Option(CON_VALID_PROP_NAMES, "", "ENABLED", "true", "message property names should be validated as valid Java identifiers"),
+            new Option(CON_CLIENTID, "", "CLIENTID", "", "clientID value that is applied to the connection."),
+            new Option(CON_ASYNC_SEND, "", "ENABLED", "false", "send all messages asynchronously (if false only non-persistent and transacted are send asynchronously"),
+            new Option(CON_SYNC_SEND, "", "ENABLED", "false", "send all messages synchronously"),
+            new Option(CON_ASYNC_ACKS, "", "ENABLED", "false", "causes all Message acknowledgments to be sent asynchronously"),
+            new Option(CON_LOC_MSG_PRIO, "", "ENABLED", "false", "prefetched messages are reordered locally based on their given priority"),
+            new Option(CON_VALID_PROP_NAMES, "", "ENABLED", "true", "message property names should be validated as valid Java identifiers"),
 
-            new com.redhat.mqe.lib.Option(CON_RECV_LOCAL_ONLY, "", "ENABLED", "false", "if enabled receive calls with a timeout will only check a consumers local message buffer"),
-            new com.redhat.mqe.lib.Option(CON_RECV_NOWAIT_LOCAL, "", "ENABLED", "false", "if enabled receiveNoWait calls will only check a consumers local message buffer"),
+            new Option(CON_RECV_LOCAL_ONLY, "", "ENABLED", "false", "if enabled receive calls with a timeout will only check a consumers local message buffer"),
+            new Option(CON_RECV_NOWAIT_LOCAL, "", "ENABLED", "false", "if enabled receiveNoWait calls will only check a consumers local message buffer"),
 
-            new com.redhat.mqe.lib.Option(CON_QUEUE_PREFIX, "", "PREFIX", "", "optional prefix value added to the name of any Queue created from a JMS Session"),
-            new com.redhat.mqe.lib.Option(CON_TOPIC_PREFIX, "", "PREFIX", "", "optional prefix value added to the name of any Topic created from a JMS Session."),
-            new com.redhat.mqe.lib.Option(CON_CLOSE_TIMEOUT, "", "TIMEOUT", "15", "timeout value that controls how long the client waits on Connection close before returning"),
-            new com.redhat.mqe.lib.Option(CON_CONN_TIMEOUT, "", "TIMEOUT", "15", "timeout value that controls how long the client waits on Connection establishment before returning with an error"),
-            new com.redhat.mqe.lib.Option(CON_CLIENTID_PREFIX, "", "PREFIX", "ID:", "client ID prefix for new connections"),
-            new com.redhat.mqe.lib.Option(CON_CONNID_PREFIX, "", "PREFIX", "ID:", "connection ID prefix used for a new connections. Usable for tracking connections in logs"),
-            new com.redhat.mqe.lib.Option(CON_POPULATE_JMSXUSERID, "", "ENABLED", "false", "populate the JMSXUserID for each sent message using authenticated username from connection"),
+            new Option(CON_QUEUE_PREFIX, "", "PREFIX", "", "optional prefix value added to the name of any Queue created from a JMS Session"),
+            new Option(CON_TOPIC_PREFIX, "", "PREFIX", "", "optional prefix value added to the name of any Topic created from a JMS Session."),
+            new Option(CON_CLOSE_TIMEOUT, "", "TIMEOUT", "15", "timeout value that controls how long the client waits on Connection close before returning"),
+            new Option(CON_CONN_TIMEOUT, "", "TIMEOUT", "15", "timeout value that controls how long the client waits on Connection establishment before returning with an error"),
+            new Option(CON_CLIENTID_PREFIX, "", "PREFIX", "ID:", "client ID prefix for new connections"),
+            new Option(CON_CONNID_PREFIX, "", "PREFIX", "ID:", "connection ID prefix used for a new connections. Usable for tracking connections in logs"),
+            new Option(CON_POPULATE_JMSXUSERID, "", "ENABLED", "false", "populate the JMSXUserID for each sent message using authenticated username from connection"),
 
-            new com.redhat.mqe.lib.Option(CON_MAX_REDELIVERIES, "", "COUNT", "-1", "maximum number of allowed message redeliveries"),
-            new com.redhat.mqe.lib.Option(CON_PREFETCH_QUEUE, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
-            new com.redhat.mqe.lib.Option(CON_PREFETCH_TOPIC, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
-            new com.redhat.mqe.lib.Option(CON_PREFETCH_BROWSER, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
-            new com.redhat.mqe.lib.Option(CON_PREFETCH_DUR_TOPIC, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
-            new com.redhat.mqe.lib.Option(CON_PREFETCH_ALL, "", "COUNT", "1000", "set prefetch values to all prefetch options"),
+            new Option(CON_MAX_REDELIVERIES, "", "COUNT", "-1", "maximum number of allowed message redeliveries"),
+            new Option(CON_PREFETCH_QUEUE, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
+            new Option(CON_PREFETCH_TOPIC, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
+            new Option(CON_PREFETCH_BROWSER, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
+            new Option(CON_PREFETCH_DUR_TOPIC, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
+            new Option(CON_PREFETCH_ALL, "", "COUNT", "1000", "set prefetch values to all prefetch options"),
 
-            new com.redhat.mqe.lib.Option(CON_RECONNECT, "", "ENABLED", "false", "enable default failover reconnect"),
-            new com.redhat.mqe.lib.Option(CON_RETRIES, "", "COUNT", "-1", "retry to connect to the broker that many times"),
-            new com.redhat.mqe.lib.Option(CON_RECONNECT_TIMEOUT, "", "MS", "10", "delay between successive reconnection attempts; constant if backoff is off"),
-            new com.redhat.mqe.lib.Option(CON_RECONNECT_INTERVAL, "", "SEC", "30", "maximum time that client will wait before next reconnect. Used only when backoff is on"),
-            new com.redhat.mqe.lib.Option(CON_RECONNECT_BACKOFF, "", "ENABLED", "true", "choose to use backoff multiplier or not"),
-            new com.redhat.mqe.lib.Option(CON_RECONNECT_BACKOFF_MULTIPLIER, "", "VALUE", "2.0", "backoff multiplier for reconnect intervals"),
-            new com.redhat.mqe.lib.Option(CON_RECONNECT_START_LIMIT, "", "INTERVAL", "-1", "For a client that has never connected to a remote peer before, this sets " +
+            new Option(CON_RECONNECT, "", "ENABLED", "false", "enable default failover reconnect"),
+            new Option(CON_RETRIES, "", "COUNT", "-1", "retry to connect to the broker that many times"),
+            new Option(CON_RECONNECT_TIMEOUT, "", "MS", "10", "delay between successive reconnection attempts; constant if backoff is off"),
+            new Option(CON_RECONNECT_INTERVAL, "", "SEC", "30", "maximum time that client will wait before next reconnect. Used only when backoff is on"),
+            new Option(CON_RECONNECT_BACKOFF, "", "ENABLED", "true", "choose to use backoff multiplier or not"),
+            new Option(CON_RECONNECT_BACKOFF_MULTIPLIER, "", "VALUE", "2.0", "backoff multiplier for reconnect intervals"),
+            new Option(CON_RECONNECT_START_LIMIT, "", "INTERVAL", "-1", "For a client that has never connected to a remote peer before, this sets " +
                 "the number of attempts made to connect before reporting the connection as failed. The default is value of maxReconnectAttempts"),
-            new com.redhat.mqe.lib.Option(CON_RECONNECT_INITIAL_DELAY, "", "DELAY", "0", "delay the client will wait before the first attempt to reconnect to a remote peer"),
-            new com.redhat.mqe.lib.Option(CON_RECONNECT_WARN_ATTEMPTS, "", "ATTEMPTS", "10", "that often the client will log a message indicating that failover reconnection is being attempted"),
+            new Option(CON_RECONNECT_INITIAL_DELAY, "", "DELAY", "0", "delay the client will wait before the first attempt to reconnect to a remote peer"),
+            new Option(CON_RECONNECT_WARN_ATTEMPTS, "", "ATTEMPTS", "10", "that often the client will log a message indicating that failover reconnection is being attempted"),
 
-            new com.redhat.mqe.lib.Option(CON_SSL_KEYSTORE_LOC, "", "LOC", "", "default is to read from the system property \"javax.net.ssl.keyStore\""),
-            new com.redhat.mqe.lib.Option(CON_SSL_KEYSTORE_PASS, "", "PASS", "", "default is to read from the system property \"javax.net.ssl.keyStorePassword\""),
-            new com.redhat.mqe.lib.Option(CON_SSL_TRUSTSTORE_LOC, "", "LOC", "", "default is to read from the system property \"javax.net.ssl.trustStore\""),
-            new com.redhat.mqe.lib.Option(CON_SSL_TRUSTSTORE_PASS, "", "PASS", "", "default is to read from the system property \"javax.net.ssl.keyStorePassword\""),
-            new com.redhat.mqe.lib.Option(CON_SSL_STORE_TYPE, "", "TYPE", "JKS", "store type"),
-            new com.redhat.mqe.lib.Option(CON_SSL_CONTEXT_PROTOCOL, "", "PROTOCOL", "TLS", "protocol argument used when getting an SSLContext"),
-            new com.redhat.mqe.lib.Option(CON_SSL_ENA_CIPHERED, "", "SUITES", "", "enabled cipher suites (comma separated list); disabled ciphers are removed from this list."),
-            new com.redhat.mqe.lib.Option(CON_SSL_DIS_CIPHERED, "", "SUITES", "", "disabled cipher suites (comma separated list)"),
-            new com.redhat.mqe.lib.Option(CON_SSL_ENA_PROTOS, "", "PROTOCOLS", "", "enabled protocols (comma separated list). No default, meaning the context default protocols are used"),
-            new com.redhat.mqe.lib.Option(CON_SSL_DIS_PROTOS, "", "PROTOCOLS", "SSLv2Hello,SSLv3", "disabled protocols (comma separated list)"),
-            new com.redhat.mqe.lib.Option(CON_SSL_TRUST_ALL, "", "ENABLED", "false", ""),
-            new com.redhat.mqe.lib.Option(CON_SSL_VERIFY_HOST, "", "ENABLED", "true", ""),
-            new com.redhat.mqe.lib.Option(CON_SSL_KEYALIAS, "", "ALIAS", "", "alias to use when selecting a keypair from the keystore if required to send a client certificate to the server"),
+            new Option(CON_SSL_KEYSTORE_LOC, "", "LOC", "", "default is to read from the system property \"javax.net.ssl.keyStore\""),
+            new Option(CON_SSL_KEYSTORE_PASS, "", "PASS", "", "default is to read from the system property \"javax.net.ssl.keyStorePassword\""),
+            new Option(CON_SSL_TRUSTSTORE_LOC, "", "LOC", "", "default is to read from the system property \"javax.net.ssl.trustStore\""),
+            new Option(CON_SSL_TRUSTSTORE_PASS, "", "PASS", "", "default is to read from the system property \"javax.net.ssl.keyStorePassword\""),
+            new Option(CON_SSL_STORE_TYPE, "", "TYPE", "JKS", "store type"),
+            new Option(CON_SSL_CONTEXT_PROTOCOL, "", "PROTOCOL", "TLS", "protocol argument used when getting an SSLContext"),
+            new Option(CON_SSL_ENA_CIPHERED, "", "SUITES", "", "enabled cipher suites (comma separated list); disabled ciphers are removed from this list."),
+            new Option(CON_SSL_DIS_CIPHERED, "", "SUITES", "", "disabled cipher suites (comma separated list)"),
+            new Option(CON_SSL_ENA_PROTOS, "", "PROTOCOLS", "", "enabled protocols (comma separated list). No default, meaning the context default protocols are used"),
+            new Option(CON_SSL_DIS_PROTOS, "", "PROTOCOLS", "SSLv2Hello,SSLv3", "disabled protocols (comma separated list)"),
+            new Option(CON_SSL_TRUST_ALL, "", "ENABLED", "false", ""),
+            new Option(CON_SSL_VERIFY_HOST, "", "ENABLED", "true", ""),
+            new Option(CON_SSL_KEYALIAS, "", "ALIAS", "", "alias to use when selecting a keypair from the keystore if required to send a client certificate to the server"),
 
-            new com.redhat.mqe.lib.Option(CON_TCP_SEND_BUF_SIZE, "", "SIZE", "64", "tcp send buffer size in kilobytes"),
-            new com.redhat.mqe.lib.Option(CON_TCP_RECV_BUF_SIZE, "", "SIZE", "64", "tcp receive buffer size in kilobytes"),
-            new com.redhat.mqe.lib.Option(CON_TCP_TRAFFIC_CLASS, "", "CLASS?", "0", "?tcp traffic class"),
-            new com.redhat.mqe.lib.Option(CON_TCP_CON_TIMEOUT, "", "TIMEOUT", "60", "tcp connection timeout in seconds"),
-            new com.redhat.mqe.lib.Option(CON_TCP_SOCK_TIMEOUT, "", "TIMEOUT", "-1", "?tcp socket timeout in (-1 disabled?)"),
-            new com.redhat.mqe.lib.Option(CON_TCP_SOCK_LINGER, "", "TIMEOUT", "-1", "?tcp socket linger timeout"),
-            new com.redhat.mqe.lib.Option(CON_TCP_KEEP_ALIVE, "", "ENABLED", "false", "send tcp keep alive packets"),
-            new com.redhat.mqe.lib.Option(CON_TCP_NO_DELAY, "", "ENABLED", "true", "use tcp_nodelay (automatic concatenation of small packets into bigger frames)"),
+            new Option(CON_TCP_SEND_BUF_SIZE, "", "SIZE", "64", "tcp send buffer size in kilobytes"),
+            new Option(CON_TCP_RECV_BUF_SIZE, "", "SIZE", "64", "tcp receive buffer size in kilobytes"),
+            new Option(CON_TCP_TRAFFIC_CLASS, "", "CLASS?", "0", "?tcp traffic class"),
+            new Option(CON_TCP_CON_TIMEOUT, "", "TIMEOUT", "60", "tcp connection timeout in seconds"),
+            new Option(CON_TCP_SOCK_TIMEOUT, "", "TIMEOUT", "-1", "?tcp socket timeout in (-1 disabled?)"),
+            new Option(CON_TCP_SOCK_LINGER, "", "TIMEOUT", "-1", "?tcp socket linger timeout"),
+            new Option(CON_TCP_KEEP_ALIVE, "", "ENABLED", "false", "send tcp keep alive packets"),
+            new Option(CON_TCP_NO_DELAY, "", "ENABLED", "true", "use tcp_nodelay (automatic concatenation of small packets into bigger frames)"),
 
-            new com.redhat.mqe.lib.Option(TRANSACTED, "false"),
-            new com.redhat.mqe.lib.Option(MSG_DURABLE, "false"),
-            new com.redhat.mqe.lib.Option(DURATION, "0"),
-            new com.redhat.mqe.lib.Option(FAILOVER_URL, "")
+            new Option(TRANSACTED, "false"),
+            new Option(MSG_DURABLE, "false"),
+            new Option(DURATION, "0"),
+            new Option(FAILOVER_URL, "")
         ));
         translationDtestJmsMap.put("", "");
 
@@ -303,7 +304,7 @@ public abstract class AacClientOptions extends ClientOptions {
      * @return true, if this option is valid for given client.
      */
 
-    public boolean isValidOption(com.redhat.mqe.lib.Option option) {
+    public boolean isValidOption(Option option) {
         if (option == null) {
             throw new IllegalArgumentException("Argument is null!");
         }
@@ -316,23 +317,23 @@ public abstract class AacClientOptions extends ClientOptions {
      * @param name get defaultValue for this option
      * @return Object
      */
-    public abstract com.redhat.mqe.lib.Option getOption(String name);
+    public abstract Option getOption(String name);
 
     /**
      * Method for getting default values for given client.
      *
      * @return Map of default options for given client
      */
-    public abstract List<com.redhat.mqe.lib.Option> getClientDefaultOptions();
+    public abstract List<Option> getClientDefaultOptions();
 
     /**
      * Get list of actual/updated client options.
      *
      * @return current list of updated client options
      */
-    public abstract List<com.redhat.mqe.lib.Option> getClientOptions();
+    public abstract List<Option> getClientOptions();
 
-    public List<com.redhat.mqe.lib.Option> getDefaultOptions() {
+    public List<Option> getDefaultOptions() {
         return defaultOptions;
     }
 
@@ -345,23 +346,23 @@ public abstract class AacClientOptions extends ClientOptions {
      * @return map of option names and client Options which has been
      * modified by the user command line input.
      */
-    public Map<String, com.redhat.mqe.lib.Option> getUpdatedOptionsMap() {
-        Map<String, com.redhat.mqe.lib.Option> updatedOptionsMap = new HashMap<>();
-        for (com.redhat.mqe.lib.Option option : updatedOptions) {
+    public Map<String, Option> getUpdatedOptionsMap() {
+        Map<String, Option> updatedOptionsMap = new HashMap<>();
+        for (Option option : updatedOptions) {
             updatedOptionsMap.put(option.getName(), option);
         }
         return updatedOptionsMap;
     }
 
-    public List<com.redhat.mqe.lib.Option> getUpdatedOptions() {
+    public List<Option> getUpdatedOptions() {
         return updatedOptions;
     }
 
-    public void setUpdatedOptions(List<com.redhat.mqe.lib.Option> updatedOptions) {
+    public void setUpdatedOptions(List<Option> updatedOptions) {
         this.updatedOptions = updatedOptions;
     }
 
-    public static void addNumericArgumentValueOptionList(com.redhat.mqe.lib.Option option) {
+    public static void addNumericArgumentValueOptionList(Option option) {
         numericArgumentValueOptionList.add(option);
     }
 }
