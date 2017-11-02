@@ -19,80 +19,34 @@
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.math.BigInteger
-import java.util.*
 import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
-import java.security.Permission
 import java.time.Duration
 import com.google.common.truth.Truth.assertThat
-import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.params.provider.CsvFileSource
 import java.time.LocalTime
 import kotlin.test.fail
 
-class SystemExitingWithStatus(val status: Int) : Exception()
+abstract class AbstractMainTest : AbstractTest() {
+    override val prefix: String = "abstractMainTestAddress_"
 
-class NoExitSecurityManager(val parentManager: SecurityManager?) : SecurityManager() {
-    override fun checkExit(status: Int) = throw SystemExitingWithStatus(status)
-    override fun checkPermission(perm: Permission?) = Unit
-}
-
-fun assertSystemExit(status: Int, executable: Executable) {
-    val previousManager = System.getSecurityManager()
-    try {
-        val manager = NoExitSecurityManager(previousManager)
-        System.setSecurityManager(manager)
-
-        executable.execute()
-
-        fail("expected exception")
-    } catch (e: SystemExitingWithStatus) {
-        assertThat(e.status).isEqualTo(status)
-    } finally {
-        System.setSecurityManager(previousManager)
-    }
-}
-
-fun assertNoSystemExit(executable: () -> Unit) {
-    val previousManager = System.getSecurityManager()
-    try {
-        val manager = NoExitSecurityManager(previousManager)
-        System.setSecurityManager(manager)
-
-        executable()
-
-    } catch (e: SystemExitingWithStatus) {
-        fail("System.exit has been called")
-    } finally {
-        System.setSecurityManager(previousManager)
-    }
-}
-
-abstract class AbstractMainTest {
-    abstract val brokerUrl: String
     /**
      * Set all single-value options to some harmless nondefault value here.
      * Used in a test to increase code coverage and catch some unforeseen option interactions.
      */
     abstract val senderAdditionalOptions: Array<String>
     abstract val connectorAdditionalOptions: Array<String>
-
-    val prefix: String = "lalaLand_"
-    lateinit var randomSuffix: String
-    val address: String
+    abstract val brokerUrl: String
+    open val address: String
         get() = prefix + randomSuffix
-
-    val random = Random()
 
     abstract fun main(args: Array<String>)
 
     @BeforeEach
     fun setup() {
         print(LocalTime.now())
-        // https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
-        randomSuffix = BigInteger(130, random).toString(32)
+        randomSuffix = generateRandomSuffix()
     }
 
     @ParameterizedTest
