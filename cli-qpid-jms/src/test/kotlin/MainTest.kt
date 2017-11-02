@@ -18,6 +18,9 @@
  */
 
 import com.redhat.mqe.jms.Main
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import java.time.Duration
 
 class AacMainTest : AbstractMainTest() {
 
@@ -122,32 +125,25 @@ class AacMainTest : AbstractMainTest() {
 """.split(" ", "\n").toTypedArray()
 
     override fun main(args: Array<String>) = Main.main(args)
+
+    /**
+     * transport.logBytes option in qpid-jms
+     */
+    @Test
+    fun sendAndReceiveSingleMessageLogBytes() {
+        val senderParameters =
+            "sender --log-msgs dict --out json --broker $brokerUrl --address $address --count 1 --log-bytes".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver --log-msgs dict --out json --broker $brokerUrl --address $address --count 1 --log-bytes".split(" ").toTypedArray()
+        Assertions.assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+    }
 }
 
-//class MainTest {
-//    @Test fun sendAndReceiveSingleMessage() {
-//        val senderParameters =
-//                "sender --log-msgs dict --broker amqp://127.0.0.1:5672 --address lalaLand --count 1".split(" ").toTypedArray()
-//        val receiverParameters =
-//                "receiver --log-msgs dict --broker amqpws://127.0.0.1:5672 --address lalaLand --count 1".split(" ").toTypedArray()
-////        print("Sending: ")
-////        Main.main(senderParameters)
-//        print("Receiving: ")
-//        Main.main(receiverParameters)
-//    }
-//
-//    @Test fun sendAndReceiveListMessage() {
-//        val senderParameters =
-//                """sender --log-msgs dict --broker amqp://127.0.0.1:5672 --address lalaLand --count 1 --msg-content-list-item --msg-content-list-item "String" --msg-content-list-item "~1" --msg-content-list-item "~1.0" --msg-content-list-item "1" --msg-content-list-item "1.0" --msg-content-list-item "~-1" --msg-content-list-item "~-1.3" --msg-content-list-item "-1" --msg-content-list-item "~~1"""".split(" ").toTypedArray()
-//
-//        val receiverParameters =
-//                "receiver --log-msgs dict --broker amqp://127.0.0.1:5672 --address lalaLand --count 1".split(" ").toTypedArray()
-//        print("Sending: ")
-//        Main.main(senderParameters)
-//        print("Receiving: ")
-//        Main.main(receiverParameters)
-//    }
-//
 //        @Test fun sendAndReceiveSingleMessageSsl() {
 //        val senderParameters =
 //                "sender --log-msgs dict --broker amqps://127.0.0.1:61616 --address lalaLand --count 1 --conn-ssl-truststore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/redhatqe.truststore --conn-ssl-truststore-password password --conn-ssl-keystore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/client.keystore --conn-ssl-keystore-password password".split(" ").toTypedArray()
@@ -201,43 +197,10 @@ class AacMainTest : AbstractMainTest() {
 //        r2.join()
 //    }
 //
-//    @Test fun sendSingleMessageToTopic() {
-//        val senderParameters =
-//                ("sender --log-msgs dict --broker amqp://127.0.0.1:5672 --address topic://topic --count 1 ".split(" ").toTypedArray())
-//        print("Sending: ")
-//        Main.main(senderParameters)
-//    }
-//
 //    @Test fun sendSingleMessageToTopicAndRollback() {
 //        val senderParameters =
 //                ("sender --log-msgs dict --broker amqp://127.0.0.1:5672 --address topic://topic --count 1 --tx-action rollback tx-endloop-action rollback".split(" ").toTypedArray())
 //        print("Sending: ")
 //        Main.main(senderParameters)
-//    }
-//
-//    @Test fun sendSingleMessageToQueue() {
-//        val senderParameters =
-//                ("sender --log-msgs dict --broker amqp://127.0.0.1:5672 --address inQueue --count 1 ".split(" ").toTypedArray())
-//        print("Sending: ")
-//        Main.main(senderParameters)
-//    }
-//
-//    @Test fun receiveSingleMessageToQueue() {
-//        val senderParameters =
-//                ("receiver --log-msgs dict --broker amqp://127.0.0.1:5672 --address outQueue --count 1 ".split(" ").toTypedArray())
-//        print("Sending: ")
-//        Main.main(senderParameters)
-//    }
-//
-//    @Test fun `print sender help`() {
-//        Main.main("sender --help".split(" ").toTypedArray())
-//    }
-//
-//    @Test fun receiveSingleMessage() {
-//        val address = "target"
-//        val parameters =
-//                ("receiver --log-msgs dict --broker amqp://127.0.0.1:5672 --address $address --count 1 ".split(" ").toTypedArray())
-//        print("Sending: ")
-//        Main.main(parameters)
 //    }
 //}
