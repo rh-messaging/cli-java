@@ -229,7 +229,6 @@ public class SenderClient extends CoreClient {
                 return (T) bytesMessage;
             } else if (senderOptions.getOption(ClientOptions.MSG_CONTENT).hasParsedValue()
                 || senderOptions.getOption(ClientOptions.MSG_CONTENT_FROM_FILE).hasParsedValue()) {
-//        if (senderOptions.getOption(ClientOptions.CONTENT_TYPE).hasParsedValue()) {
                 String textContent;
                 switch (senderOptions.getOption(ClientOptions.CONTENT_TYPE).getValue().toLowerCase()) {
                     case "string":
@@ -256,7 +255,6 @@ public class SenderClient extends CoreClient {
                         fillObjectMessage(senderOptions, objectMessage);
                         return (T) objectMessage;
                 }
-//        }
             } else if (senderOptions.getOption(ClientOptions.MSG_CONTENT_LIST_ITEM).hasParsedValue()) {
                 // Create "ListMessage" using StreamMessage
                 StreamMessage pseudoListMessage = session.createStreamMessage();
@@ -275,10 +273,9 @@ public class SenderClient extends CoreClient {
                 return (T) session.createMessage();
             }
         } catch (JMSException e) {
-            LOG.error("Error while creating message or setting content to this message!");
-            e.printStackTrace();
+            throw new JmsMessagingException("error while creating message or setting content to this message", e);
         }
-        return null;
+        throw new JmsMessagingException("type of message to be created was not specified");
     }
 
     /**

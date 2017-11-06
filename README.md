@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/rh-messaging/cli-java.svg?branch=master)](https://travis-ci.org/rh-messaging/cli-java)
 [![Code Coverage](https://codecov.io/gh/rh-messaging/cli-java/branch/master/graph/badge.svg)](https://codecov.io/gh/rh-messaging/cli-java)
+[![Coverity Scan Status](https://scan.coverity.com/projects/14128/badge.svg)](https://scan.coverity.com/projects/cli-java)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/6af323f5f8804b659418013a719f3708)](https://www.codacy.com/app/jdanekrh/cli-java?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rh-messaging/cli-java&amp;utm_campaign=Badge_Grade)
 [![Code Climate](https://codeclimate.com/github/rh-messaging/cli-java/badges/gpa.svg)](https://codeclimate.com/github/rh-messaging/cli-java)
 

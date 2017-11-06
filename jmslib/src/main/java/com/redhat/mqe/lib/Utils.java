@@ -190,19 +190,19 @@ public class Utils {
 
     /**
      * Try to find out the type of the parameter.
-     * If preferedStringType is provided, given class is returned.
+     * If preferredStringType is provided, given class is returned.
      * Else start retypying with Integer, Long, Float, Double, Boolean
      * and if still not found the correct type, use String
      * as the default.
      *
-     * @param preferedStringType type of the preferred (suggested) type given as string
+     * @param preferredStringType type of the preferred (suggested) type given as string
      * @param value              to be find out its type
      * @return Class type of given value
      */
 
-    public static Class<?> getClassType(String preferedStringType, String value, boolean allowExplicitRetype) throws JmsMessagingException {
-        LOG.trace("getClassType for " + value + ":" + preferedStringType);
-        if (preferedStringType == null) {
+    public static Class<?> getClassType(String preferredStringType, String value, boolean allowExplicitRetype) throws JmsMessagingException {
+        LOG.trace("getClassType for " + value + ":" + preferredStringType);
+        if (preferredStringType == null) {
             // set manually the contentType to (autotypecasting)
             if (value.startsWith("~") && allowExplicitRetype) {
                 LOG.trace("Auto-typecasting " + value);
@@ -219,39 +219,39 @@ public class Utils {
                 }
             } else {
                 // We should default to use string
-                preferedStringType = "string";
+                preferredStringType = "string";
             }
         }
-        if (preferedStringType == null) {
+        if (preferredStringType == null) {
             LOG.error("Error while finding out the content data type.");
             System.exit(2);
         }
-        switch (preferedStringType.toLowerCase()) {
+        switch (preferredStringType.toLowerCase()) {
             case "int":
             case "integer":
-                preferedStringType = "Integer";
+                preferredStringType = "Integer";
                 break;
             case "long":
-                preferedStringType = "Long";
+                preferredStringType = "Long";
                 break;
             case "float":
-                preferedStringType = "Float";
+                preferredStringType = "Float";
                 break;
             case "double":
-                preferedStringType = "Double";
+                preferredStringType = "Double";
                 break;
             case "bool":
             case "boolean":
-                preferedStringType = "Boolean";
+                preferredStringType = "Boolean";
                 break;
             case "string":
             default:
-                preferedStringType = "String";
+                preferredStringType = "String";
                 break;
         }
         try {
-            LOG.trace("Using " + preferedStringType + " for " + value);
-            return Class.forName("java.lang." + preferedStringType);
+            LOG.trace("Using " + preferredStringType + " for " + value);
+            return Class.forName("java.lang." + preferredStringType);
         } catch (ClassNotFoundException e) {
             LOG.error("Error while finding out the type of the object.");
             e.printStackTrace();

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 @SuppressWarnings("serial")
-public class JmsMessagingException extends Exception {
+public class JmsMessagingException extends RuntimeException {
 
     private void writeObject(ObjectOutputStream out)
         throws IOException {

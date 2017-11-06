@@ -57,7 +57,7 @@ public class Content {
         this.isMap = isMap;
         try {
             if (isMap) {
-                String splitValue = null;
+                String splitValue = "";
                 String splitter = "=";
                 if (parsedValue.contains("=") && parsedValue.contains("~")) {
                     if (parsedValue.indexOf("=") < parsedValue.indexOf("~")) {
@@ -72,7 +72,6 @@ public class Content {
                     splitValue = parsedValue.substring(parsedValue.indexOf(splitter));
                 }
                 this.type = Utils.getClassType(contentType, splitValue, allowExplicitRetype);
-                // TODO fix this?
 
                 this.key = parsedValue.substring(0, parsedValue.indexOf(splitter));
                 val = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
