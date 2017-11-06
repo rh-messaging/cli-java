@@ -9,9 +9,7 @@ cli-java is a collection of commandline messaging clients suitable for interacti
 
 ## Getting started
 
-    mvn package 
-    or 
-    mvn package -DskipTests=true (without executing tests)
+    mvn package -DskipTests=true  # compile without executing tests (tests require broker)
     java -jar cli-qpid-jms/target/cli-qpid-jms-*.jar -b amqp://127.0.0.1:5672 -a myQ --log-msgs dict
 
 ### Update versions
