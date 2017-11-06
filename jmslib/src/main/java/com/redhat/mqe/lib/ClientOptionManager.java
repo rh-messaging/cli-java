@@ -83,7 +83,7 @@ public abstract class ClientOptionManager {
             if (opt.isCliArgument()) {
                 if (opt.getLongOptionName().equals(ClientOptions.HELP)) {
                     parser.acceptsAll(Arrays.asList(opt.getShortOptionName(),
-                        opt.getLongOptionName()), opt.getDescription()).isForHelp();
+                        opt.getLongOptionName()), opt.getDescription());
                     continue;
                 }
 
