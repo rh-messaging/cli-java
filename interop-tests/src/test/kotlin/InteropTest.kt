@@ -55,6 +55,28 @@ class InteropTest : AbstractTest() {
         assertMessagesAreIdentical(address, s, b, r)
     }
 
+    @ParameterizedTest(name = "{0} -> {1}")
+    @MethodSource("clientCombinationsProvider")
+    fun `send browse receive expired durable message`(senderName: String, receiverName: String) {
+        val address = address(senderName, receiverName)
+        val artemisExpiryQueue = "ExpiryQueue"
+
+        println("drain artemisExpiryQueue")
+        val dr = createClient(receiverName, "receiver", "-b 127.0.0.1:61616 -a $artemisExpiryQueue --log-msgs dict --count 0".split(" "))
+        dr.run()
+
+        println("perform test")
+        val s = createClient(senderName, "sender", "-b 127.0.0.1:61616 -a $address --log-msgs dict --msg-durable yes --msg-ttl 1".split(" "))
+        val b = createClient(receiverName, "browser", "-b 127.0.0.1:61616 -a $artemisExpiryQueue --log-msgs dict --count 1".split(" "))
+        // this does not guarantee test isolation
+        val r = createClient(receiverName, "receiver", "-b 127.0.0.1:61616 -a $artemisExpiryQueue --log-msgs dict --count 1".split(" "))
+        s.run()
+        Thread.sleep(50 * 1000) // 25s is not enough for aac -> acc
+        b.run()
+        r.run()
+        assertMessagesAreIdentical(address, s, b, r)
+    }
+
     companion object {
         @JvmStatic
         fun clientCombinationsProvider(): Stream<Arguments> {
