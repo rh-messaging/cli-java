@@ -31,8 +31,10 @@
     </parent>
 
     <artifactId>cli-artemis-jms</artifactId>
+    <packaging>bundle</packaging>
 
     <properties>
+        <bundle.symbolic.name.suffix>acc</bundle.symbolic.name.suffix>
         <jar.main.class>com.redhat.mqe.acc.Main</jar.main.class>
         <snapshots.enabled>false</snapshots.enabled>
         <artemis.jms.client.version>LATEST</artemis.jms.client.version>

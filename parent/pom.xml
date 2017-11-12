@@ -34,10 +34,10 @@
     <packaging>pom</packaging>
 
     <properties>
+        <bundle.symbolic.name.suffix>Child POM responsibility</bundle.symbolic.name.suffix>
         <jar.main.class>Child POM responsibility</jar.main.class>
         <library.version>Child POM responsibility</library.version>
-        <buildNumber></buildNumber>
-        <jar.finalName>${project.artifactId}-${project.version}${buildNumber}</jar.finalName>
+        <jar.finalName>${project.artifactId}-${project.version}</jar.finalName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -187,7 +187,7 @@
                 </configuration>
             </plugin>
             <plugin>
-                <!--Don't create default jar with no manifest etc -->
+                <!--Don't create default jar without dependencies -->
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>${plugin.jar.version}</version>
                 <executions>
@@ -196,6 +196,36 @@
                         <phase>none</phase>
                     </execution>
                 </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${jar.main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <!--https://issues.apache.org/jira/browse/FELIX-5698-->
+                <dependencies>
+                    <dependency>
+                        <groupId>biz.aQute.bnd</groupId>
+                        <artifactId>biz.aQute.bndlib</artifactId>
+                        <version>3.5.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <instructions>
+                        <Bundle-SymbolicName>com.redhat.mqe.${bundle.symbolic.name.suffix}</Bundle-SymbolicName>
+                        <Export-Package>com.redhat.mqe.${bundle.symbolic.name.suffix}</Export-Package>
+                        <Import-Package></Import-Package>
+                        <Embed-Dependency>*;scope=compile|runtime;inline=true</Embed-Dependency>
+                        <Embed-Transitive>true</Embed-Transitive>
+                    </instructions>
+                    <finalName>${jar.finalName}-${library.version}</finalName>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -217,33 +247,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${plugin.assembly.version}</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>${jar.main.class}</mainClass>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <finalName>${jar.finalName}-${library.version}</finalName>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
