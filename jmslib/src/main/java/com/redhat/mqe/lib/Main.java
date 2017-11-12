@@ -43,7 +43,14 @@ public class Main {
         if (client == null) {
             printHelpAndExit();
         } else {
-            client.startClient();
+            // https://stackoverflow.com/questions/2198928/better-handling-of-thread-context-classloader-in-osgi
+            ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                Thread.currentThread().setContextClassLoader(Main.class.getClassLoader());
+                client.startClient();
+            } finally {
+                Thread.currentThread().setContextClassLoader(originalClassLoader);
+            }
         }
     }
 
