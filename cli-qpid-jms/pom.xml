@@ -30,8 +30,10 @@
     </parent>
 
     <artifactId>cli-qpid-jms</artifactId>
+    <packaging>bundle</packaging>
 
     <properties>
+        <bundle.symbolic.name.suffix>jms</bundle.symbolic.name.suffix>
         <jar.main.class>com.redhat.mqe.jms.Main</jar.main.class>
         <qpid.jms.client.version>LATEST</qpid.jms.client.version>
         <library.version>${qpid.jms.client.version}</library.version>
