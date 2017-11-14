@@ -20,6 +20,7 @@
 package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.ClientOptionManager;
+import com.redhat.mqe.lib.ClientOptions;
 
 import javax.jms.Session;
 import java.util.HashMap;
@@ -89,5 +90,13 @@ class AacClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.CON_TCP_SOCK_LINGER, "transport.soLinger");
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.CON_TCP_KEEP_ALIVE, "transport.tcpKeepAlive");
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.CON_TCP_NO_DELAY, "transport.tcpNoDelay");
+    }
+
+    @Override
+    protected void createConnectionOptions(ClientOptions clientOptions) {
+        if (Boolean.parseBoolean(clientOptions.getOption(ClientOptions.LOG_BYTES).getValue())) {
+            connectionOptionsUrlMap.put("transport.traceBytes", "true");
+        }
+        super.createConnectionOptions(clientOptions);
     }
 }

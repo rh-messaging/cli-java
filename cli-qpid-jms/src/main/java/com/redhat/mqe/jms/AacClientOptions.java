@@ -217,6 +217,7 @@ public abstract class AacClientOptions extends ClientOptions {
                     "It is used as exactly as provided!"),
             new Option(LOG_LEVEL, "", "LEVEL", "info", "logging level of the client. trace/debug/info/warn/error"),
             new Option(LOG_STATS, "", "LEVEL", "INFO", "report various statistic/debug information"), // ?
+            new Option(LOG_BYTES, "", "", "false", "report content of sent and received packets"), // ?
             new Option(SSN_ACK_MODE, "", "ACKMODE", "auto", "session acknowledge mode auto/client/dups_ok/(individual)"),
             new Option(CLOSE_SLEEP, "", "CSLEEP", "0", "sleep before publisher/subscriber/session/connection.close() in floating seconds"),
 

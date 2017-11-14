@@ -50,6 +50,7 @@ public abstract class ClientOptions {
     public static final String DURATION_MODE = "duration-mode";
     static final String LOG_LEVEL = "log-lib";
     static final String LOG_STATS = "log-stats";
+    public static final String LOG_BYTES = "log-bytes";
     public static final String USERNAME = "conn-username";                               // jms.username
     public static final String PASSWORD = "conn-password";                               // jms.password
     static final String HELP = "help";
