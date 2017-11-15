@@ -19,11 +19,14 @@
 
 package com.redhat.mqe.jms;
 
+import com.redhat.mqe.ClientListener;
+import com.redhat.mqe.lib.Client;
 import com.redhat.mqe.lib.*;
 import dagger.Binds;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.Module;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Named;
 
@@ -63,14 +66,21 @@ interface AacClient extends Client {
         @BindsInstance
         Builder args(@Args String[] args);
 
+        @BindsInstance
+        Builder listener(@Nullable ClientListener listener);
+
         AacClient build();
     }
 }
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(ClientListener listener, String[] args) throws Exception {
         AacClient client = DaggerAacClient.builder()
-            .args(args).build();
+            .args(args).listener(listener).build();
         com.redhat.mqe.lib.Main.main(args, client);
+    }
+
+    public static void main(String[] args) throws Exception {
+        main(null, args);
     }
 }

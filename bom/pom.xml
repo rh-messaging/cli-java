@@ -73,6 +73,11 @@
             <!-- internal dependencies-->
             <dependency>
                 <groupId>com.redhat.cli-java</groupId>
+                <artifactId>cli</artifactId>
+                <version>1.2.2-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.redhat.cli-java</groupId>
                 <artifactId>jmslib</artifactId>
                 <version>1.2.2-SNAPSHOT</version>
             </dependency>

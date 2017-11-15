@@ -19,26 +19,16 @@
 
 package com.redhat.mqe.aoc;
 
+import com.redhat.mqe.ClientListener;
+import com.redhat.mqe.lib.Client;
 import com.redhat.mqe.lib.*;
 import dagger.Binds;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.Module;
+import org.jetbrains.annotations.Nullable;
 
 import javax.inject.Named;
-
-@Component(modules = {
-    AocClientModule.class
-})
-interface AocClient extends Client {
-    @Component.Builder
-    interface Builder {
-        @BindsInstance
-        Builder args(@Args String[] args);
-
-        AocClient build();
-    }
-}
 
 @Module(includes = AocClientModule.Declarations.class)
 final class AocClientModule {
@@ -67,10 +57,30 @@ final class AocClientModule {
     }
 }
 
+@Component(modules = {
+    AocClientModule.class
+})
+interface AocClient extends Client {
+    @Component.Builder
+    interface Builder {
+        @BindsInstance
+        Builder args(@Args String[] args);
+
+        @BindsInstance
+        Builder listener(@Nullable ClientListener listener);
+
+        AocClient build();
+    }
+}
+
 public class Main {
-    public static void main(String[] args) throws Exception {
+    public static void main(ClientListener listener, String[] args) throws Exception {
         AocClient client = DaggerAocClient.builder()
-            .args(args).build();
+            .args(args).listener(listener).build();
         com.redhat.mqe.lib.Main.main(args, client);
+    }
+
+    public static void main(String[] args) throws Exception {
+        main(null, args);
     }
 }

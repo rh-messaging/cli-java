@@ -19,9 +19,12 @@
 
 package com.redhat.mqe.lib;
 
+import com.redhat.mqe.ClientListener;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.jms.*;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -56,6 +59,10 @@ public abstract class CoreClient {
 
     protected ConnectionManagerFactory connectionManagerFactory;
     protected JmsMessageFormatter jmsMessageFormatter;
+
+    @Inject
+    @Nullable
+    protected ClientListener listener;
 
     /**
      * Method starts the given client. Serves as entry point.
@@ -378,6 +385,9 @@ public abstract class CoreClient {
             System.exit(1);
         }
         if (messageData != null) {
+            if (listener != null) {
+                listener.onMessage(messageData);
+            }
             if ("json".equals(logMsgs) || "json".equals(out)) {
                 jmsMessageFormatter.printMessageAsJson(messageData);
             } else {
