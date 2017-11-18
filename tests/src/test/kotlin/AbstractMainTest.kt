@@ -29,6 +29,7 @@ import java.time.Duration
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.params.provider.CsvFileSource
+import java.io.File
 import java.time.LocalTime
 import kotlin.test.fail
 
@@ -266,6 +267,64 @@ abstract class AbstractMainTest {
         main(senderParameters)
         print("Receiving: ")
         main(receiverParameters)
+    }
+
+    @Test
+    fun sendAndReceiveMessageFromFile() {
+        val file = File.createTempFile(address, null)
+        try {
+            file.writeText("aContent")
+            val senderParameters =
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(" ").toTypedArray()
+            val receiverParameters =
+                "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+        } finally {
+            file.delete()
+        }
+    }
+
+    @Test
+    fun sendAndReceiveBinaryMessageFromFile() {
+        val file = File.createTempFile(address, null)
+        try {
+            file.writeText("aContent")
+            val senderParameters =
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true".split(" ").toTypedArray()
+            val receiverParameters =
+                "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+        } finally {
+            file.delete()
+        }
+    }
+
+    @Test
+    fun sendMessageFromNonexistentFile() {
+        assertSystemExit(2, Executable {
+            val file = "noSuchFile"
+            val senderParameters =
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(" ").toTypedArray()
+            main(senderParameters)
+        })
+    }
+
+    @Test
+    fun sendBinaryMessageFromNonexistentFile() {
+        assertSystemExit(2, Executable {
+            val file = "noSuchFile"
+            val senderParameters =
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true".split(" ").toTypedArray()
+            main(senderParameters)
+        })
     }
 
     @Test
