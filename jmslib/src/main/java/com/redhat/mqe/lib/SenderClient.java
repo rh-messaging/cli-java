@@ -22,10 +22,8 @@ package com.redhat.mqe.lib;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -546,12 +544,12 @@ public class SenderClient extends CoreClient {
             }
         } else if (senderOptions.getOption(ClientOptions.MSG_CONTENT_FROM_FILE).hasParsedValue()) {
             LOG.trace("set MSG_CONTENT_FROM_FILE");
+            byte[] bytes = readBinaryContentFromFile(senderOptions.getOption(ClientOptions.MSG_CONTENT_FROM_FILE).getValue());
             if (senderOptions.getOption(ClientOptions.MSG_CONTENT_BINARY).hasParsedValue()
                 && Boolean.parseBoolean(senderOptions.getOption(ClientOptions.MSG_CONTENT_BINARY).getValue())) {
-                binaryMessageData = readBinaryContentFromFile(senderOptions.getOption(ClientOptions.MSG_CONTENT_FROM_FILE).getValue());
+                binaryMessageData = bytes;
             } else {
-                String text = readContentFromFile(senderOptions.getOption(ClientOptions.MSG_CONTENT_FROM_FILE).getValue());
-                contentList.add(new Content(globalContentType, text, false));
+                contentList.add(new Content(globalContentType, new String(bytes, StandardCharsets.UTF_8), false));
             }
         }
         content = contentList;
@@ -565,58 +563,19 @@ public class SenderClient extends CoreClient {
      */
     private static byte[] readBinaryContentFromFile(String binaryFileName) {
         File binaryFile = new File(binaryFileName);
-        byte[] bytesOut = null;
+        byte[] data = new byte[0];
         if (binaryFile.canRead()) {
-            bytesOut = new byte[(int) binaryFile.length()];
             try {
-                try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(binaryFile))) {
-                    int totalBytesRead = 0;
-                    while (totalBytesRead < bytesOut.length) {
-                        int bytesRemaining = bytesOut.length - totalBytesRead;
-                        //input.read() returns -1, 0, or more
-                        int bytesRead = bis.read(bytesOut, totalBytesRead, bytesRemaining);
-                        if (bytesRead > 0) {
-                            totalBytesRead = totalBytesRead + bytesRead;
-                        }
-                    }
-                }
+                data = Files.readAllBytes(binaryFile.toPath());
             } catch (IOException e) {
                 e.printStackTrace();
+                System.exit(2);
             }
         } else {
             LOG.error("Unable to access file " + binaryFileName);
             System.exit(2);
         }
-        LOG.debug("ToSend=" + new String(bytesOut));
-        return bytesOut;
-    }
-
-    /**
-     * Read content from provided file path. File content is returned
-     * as a string representation of all lines.
-     *
-     * @param path path to file to read input from
-     * @return the concatenated lines
-     */
-    private static String readContentFromFile(String path) {
-        StringBuilder fileContent = new StringBuilder();
-        try {
-            Path filePath = Paths.get(path);
-            if (Files.exists(filePath) && Files.isReadable(filePath)) {
-                for (String line : Files.readAllLines(filePath, Charset.defaultCharset())) {
-                    fileContent.append(line).append(System.lineSeparator());
-                }
-                // TODO find better solution for files with new lines - not to append line separators
-                fileContent.setLength(fileContent.length() - 1);
-            } else {
-                LOG.error("Unable to read file from provided path: " + path);
-                System.exit(2);
-            }
-        } catch (IOException ex) {
-            LOG.error("Cannot read content file \"" + path + "\"");
-            ex.printStackTrace();
-            System.exit(2);
-        }
-        return fileContent.toString();
+        LOG.debug("ToSend=" + data.length);
+        return data;
     }
 }
