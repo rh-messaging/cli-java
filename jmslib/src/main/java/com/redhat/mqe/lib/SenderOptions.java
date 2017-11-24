@@ -49,7 +49,7 @@ public class SenderOptions extends ClientOptions {
             new Option(MSG_CONTENT_TYPE, "", "MSGTYPE", "", "type of JMSMessageBody to use in header"),
             new Option(MSG_CONTENT_FROM_FILE, "", "PATH", "", "specify filename to load content from"),
             new Option(MSG_CONTENT, "", "CONTENT", "", "actual content fed to message body"),
-            new Option(MSG_CONTENT_BINARY, "false", "BIN_CONTENT", "", "is message content binary"),
+            new Option(MSG_CONTENT_BINARY, "", "BIN_CONTENT", "false", "is message content binary"),
             new Option(MSG_CONTENT_LIST_ITEM, "L", "VALUE", "", "item from list"),
             new Option(MSG_CONTENT_MAP_ITEM, "M", "KEY=VALUE", "", "Map item specified as KEY=VALUE (use '~' instead of '=' for auto-casting)"),
             new Option(MSG_NOTIMESTAMP, "", "TIMESTAMP", "false", "producer do not create timestamps for messages"),

@@ -346,9 +346,11 @@ public abstract class CoreClient {
      * @param message       to be printed
      */
     void printMessage(ClientOptions clientOptions, Message message) {
+        final String logMsgs = clientOptions.getOption(ClientOptions.LOG_MSGS).getValue();
+        final String out = clientOptions.getOption(ClientOptions.OUT).getValue();
         Map<String, Object> messageData = null;
         try {
-            switch (clientOptions.getOption(ClientOptions.LOG_MSGS).getValue()) {
+            switch (logMsgs) {
                 case "dict":
                     messageData = messageFormatter.formatMessageAsDict(message);
                     break;
@@ -356,6 +358,7 @@ public abstract class CoreClient {
                     messageData = messageFormatter.formatMessageBody(message);
                     break;
                 case "interop":
+                case "json":
                     messageData = messageFormatter.formatMessageAsInterop(message);
                     break;
                 case "none":
@@ -368,15 +371,10 @@ public abstract class CoreClient {
             System.exit(1);
         }
         if (messageData != null) {
-            switch(clientOptions.getOption(ClientOptions.OUT).getValue()) {
-                case "json": {
-                    messageFormatter.printMessageAsJson(messageData);
-                    break;
-                }
-                default: {
-                    messageFormatter.printMessageAsPython(messageData);
-                    break;
-                }
+            if ("json".equals(logMsgs) || "json".equals(out)) {
+                messageFormatter.printMessageAsJson(messageData);
+            } else {
+                messageFormatter.printMessageAsPython(messageData);
             }
         }
     }
