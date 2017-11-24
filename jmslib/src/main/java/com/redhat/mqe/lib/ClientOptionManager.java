@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
  * Each supplied option is checked against template/default
  * client options list, then accordingly set for client.
  */
-public class ClientOptionManager {
+public abstract class ClientOptionManager {
     private static final Logger LOG = LoggerFactory.getLogger(ClientOptionManager.class);
     /**
      * Mapping from cli options to connection factory properties.
@@ -271,18 +271,14 @@ public class ClientOptionManager {
         patternOptionMapping.put("query", ClientOptions.BROKER_OPTIONS);
 
         // Search for the first protocol, hostname and port in provided url. Also get username and password if they are provided
-        Pattern pattern;
-        if (CoreClient.isAMQClient()) {
-            pattern = Pattern.compile(protocol + hostname + query);
-        } else {
-            pattern = Pattern.compile(protocol + credentials + hostname + query);
-        }
+        Pattern pattern = Pattern.compile(protocol + credentials + hostname + query);
         Matcher matcher = pattern.matcher(brokerUrl);
         if (matcher.find()) {
             for (String groupName : patternOptionMapping.keySet()) {
                 try {
-                    if (matcher.group(groupName) != null)
+                    if (matcher.group(groupName) != null) {
                         checkAndSetOption(patternOptionMapping.get(groupName), matcher.group(groupName), clientOptions);
+                    }
                 } catch (IllegalArgumentException e) {
                     LOG.trace("Group {} not found", groupName);
                 }
@@ -299,7 +295,7 @@ public class ClientOptionManager {
      * @param brokerUrl provided broker url by user
      * @return updated broker url with expected amqp protocol
      */
-    protected static String appendMissingProtocol(String brokerUrl) {
+    protected String appendMissingProtocol(String brokerUrl) {
         StringBuilder newBrokerUrl = new StringBuilder();
 
         String[] brokerUrls = brokerUrl.split(",");
@@ -310,7 +306,7 @@ public class ClientOptionManager {
             Matcher matcher = pattern.matcher(simpleBrokerUrl);
             if (matcher.find()) {
                 if (matcher.group("protocol") == null) {
-                    String prefix = CoreClient.isQpidClient() ? "amqp" : "tcp";
+                    String prefix = getUrlProtocol();
                     tmpUrl = prefix + "://" + matcher.group();
                 } else {
                     tmpUrl = matcher.group();
@@ -325,6 +321,8 @@ public class ClientOptionManager {
         LOG.trace("FinalBrokerUrl=" + newBrokerUrl.toString());
         return newBrokerUrl.toString();
     }
+
+    protected abstract String getUrlProtocol();
 
     /**
      * Method sets broker options like hostname, port, credentials, protocol.

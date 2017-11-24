@@ -125,6 +125,11 @@ class AocClientOptionManager extends ClientOptionManager {
     }
 
     @Override
+    protected String getUrlProtocol() {
+        return "tcp";
+    }
+
+    @Override
     protected void createConnectionOptions(ClientOptions clientOptions) {
         // Configure SSL options, which in case of activemq-client are set as Java properties
         // http://activemq.apache.org/how-do-i-use-ssl.html
