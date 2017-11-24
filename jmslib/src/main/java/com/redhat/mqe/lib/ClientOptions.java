@@ -50,6 +50,7 @@ public abstract class ClientOptions {
     public static final String DURATION_MODE = "duration-mode";
     static final String LOG_LEVEL = "log-lib";
     static final String LOG_STATS = "log-stats";
+    public static final String LOG_BYTES = "log-bytes";
     public static final String USERNAME = "conn-username";                               // jms.username
     public static final String PASSWORD = "conn-password";                               // jms.password
     static final String HELP = "help";
@@ -299,7 +300,7 @@ public abstract class ClientOptions {
             new Option(CONN_TIGHT_ENCODING_ENA, "", "ENABLED", "true", "should wire size be optimized over CPU usage ?"),
             new Option(CONN_PREFIX_PACKET_SIZE_ENA, "", "ENABLED", "true", "Should the size of the packet be prefixed before each packet is marshalled?"),
             // maxInactivityDuration (ACtiveMQ default 30000ms) is CON_TCP_SOCK_TIMEOUT
-            new Option(CONN_MAX_INACTITVITY_DUR, "30000", "MS", "", "The maximum inactivity duration (after which the connection is considered dead) in seconds"),
+            new Option(CONN_MAX_INACTITVITY_DUR, "", "MS", "30000", "The maximum inactivity duration (after which the connection is considered dead) in seconds"),
             new Option(CONN_MAX_INACTITVITY_DUR_INIT_DELAY, "", "MS", "10000", "initial delay before starting the maximum inactivity checks"),
             new Option(CONN_CACHE_SIZE, "", "if CM_ENA=true", "1024", "if cacheEnabled is true, then this specifies the maximum number of values to cached. This property was added in ActiveMQ 4.1"),
             new Option(CONN_MAX_FRAME_SIZE, "", "MAX_LONG", String.valueOf(Long.MAX_VALUE), "Maximum frame size that can be sent. Can help help prevent OOM DOS attacks")
