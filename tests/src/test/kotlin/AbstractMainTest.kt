@@ -209,6 +209,20 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Test
+    fun sendAndReceiveSingleMessageLogJsonFloatType() {
+        val senderParameters =
+            "sender --log-msgs dict --out json --broker $brokerUrl --address $address --msg-property baf~42.2 --count 1".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+    }
+
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/receiver.csv"))
     fun sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions: String) {
