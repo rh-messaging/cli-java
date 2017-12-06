@@ -384,14 +384,15 @@ public abstract class ClientOptionManager {
             String jmsConOptionNames = CONNECTION_TRANSLATION_MAP.get(option.getName());
             if (jmsConOptionNames != null) {
                 for (String jmsConOptionName : jmsConOptionNames.split(";")) {
+                    if (jmsConOptionName.equals("")) {
+                        System.out.println("ignored option: " + option.getName());
+                        continue;
+                    }
                     if (option.getName().equals(ClientOptions.CON_HEARTBEAT)) {
                         Integer value = Math.round(Float.parseFloat(option.getValue()) * 1000);
                         connectionOptionsUrlMap.put(jmsConOptionName, value.toString());
                     } else {
                         connectionOptionsUrlMap.put(jmsConOptionName, option.getValue());
-                    }
-                    if (jmsConOptionName.equals("")) {
-                        System.out.println("ignored options: " + option.getName());
                     }
                 }
             }
