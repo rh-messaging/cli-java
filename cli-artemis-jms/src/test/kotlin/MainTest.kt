@@ -18,10 +18,13 @@
  */
 
 import com.redhat.mqe.acc.Main
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
 class AccMainTest : AbstractMainTest() {
 
     override val brokerUrl = "tcp://127.0.0.1:61616"
+    override val sslBrokerUrl = "tcp://127.0.0.1:61617"
 
     override val senderAdditionalOptions = """
 --capacity 1
@@ -136,25 +139,10 @@ class AccMainTest : AbstractMainTest() {
 
     override fun main(args: Array<String>) = Main.main(args)
 
-//    @Test fun sendAndReceiveSingleMessage() {
-////        val address = "tcp://127.0.0.1:5445"
-//        val address = "tcp://127.0.0.1:61616"
-//        val senderParameters =
-//                "sender --log-msgs dict --broker $address --address lalaLand --count 1".split(" ").toTypedArray()
-//        val receiverParameters =
-//                "receiver --log-msgs dict --broker $address --address lalaLand --count 1".split(" ").toTypedArray()
-//        print("Sending: ")
-//        Main.main(senderParameters)
-////        print("Receiving: ")
-////        Main.main(receiverParameters)
-//    }
-//
-//    @Test fun sendSingleMessageTls() {
-//        val senderParameters =
-//                "sender --log-msgs dict --broker tcp://127.0.0.1:61616 --address lalaLand --count 1 --conn-ssl-truststore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/ikeysiold/client-side-truststore.jks --conn-ssl-truststore-password secureexample --conn-ssl-keystore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/ikeysiold/client-side-keystore.jks --conn-ssl-keystore-password secureexample".split(" ").toTypedArray()
-//        print("Sending: ")
-//        Main.main(senderParameters)
-//    }
+    @Disabled("ARTEMIS-1538 trustAll is ignored when specified in the connectionFactory URI")
+    @Test
+    override fun sendSingleMessageAllTrustingTls() {
+    }
 //
 //
 //    @Test fun sendSingleMessage() {
@@ -170,13 +158,6 @@ class AccMainTest : AbstractMainTest() {
 //        Main.main(
 //                "receiver  --timeout 120 --log-msgs dict --broker $host --conn-reconnect True --conn-username admin --conn-password admin --address $address --count 1".split(" ").toTypedArray()
 //        )
-//    }
-//
-//    @Test fun sendSingleMessageToTopic() {
-//        val senderParameters =
-//                ("sender --log-msgs dict --broker tcp://127.0.0.1:61616 --address topic://topic --count 1 ".split(" ").toTypedArray())
-//        print("Sending: ")
-//        Main.main(senderParameters)
 //    }
 //
 //    @Test fun sendManyMessageToTopicInTxAndRollback() {
