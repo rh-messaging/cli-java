@@ -25,6 +25,7 @@ import java.time.Duration
 class AacMainTest : AbstractMainTest() {
 
     override val brokerUrl = "amqp://127.0.0.1:5672"
+    override val sslBrokerUrl = "amqps://127.0.0.1:5673"
 
     // TODO(jdanek) re-enable when https://issues.apache.org/jira/browse/QPIDJMS-314 is fixed
     //    --conn-tcp-sock-linger 1000
