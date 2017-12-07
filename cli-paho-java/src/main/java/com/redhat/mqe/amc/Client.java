@@ -28,41 +28,38 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- * Created by mtoth on 4/26/16.
- */
-public class CoreClient {
+public class Client {
 
-  public static String broker;
-  static MemoryPersistence persistence = new MemoryPersistence();
+    public static String broker;
+    static MemoryPersistence persistence = new MemoryPersistence();
 
 
-  static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions) {
-    connectOptions.setUserName("admin");
-    connectOptions.setPassword("admin".toCharArray());
-    connectOptions.setCleanSession(true);
+    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions) {
+        connectOptions.setUserName("admin");
+        connectOptions.setPassword("admin".toCharArray());
+        connectOptions.setCleanSession(true);
 
-    return connectOptions;
-  }
-
-  void closeClient(MqttClient client) {
-    if (client != null) {
-      try {
-        client.disconnect();
-        client.close();
-      } catch (MqttException e) {
-        e.printStackTrace();
-      }
-
+        return connectOptions;
     }
-  }
 
-  protected Logger setUpLogger(String name) {
-    Logger log = Logger.getLogger(name);
-    ConsoleHandler handler = new ConsoleHandler();
-    log.setLevel(Level.FINE);
-    handler.setLevel(Level.FINE);
-    log.addHandler(handler);
-    return log;
-  }
+    void closeClient(MqttClient client) {
+        if (client != null) {
+            try {
+                client.disconnect();
+                client.close();
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    protected Logger setUpLogger(String name) {
+        Logger log = Logger.getLogger(name);
+        ConsoleHandler handler = new ConsoleHandler();
+        log.setLevel(Level.FINE);
+        handler.setLevel(Level.FINE);
+        log.addHandler(handler);
+        return log;
+    }
 }

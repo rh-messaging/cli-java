@@ -29,49 +29,50 @@ import java.util.logging.Logger;
 
 /**
  * Sender client to send messages to given topic.
- * Persistence is not neccessary if cleanSession is used. (default client yes)
+ * Persistence is not necessary if cleanSession is used. (default client yes)
  * Quality of Service 0: at most once, 1: at least once, 2: exactly once
  */
-public class Sender extends CoreClient {
-  Logger log;
+public class Sender extends Client {
+    Logger log;
 
-  public Sender(String cliBroker) {
-    System.out.println(cliBroker);
-    broker = cliBroker;
-    log = setUpLogger("Sender");
-  }
-
-  /**
-   * Send a message to the topic
-   * @param topic
-   * @param qos     At most once (0)
-                    At least once (1)
-                    Exactly once (2)
-   * @param content
-   * @param clientId
-   * @param msgCount
-   */
-  public void send(String topic, int qos, String content, String clientId, int msgCount) {
-    MqttClient sender = null;
-    try {
-      sender = new MqttClient(broker, clientId, persistence);
-      log.fine("Connecting to broker: " + broker);
-      sender.connect(setConnectionOptions(new MqttConnectOptions()));
-      MqttMessage message = new MqttMessage(content.getBytes());
-      message.setQos(qos);
-      for (int i = 0; i < msgCount; i++) {
-        sender.publish(topic, message);
-      }
-    } catch (MqttException me) {
-      log.severe("reason " + me.getReasonCode());
-      log.severe("msg " + me.getMessage());
-      log.severe("loc " + me.getLocalizedMessage());
-      log.severe("cause " + me.getCause());
-      log.severe("excep " + me);
-      me.printStackTrace();
-    } finally {
-      closeClient(sender);
-      log.fine("Disconnected");
+    public Sender(String cliBroker) {
+        System.out.println(cliBroker);
+        broker = cliBroker;
+        log = setUpLogger("Sender");
     }
-  }
+
+    /**
+     * Send a message to the topic
+     *
+     * @param topic
+     * @param qos      At most once (0)
+     *                 At least once (1)
+     *                 Exactly once (2)
+     * @param content
+     * @param clientId
+     * @param msgCount
+     */
+    public void send(String topic, int qos, String content, String clientId, int msgCount) {
+        MqttClient sender = null;
+        try {
+            sender = new MqttClient(broker, clientId, persistence);
+            log.fine("Connecting to broker: " + broker);
+            sender.connect(setConnectionOptions(new MqttConnectOptions()));
+            MqttMessage message = new MqttMessage(content.getBytes());
+            message.setQos(qos);
+            for (int i = 0; i < msgCount; i++) {
+                sender.publish(topic, message);
+            }
+        } catch (MqttException me) {
+            log.severe("reason " + me.getReasonCode());
+            log.severe("msg " + me.getMessage());
+            log.severe("loc " + me.getLocalizedMessage());
+            log.severe("cause " + me.getCause());
+            log.severe("excep " + me);
+            me.printStackTrace();
+        } finally {
+            closeClient(sender);
+            log.fine("Disconnected");
+        }
+    }
 }
