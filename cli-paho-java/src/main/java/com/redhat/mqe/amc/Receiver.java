@@ -23,57 +23,54 @@ import org.eclipse.paho.client.mqttv3.*;
 
 import java.util.logging.Logger;
 
-/**
- * Created by mtoth on 4/26/16.
- */
-public class Receiver extends CoreClient implements MqttCallback {
-  Logger log;
+public class Receiver extends Client implements MqttCallback {
+    Logger log;
 
-  public Receiver(String cliBroker) {
-    log = setUpLogger("Receiver");
-    broker = cliBroker;
-  }
-
-  public void receive(String topic, String clientid, int timeout) {
-    MqttClient receiver = null;
-    timeout = timeout * 1000;
-    try {
-      receiver = new MqttClient(broker, clientid, null);
-      log.fine("Connecting to the broker " + broker);
-      receiver.connect(setConnectionOptions(new MqttConnectOptions()));
-      receiver.setCallback(this);
-
-      receiver.subscribe(topic);
-      log.fine("Subscribed to " + topic);
-      // wait for messages to arrive for some time
-      long endTime = System.currentTimeMillis() + timeout;
-      while (System.currentTimeMillis() < endTime) {
-        Thread.sleep(200);
-      }
-      receiver.unsubscribe(topic);
-    } catch (MqttException e) {
-      log.severe("Error while subscribing!  " + e.getMessage());
-      e.printStackTrace();
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    } finally {
-      closeClient(receiver);
+    public Receiver(String cliBroker) {
+        log = setUpLogger("Receiver");
+        broker = cliBroker;
     }
-  }
 
-  public void connectionLost(Throwable cause) {
-    log.severe("Connection lost! " + cause.getMessage());
-    cause.printStackTrace();
-  }
+    public void receive(String topic, String clientid, int timeout) {
+        MqttClient receiver = null;
+        timeout = timeout * 1000;
+        try {
+            receiver = new MqttClient(broker, clientid, null);
+            log.fine("Connecting to the broker " + broker);
+            receiver.connect(setConnectionOptions(new MqttConnectOptions()));
+            receiver.setCallback(this);
 
-  public void messageArrived(String topic, MqttMessage message)
-      throws Exception {
+            receiver.subscribe(topic);
+            log.fine("Subscribed to " + topic);
+            // wait for messages to arrive for some time
+            long endTime = System.currentTimeMillis() + timeout;
+            while (System.currentTimeMillis() < endTime) {
+                Thread.sleep(200);
+            }
+            receiver.unsubscribe(topic);
+        } catch (MqttException e) {
+            log.severe("Error while subscribing!  " + e.getMessage());
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            closeClient(receiver);
+        }
+    }
+
+    public void connectionLost(Throwable cause) {
+        log.severe("Connection lost! " + cause.getMessage());
+        cause.printStackTrace();
+    }
+
+    public void messageArrived(String topic, MqttMessage message)
+        throws Exception {
 //    log.info("Message arrived from " + topic);
 //    log.info("message=" + message.toString());
-    System.out.println(message.toString());
-  }
+        System.out.println(message.toString());
+    }
 
-  public void deliveryComplete(IMqttDeliveryToken token) {
-    log.info("Delivery of message OK. " + token.toString());
-  }
+    public void deliveryComplete(IMqttDeliveryToken token) {
+        log.info("Delivery of message OK. " + token.toString());
+    }
 }
