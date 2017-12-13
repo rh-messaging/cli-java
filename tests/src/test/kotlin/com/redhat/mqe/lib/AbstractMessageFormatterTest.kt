@@ -23,13 +23,8 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
-import java.security.InvalidParameterException
-import java.util.*
 import javax.jms.BytesMessage
 import javax.jms.Message
-import javax.json.Json
-import javax.json.JsonValue
-import javax.json.spi.JsonProvider
 
 class Formatter : MessageFormatter() {
     override fun formatMessage(msg: Message?): MutableMap<String, Any> {

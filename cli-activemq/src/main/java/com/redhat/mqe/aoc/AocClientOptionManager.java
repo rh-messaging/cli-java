@@ -22,7 +22,15 @@ package com.redhat.mqe.aoc;
 import com.redhat.mqe.lib.ClientOptionManager;
 import com.redhat.mqe.lib.ClientOptions;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.nio.file.Paths;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 class AocClientOptionManager extends ClientOptionManager {
     {
@@ -77,7 +85,7 @@ class AocClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_DIS_CIPHERED, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_ENA_PROTOS, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_DIS_PROTOS, "");
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_TRUST_ALL, "");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_TRUST_ALL, null);
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_VERIFY_HOST, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_KEYALIAS, "");
 
@@ -131,6 +139,18 @@ class AocClientOptionManager extends ClientOptionManager {
 
     @Override
     protected void createConnectionOptions(ClientOptions clientOptions) {
+        // see the link for source of inspiration. NOTE: the TrustingTrustManager is never unset!
+        // http://activemq.2283324.n4.nabble.com/Configure-activemq-client-to-trust-any-SSL-certificate-from-the-broker-without-verifying-it-td4733309.html
+        if (clientOptions.getOption(ClientOptions.CON_SSL_TRUST_ALL).hasParsedValue()) {
+            try {
+                SSLContext ctx = SSLContext.getInstance("TLS");
+                ctx.init(new KeyManager[0], new TrustManager[]{new TrustingTrustManager()}, null);
+                SSLContext.setDefault(ctx);
+            } catch (NoSuchAlgorithmException | KeyManagementException e) {
+                throw new RuntimeException("Could not set up the all-trusting TrustManager", e);
+            }
+        }
+
         // Configure SSL options, which in case of activemq-client are set as Java properties
         // http://activemq.apache.org/how-do-i-use-ssl.html
         // https://docs.oracle.com/javase/8/docs/technotes/guides/security/jsse/JSSERefGuide.html#CustomizingStores
@@ -159,5 +179,25 @@ class AocClientOptionManager extends ClientOptionManager {
     private String relativize(String p) {
         // this may not be necessary step, although ActiveMQ doc says it is
         return Paths.get("").toAbsolutePath().relativize(Paths.get(p).toAbsolutePath()).toString();
+    }
+
+    /**
+     * Does not do any checking. Trusts all certificates.
+     */
+    private class TrustingTrustManager implements X509TrustManager {
+        @Override
+        public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            // trust anything
+        }
+
+        @Override
+        public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+            // trust anything
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
     }
 }

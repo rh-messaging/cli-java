@@ -94,6 +94,7 @@ class AccClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_TIGHT_ENCODING_ENA, "");
 
         // activemq-artemis/examples/features/standard/ssl-enabled-dual-authentication/src/main/resources/jndi.properties
+        // org.apache.activemq.artemis.core.remoting.impl.netty.TransportConstants for more
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_KEYSTORE_LOC, "keyStorePath");
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_KEYSTORE_PASS, "keyStorePassword");
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_TRUSTSTORE_LOC, "trustStorePath");
@@ -104,7 +105,7 @@ class AccClientOptionManager extends ClientOptionManager {
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_DIS_CIPHERED, "");
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_ENA_PROTOS, "enabledProtocols");
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_DIS_PROTOS, "");
-        CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_TRUST_ALL, "");
+        CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_TRUST_ALL, "trustAll");
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_VERIFY_HOST, "verifyHost");
         CONNECTION_TRANSLATION_MAP.putAll(CTL_SSL_OPTIONS);
     }

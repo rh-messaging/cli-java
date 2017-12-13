@@ -73,6 +73,7 @@ fun assertNoSystemExit(executable: () -> Unit) {
 
 abstract class AbstractMainTest {
     abstract val brokerUrl: String
+    abstract val sslBrokerUrl: String
     /**
      * Set all single-value options to some harmless nondefault value here.
      * Used in a test to increase code coverage and catch some unforeseen option interactions.
@@ -199,6 +200,20 @@ abstract class AbstractMainTest {
     fun sendAndReceiveSingleMessageLogJson() {
         val senderParameters =
             "sender --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+    }
+
+    @Test
+    fun sendAndReceiveSingleMessageLogJsonFloatType() {
+        val senderParameters =
+            "sender --log-msgs dict --out json --broker $brokerUrl --address $address --msg-property baf~42.2 --count 1".split(" ").toTypedArray()
         val receiverParameters =
             "receiver --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(10)) {
@@ -343,5 +358,16 @@ abstract class AbstractMainTest {
         print("Sending: ")
         main(senderParameters)
         t.join()
+    }
+
+    @Test
+    open fun sendSingleMessageAllTrustingTls() {
+        assertNoSystemExit {
+            //        "sender --log-msgs dict --broker tcp://127.0.0.1:61617 --address lalaLand --count 1 --conn-ssl-truststore-location  --conn-ssl-truststore-password secureexample --conn-ssl-keystore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/ikeysiold/client-side-keystore.jks --conn-ssl-keystore-password secureexample".split(" ").toTypedArray()
+            val senderParameters =
+                "sender --log-msgs dict --broker $sslBrokerUrl --address $address --conn-ssl-verify-host false --conn-ssl-trust-all true --count 1".split(" ").toTypedArray()
+            print("Sending: ")
+            main(senderParameters)
+        }
     }
 }

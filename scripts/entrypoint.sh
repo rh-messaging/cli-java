@@ -11,19 +11,23 @@ ENV_AMQ7_CLUSTER_PASSWORD=${AMQ7_ROLE:-topsecret007-cluster}
 
 if [ ! "$(ls -A /var/lib/amq7/etc)" ]; then
 	# Create broker instance
-	cd /var/lib && \
-	  /opt/A-MQ7/bin/artemis create amq7 \
-		--home /opt/A-MQ7 \
-		--user $ENV_AMQ7_USER \
-		--password $ENV_AMQ7_PASSWORD \
-		--role $ENV_AMQ7_ROLE \
-        --allow-anonymous \
-		--cluster-user $ENV_AMQ7_CLUSTER_USER \
-		--cluster-password $ENV_AMQ7_CLUSTER_PASSWORD \
-        --http-host 0.0.0.0
+	cd /var/lib
+        /opt/A-MQ7/bin/artemis create amq7 \
+            --home /opt/A-MQ7 \
+            --user $ENV_AMQ7_USER \
+            --password $ENV_AMQ7_PASSWORD \
+            --role $ENV_AMQ7_ROLE \
+            --allow-anonymous \
+            --cluster-user $ENV_AMQ7_CLUSTER_USER \
+            --cluster-password $ENV_AMQ7_CLUSTER_PASSWORD \
+            --http-host 0.0.0.0
 
-  chown -R amq7:amq7 /var/lib/amq7
+        cd $WORKDIR
+        cp /mnt/server-side-keystore.jks ./
+        cd /var/lib/amq7/etc
+        patch -p1 < /mnt/broker.xml.patch
 
+        chown -R amq7:amq7 /var/lib/amq7
 	cd $WORKDIR
 fi
 

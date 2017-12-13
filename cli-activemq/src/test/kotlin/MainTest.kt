@@ -22,6 +22,7 @@ import com.redhat.mqe.aoc.Main
 class AocMainTest : AbstractMainTest() {
 
     override val brokerUrl = "tcp://127.0.0.1:61616"
+    override val sslBrokerUrl = "ssl://127.0.0.1:61617"
 
     override val senderAdditionalOptions =
 // TODO(jdanek): uncomment when we can handle mixing regular and reconnect options
