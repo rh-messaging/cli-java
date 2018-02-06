@@ -179,19 +179,19 @@ public abstract class ClientOptions {
     public static final String MSG_CORRELATION_ID = "msg-correlation-id";
     static final String MSG_NOTIMESTAMP = "msg-no-timestamp";
 
-    static final String PROPERTY_TYPE = "property-type";
-    static final String MSG_PROPERTY = "msg-property";
+    public static final String PROPERTY_TYPE = "property-type";
+    public static final String MSG_PROPERTY = "msg-property";
     public static final String CONTENT_TYPE = "content-type";
     public static final String MSG_CONTENT = "msg-content";
     public static final String MSG_CONTENT_BINARY = "msg-content-binary";
-    static final String MSG_CONTENT_TYPE = "msg-content-type";
+    public static final String MSG_CONTENT_TYPE = "msg-content-type";
     public static final String MSG_CONTENT_FROM_FILE = "msg-content-from-file";
-    static final String MSG_CONTENT_MAP_ITEM = "msg-content-map-item";
+    public static final String MSG_CONTENT_MAP_ITEM = "msg-content-map-item";
     public static final String MSG_CONTENT_LIST_ITEM = "msg-content-list-item";
 
-    static final String MSG_GROUP_ID = "msg-group-id";
-    static final String MSG_GROUP_SEQ = "msg-group-seq";
-    static final String MSG_REPLY_TO_GROUP_ID = "msg-reply-to-group-id";
+    public static final String MSG_GROUP_ID = "msg-group-id";
+    public static final String MSG_GROUP_SEQ = "msg-group-seq";
+    public static final String MSG_REPLY_TO_GROUP_ID = "msg-reply-to-group-id";
 
     /**
      * CONNECTOR

@@ -46,8 +46,8 @@ public abstract class ClientOptionManager {
     protected final Map<String, String> CONNECTION_TRANSLATION_MAP = new HashMap<>();
     protected Map<String, String> connectionOptionsUrlMap = new HashMap<>();
     private List<Option> updatedOptions = new ArrayList<>();
-    protected static final String QUEUE_PREFIX = "queue://";
-    protected static final String TOPIC_PREFIX = "topic://";
+    public static final String QUEUE_PREFIX = "queue://";
+    public static final String TOPIC_PREFIX = "topic://";
 
     private static final String protocol = "(?<protocol>\\w+(?:\\+?\\w+)*://)?";
     private static final String credentials = "(?:(?<username>\\w*)?:?(?<password>\\w*)?@)?";
