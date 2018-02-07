@@ -20,7 +20,6 @@
 package com.redhat.mqe.lib;
 
 import javax.jms.*;
-
 import java.util.UUID;
 
 import static com.redhat.mqe.lib.ClientOptions.*;

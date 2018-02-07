@@ -19,13 +19,8 @@
 
 package com.redhat.mqe.lib;
 
+import javax.jms.*;
 import java.util.Enumeration;
-
-import javax.jms.Connection;
-import javax.jms.Message;
-import javax.jms.Queue;
-import javax.jms.QueueBrowser;
-import javax.jms.Session;
 
 /**
  * Class for browsing Queue(s) of messages.

@@ -21,8 +21,8 @@ package com.redhat.mqe.lib;
 
 import com.redhat.mqe.lib.message.MessageProvider;
 
-import java.util.List;
 import javax.jms.*;
+import java.util.List;
 
 /**
  * SenderClient is able to send various messages with wide options

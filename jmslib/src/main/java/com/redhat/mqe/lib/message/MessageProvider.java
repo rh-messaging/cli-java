@@ -19,11 +19,17 @@
 
 package com.redhat.mqe.lib.message;
 
-import com.redhat.mqe.lib.*;
+import com.redhat.mqe.lib.ClientOptionManager;
+import com.redhat.mqe.lib.ClientOptions;
+import com.redhat.mqe.lib.Content;
+import com.redhat.mqe.lib.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.*;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

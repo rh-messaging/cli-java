@@ -20,7 +20,6 @@
 package com.redhat.mqe.aoc;
 
 import com.redhat.mqe.lib.ConnectionManagerFactory;
-import com.redhat.mqe.lib.CoreClient;
 
 public class Main {
     public static void main(String[] args) throws Exception {

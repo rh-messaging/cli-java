@@ -22,7 +22,9 @@ package com.redhat.mqe.lib.message;
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.Content;
 
-import javax.jms.*;
+import javax.jms.JMSException;
+import javax.jms.Session;
+import javax.jms.TextMessage;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

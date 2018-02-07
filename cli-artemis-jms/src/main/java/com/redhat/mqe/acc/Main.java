@@ -19,7 +19,7 @@
 
 package com.redhat.mqe.acc;
 
-import com.redhat.mqe.lib.*;
+import com.redhat.mqe.lib.ConnectionManagerFactory;
 
 public class Main {
     public static void main(String[] args) throws Exception {

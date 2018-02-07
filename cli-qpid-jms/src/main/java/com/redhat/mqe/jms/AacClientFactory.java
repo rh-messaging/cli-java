@@ -20,12 +20,6 @@
 package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.*;
-import com.redhat.mqe.lib.ClientOptionManager;
-import com.redhat.mqe.lib.ConnectorClient;
-import com.redhat.mqe.lib.CoreClient;
-import com.redhat.mqe.lib.MessageBrowser;
-import com.redhat.mqe.lib.ReceiverClient;
-import com.redhat.mqe.lib.SenderClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
