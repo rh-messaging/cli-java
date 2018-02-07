@@ -29,7 +29,9 @@ import java.io.InputStream;
 
 public class BytesMessageProvider extends MessageProvider implements AutoCloseable {
     private final Session session;
-    /** most recent message's content, for closing streamed message content */
+    /**
+     * most recent message's content, for closing streamed message content
+     */
     private Object content;
 
     public BytesMessageProvider(ClientOptions senderOptions, Session session) {

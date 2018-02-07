@@ -19,20 +19,7 @@
 
 package com.redhat.mqe.aoc;
 
-import com.redhat.mqe.lib.ClientFactory;
-import com.redhat.mqe.lib.ClientOptionManager;
-import com.redhat.mqe.lib.ClientOptions;
-import com.redhat.mqe.lib.ConnectionManagerFactory;
-import com.redhat.mqe.lib.ConnectorClient;
-import com.redhat.mqe.lib.ConnectorOptions;
-import com.redhat.mqe.lib.CoreClient;
-import com.redhat.mqe.lib.MessageBrowser;
-import com.redhat.mqe.lib.MessageFormatter;
-import com.redhat.mqe.lib.OpenwireMessageFormatter;
-import com.redhat.mqe.lib.ReceiverClient;
-import com.redhat.mqe.lib.ReceiverOptions;
-import com.redhat.mqe.lib.SenderClient;
-import com.redhat.mqe.lib.SenderOptions;
+import com.redhat.mqe.lib.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
