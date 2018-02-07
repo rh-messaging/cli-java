@@ -24,8 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -33,7 +32,7 @@ import java.nio.file.Files;
 import java.security.InvalidParameterException;
 import java.util.List;
 
-public class MessageProvider {
+public class MessageProvider implements AutoCloseable {
     static Logger LOG = LoggerFactory.getLogger(MessageProvider.class);
     private final ClientOptions senderOptions;
     private final Session session;
@@ -259,7 +258,19 @@ public class MessageProvider {
             return senderOptions.getOption(ClientOptions.MSG_CONTENT).getValue();
         } else if (senderOptions.getOption(ClientOptions.MSG_CONTENT_FROM_FILE).hasParsedValue()) {
             LOG.trace("set MSG_CONTENT_FROM_FILE");
-            byte[] bytes = readBinaryContentFromFile(senderOptions.getOption(ClientOptions.MSG_CONTENT_FROM_FILE).getValue());
+            final String fileName = senderOptions.getOption(ClientOptions.MSG_CONTENT_FROM_FILE).getValue();
+
+            if (Boolean.parseBoolean(senderOptions.getOption(ClientOptions.MSG_CONTENT_STREAM).getValue())) {
+                File binaryFile = new File(fileName);
+                try {
+                    return new BufferedInputStream(new FileInputStream(binaryFile));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    System.exit(3);
+                }
+            }
+
+            byte[] bytes = readBinaryContentFromFile(fileName);
             if (Boolean.parseBoolean(senderOptions.getOption(ClientOptions.MSG_CONTENT_BINARY).getValue())) {
                 return bytes;
             } else {
@@ -278,5 +289,9 @@ public class MessageProvider {
     static boolean isEmptyMessage(List<String> values) {
         return (values.size() == 1
             && (values.get(0).equals("") || values.get(0).equals("\"\"") || values.get(0).equals("\'\'")));
+    }
+
+    @Override
+    public void close() throws Exception {
     }
 }

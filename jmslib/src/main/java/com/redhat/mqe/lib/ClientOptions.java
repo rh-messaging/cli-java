@@ -152,6 +152,8 @@ public abstract class ClientOptions {
     static final String TX_ENDLOOP_ACTION = "tx-endloop-action";
     static final String CAPACITY = "capacity";
 
+    public static final String MSG_CONTENT_STREAM = "msg-content-stream";
+
     /**
      * RECEIVER Options
      */
@@ -293,6 +295,8 @@ public abstract class ClientOptions {
             new Option(MSG_DURABLE, "false"),
             new Option(DURATION, "0"),
             new Option(FAILOVER_URL, ""),
+
+            new Option(MSG_CONTENT_STREAM, "", "", "false", "should the message be streamed, must be used with binary content on sender"),
 
             // OpenWire
             new Option(CONN_SERVER_STACK_TRACE_ENA, "", "ENABLED", "true", "should the stack trace of exception that occur on the broker be sent to the client?"),

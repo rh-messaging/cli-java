@@ -17,9 +17,12 @@
  * limitations under the License.
  */
 
+import com.google.common.truth.Truth.assertThat
 import com.redhat.mqe.acc.Main
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import java.io.File
+import java.nio.file.Files
 
 class AccMainTest : AbstractMainTest() {
 
@@ -142,6 +145,62 @@ class AccMainTest : AbstractMainTest() {
     @Disabled("ARTEMIS-1538 trustAll is ignored when specified in the connectionFactory URI")
     @Test
     override fun sendSingleMessageAllTrustingTls() {
+    }
+
+    /**
+     * Large message streaming from/to java.io.{Input,Output}Stream is artemis-jms-client only
+     */
+    @Test
+    fun sendLargeMessageStreamFile() {
+        val file = File.createTempFile(address, null)
+        val outputDirectory = Files.createTempDirectory(address)
+        val output = outputDirectory.resolve("message")
+        val output0 = outputDirectory.resolve("message_0")
+        try {
+            file.writeText("aContent")
+            val senderParameters =
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true --msg-content-stream true".split(" ").toTypedArray()
+            val receiverParameters =
+                "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-binary-content-to-file $output".split(" ").toTypedArray()
+
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+
+            assertThat(output0.toFile().readBytes()).isEqualTo(file.readBytes())
+        } finally {
+            file.delete()
+            outputDirectory.toFile().deleteRecursively()
+        }
+    }
+
+    /**
+     * Large message streaming from/to java.io.{Input,Output}Stream is artemis-jms-client only
+     */
+    @Test
+    fun sendAndReceiveLargeMessageStreamFile() {
+        val file = File.createTempFile(address, "input")
+        val outputDirectory = Files.createTempDirectory(address)
+        val output = outputDirectory.resolve("message")
+        val output0 = outputDirectory.resolve("message_0")
+        try {
+            file.writeText("aContent")
+            val senderParameters =
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true --msg-content-stream true".split(" ").toTypedArray()
+            val receiverParameters =
+                "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-binary-content-to-file $output --msg-content-stream true".split(" ").toTypedArray()
+
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+
+            assertThat(output0.toFile().readBytes()).isEqualTo(file.readBytes())
+        } finally {
+            file.delete()
+            outputDirectory.toFile().deleteRecursively()
+        }
     }
 //
 //

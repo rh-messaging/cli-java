@@ -290,7 +290,10 @@ public abstract class AacClientOptions extends ClientOptions {
             new Option(TRANSACTED, "false"),
             new Option(MSG_DURABLE, "false"),
             new Option(DURATION, "0"),
-            new Option(FAILOVER_URL, "")
+            new Option(FAILOVER_URL, ""),
+
+
+            new Option(MSG_CONTENT_STREAM, "", "", "false", "should the message be streamed, must be used with binary content on sender")
         ));
         translationDtestJmsMap.put("", "");
 

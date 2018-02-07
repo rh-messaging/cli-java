@@ -110,6 +110,14 @@ public class SenderClient extends CoreClient {
                     ((BytesMessage) message).reset();
                 }
                 printMessage(senderOptions, message);
+
+                // close streaming message source if that is what we are doing
+                try {
+                    messageProvider.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
                 // sleep for given amount of time, defined by msg-rate "after-send-before-tx-action"
                 if (durationMode.equals(AFTER_SEND)) {
                     LOG.trace("Sleeping after send");
