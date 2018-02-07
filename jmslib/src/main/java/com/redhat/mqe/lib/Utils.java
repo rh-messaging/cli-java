@@ -329,6 +329,23 @@ public class Utils {
         return myObj;
     }
 
+    public static void streamBinaryContentToFile(String filePath, Message message, int msgCounter) {
+        try {
+            File outputFile = getFilePath(filePath, msgCounter);
+            try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
+                 BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutputStream)) {
+//                final String saveStream = "JMS_AMQ_SaveStream";
+                final String saveStream = "JMS_AMQ_OutputStream";
+                message.setObjectProperty(saveStream, bufferedOutput);
+            }
+        } catch (IOException e) {
+            LOG.error("Error while writing to file '" + filePath + "'.");
+            e.printStackTrace();
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Write message binary body to provided file or default one in temp directory.
      *
@@ -339,11 +356,7 @@ public class Utils {
         byte[] readByteArray;
         try {
             File writeBinaryFile;
-            if (filePath == null || filePath.equals("")) {
-                writeBinaryFile = File.createTempFile("recv_msg_", Long.toString(System.currentTimeMillis()));
-            } else {
-                writeBinaryFile = new File(filePath + "_" + msgCounter);
-            }
+            writeBinaryFile = getFilePath(filePath, msgCounter);
 
             LOG.debug("Write binary content to file '" + writeBinaryFile.getPath() + "'.");
             if (message instanceof BytesMessage) {
@@ -372,5 +385,15 @@ public class Utils {
             LOG.error("Error while writing to file '" + filePath + "'.");
             e1.printStackTrace();
         }
+    }
+
+    private static File getFilePath(String filePath, int msgCounter) throws IOException {
+        File writeBinaryFile;
+        if (filePath == null || filePath.equals("")) {
+            writeBinaryFile = File.createTempFile("recv_msg_", Long.toString(System.currentTimeMillis()));
+        } else {
+            writeBinaryFile = new File(filePath + "_" + msgCounter);
+        }
+        return writeBinaryFile;
     }
 }

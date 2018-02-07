@@ -24,9 +24,13 @@ import com.redhat.mqe.lib.ClientOptions;
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 import javax.jms.Session;
+import java.io.Closeable;
+import java.io.InputStream;
 
-public class BytesMessageProvider extends MessageProvider {
+public class BytesMessageProvider extends MessageProvider implements AutoCloseable {
     private final Session session;
+    /** most recent message's content, for closing streamed message content */
+    private Object content;
 
     public BytesMessageProvider(ClientOptions senderOptions, Session session) {
         super(senderOptions, session);
@@ -35,6 +39,7 @@ public class BytesMessageProvider extends MessageProvider {
 
     @Override
     public BytesMessage provideMessage(long msgCounter) throws JMSException {
+        // do not cache instance, would not work for streaming messages
         return (BytesMessage) createMessage();
     }
 
@@ -42,10 +47,21 @@ public class BytesMessageProvider extends MessageProvider {
         BytesMessage bytesMessage = session.createBytesMessage();
 
         LOG.debug("Filling ByteMessage with binary data");
-        byte[] bytes = (byte[]) messageContent();
-        bytesMessage.writeBytes(bytes);
+        content = messageContent();
+        if (content instanceof byte[]) {
+            bytesMessage.writeBytes((byte[]) content);
+        } else if (content instanceof InputStream) {
+            final String jmsAmqInputStream = "JMS_AMQ_InputStream";
+            bytesMessage.setObjectProperty(jmsAmqInputStream, content);
+        }
 
         return bytesMessage;
     }
 
+    @Override
+    public void close() throws Exception {
+        if (content instanceof Closeable) {
+            ((Closeable) content).close();
+        }
+    }
 }

@@ -92,7 +92,7 @@ abstract class AbstractMainTest {
 
     @BeforeEach
     fun setup() {
-        print(LocalTime.now())
+        print("${LocalTime.now()} ")
         // https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
         randomSuffix = BigInteger(130, random).toString(32)
     }
@@ -369,5 +369,18 @@ abstract class AbstractMainTest {
             print("Sending: ")
             main(senderParameters)
         }
+    }
+
+    @Test
+    open fun sendLargeMessageChangingLimit() {
+        val senderParameters =
+            ("sender --log-msgs dict" +
+//                " --log-lib debug" +
+                " --address $address" +
+                " --broker-uri $brokerUrl?" +
+                "minLargeMessageSize=250000" +
+                ""
+                ).split(" ").toTypedArray()
+        main(senderParameters)
     }
 }

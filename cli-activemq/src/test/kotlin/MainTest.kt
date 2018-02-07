@@ -18,6 +18,8 @@
  */
 
 import com.redhat.mqe.aoc.Main
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
 class AocMainTest : AbstractMainTest() {
 
@@ -109,4 +111,9 @@ class AocMainTest : AbstractMainTest() {
 """.split(" ", "\n").toTypedArray()
 
     override fun main(args: Array<String>) = Main.main(args)
+
+    @Test
+    @Disabled("Invalid connect parameters: {minLargeMessageSize=250000}")
+    override fun sendLargeMessageChangingLimit() {
+    }
 }

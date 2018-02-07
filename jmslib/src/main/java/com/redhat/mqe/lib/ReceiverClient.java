@@ -209,7 +209,11 @@ public class ReceiverClient extends CoreClient {
 
                 if (msg != null) {
                     if (!writeBinaryMessageFile.isEmpty()) {
-                        Utils.writeBinaryContentToFile(writeBinaryMessageFile, msg, i);
+                        if (Boolean.valueOf(rcvrOpts.getOption(ClientOptions.MSG_CONTENT_STREAM).getValue())) {
+                            Utils.streamBinaryContentToFile(writeBinaryMessageFile, msg, i);
+                        } else {
+                            Utils.writeBinaryContentToFile(writeBinaryMessageFile, msg, i);
+                        }
                     }
                     i++;
                     printMessage(rcvrOpts, msg);
