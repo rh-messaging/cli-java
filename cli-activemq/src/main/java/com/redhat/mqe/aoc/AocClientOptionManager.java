@@ -109,6 +109,7 @@ class AocClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_SERVER_STACK_TRACE_ENA, "wireFormat.stackTraceEnabled");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_TCP_NO_DELAY, "wireFormat.tcpNoDelayEnabled");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_TIGHT_ENCODING_ENA, "wireFormat.tightEncodingEnabled");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_WATCH_TOPIC_ADVISORIES, "jms.watchTopicAdvisories");
     }
 
     protected void setBrokerOptions(ClientOptions clientOptions, String brokerUrl) {
