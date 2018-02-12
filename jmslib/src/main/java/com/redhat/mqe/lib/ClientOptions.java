@@ -126,6 +126,7 @@ public abstract class ClientOptions {
     public static final String CONN_SERVER_STACK_TRACE_ENA = "conn-server-stack-trace-ena";    // wireFormat.stackTraceEnabled
     public static final String CONN_TCP_NO_DELAY = "conn-tcp-no-delay";                   // wireFormat.tcpNoDelayEnabled
     public static final String CONN_TIGHT_ENCODING_ENA = "conn-tight-encoding-ena";      // wireFormat.tightEncodingEnabled
+    public static final String CONN_WATCH_TOPIC_ADVISORIES = "conn-watch-topic-advisories";
 
     // TODO Not implemented by client libraries
 //  static final String CON_SSL_PROTOCOL = "conn-ssl-protocol";
@@ -303,7 +304,8 @@ public abstract class ClientOptions {
             new Option(CONN_MAX_INACTITVITY_DUR, "", "MS", "30000", "The maximum inactivity duration (after which the connection is considered dead) in seconds"),
             new Option(CONN_MAX_INACTITVITY_DUR_INIT_DELAY, "", "MS", "10000", "initial delay before starting the maximum inactivity checks"),
             new Option(CONN_CACHE_SIZE, "", "if CM_ENA=true", "1024", "if cacheEnabled is true, then this specifies the maximum number of values to cached. This property was added in ActiveMQ 4.1"),
-            new Option(CONN_MAX_FRAME_SIZE, "", "MAX_LONG", String.valueOf(Long.MAX_VALUE), "Maximum frame size that can be sent. Can help help prevent OOM DOS attacks")
+            new Option(CONN_MAX_FRAME_SIZE, "", "MAX_LONG", String.valueOf(Long.MAX_VALUE), "Maximum frame size that can be sent. Can help help prevent OOM DOS attacks"),
+            new Option(CONN_WATCH_TOPIC_ADVISORIES, "", "ENABLED", String.valueOf(true), "Whether to attach to OpenWire topic advisory addresses")
         ));
     }
 
