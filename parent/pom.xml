@@ -34,9 +34,9 @@
     <packaging>pom</packaging>
 
     <properties>
-        <bundle.symbolic.name.suffix>Child POM responsibility</bundle.symbolic.name.suffix>
-        <jar.main.class>Child POM responsibility</jar.main.class>
-        <library.version>Child POM responsibility</library.version>
+        <bundle.symbolic.name.suffix>ChildPomResponsibility</bundle.symbolic.name.suffix>
+        <jar.main.class>ChildPomResponsibility</jar.main.class>
+        <library.version>ChildPomResponsibility</library.version>
         <jar.finalName>${project.artifactId}-${project.version}</jar.finalName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
