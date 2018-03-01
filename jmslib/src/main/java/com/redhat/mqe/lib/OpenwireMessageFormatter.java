@@ -19,6 +19,7 @@
 
 package com.redhat.mqe.lib;
 
+import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import java.util.HashMap;
@@ -30,6 +31,10 @@ import java.util.Map;
  * Reusable from old client
  */
 public class OpenwireMessageFormatter extends MessageFormatter {
+    @Inject
+    public OpenwireMessageFormatter() {
+    }
+
     /**
      * Openwire -> AMQP mapping http://activemq.apache.org/amqp.html
      */

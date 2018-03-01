@@ -19,11 +19,58 @@
 
 package com.redhat.mqe.acc;
 
-import com.redhat.mqe.lib.ConnectionManagerFactory;
+import com.redhat.mqe.lib.*;
+import dagger.Binds;
+import dagger.BindsInstance;
+import dagger.Component;
+import dagger.Module;
+
+import javax.inject.Named;
+
+@Module(includes = AccClientModule.Declarations.class)
+final class AccClientModule {
+    @Module
+    interface Declarations {
+        @Binds
+        ConnectionManagerFactory bindConnectionManagerFactory(AccConnectionManagerFactory f);
+
+        @Binds
+        MessageFormatter bindMessageFormatter(AccCoreMessageFormatter f);
+
+        @Binds
+        ClientOptionManager bindClientOptionManager(AccClientOptionManager m);
+
+        @Binds
+        @Named("Sender")
+        ClientOptions bindClientOptions(SenderOptions o);
+
+        @Binds
+        @Named("Receiver")
+        ClientOptions bindReceiverOptions(ReceiverOptions o);
+
+        @Binds
+        @Named("Connector")
+        ClientOptions bindConnectorOptions(ConnectorOptions o);
+    }
+}
+
+@Component(modules = {
+    AccClientModule.class
+})
+interface AccClient extends Client {
+    @Component.Builder
+    interface Builder {
+        @BindsInstance
+        Builder args(@Args String[] args);
+
+        AccClient build();
+    }
+}
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        ConnectionManagerFactory connectionManagerFactory = new AccConnectionManagerFactory();
-        com.redhat.mqe.lib.Main.main(args, new AccClientFactory(), connectionManagerFactory);
+        AccClient client = DaggerAccClient.builder()
+            .args(args).build();
+        com.redhat.mqe.lib.Main.main(args, client);
     }
 }

@@ -38,10 +38,11 @@
         <truth.version>0.31</truth.version>
         <system.rules.version>1.16.0</system.rules.version>
 
-        <plugin.compiler.version>3.5.1</plugin.compiler.version>
+        <plugin.compiler.version>3.6.1</plugin.compiler.version>
         <plugin.assembly.version>2.6</plugin.assembly.version>
         <plugin.enforcer.version>1.4.1</plugin.enforcer.version>
         <plugin.jar.version>2.6</plugin.jar.version>
+        <dagger.version>2.13</dagger.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -80,6 +81,13 @@
                 <version>1.2.2-SNAPSHOT</version>
                 <type>test-jar</type>
                 <scope>test</scope>
+            </dependency>
+
+            <!--dependency injector-->
+            <dependency>
+                <groupId>com.google.dagger</groupId>
+                <artifactId>dagger</artifactId>
+                <version>${dagger.version}</version>
             </dependency>
 
             <!--test dependencies-->

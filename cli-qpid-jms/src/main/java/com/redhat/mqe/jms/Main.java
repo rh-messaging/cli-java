@@ -19,11 +19,58 @@
 
 package com.redhat.mqe.jms;
 
-import com.redhat.mqe.lib.ConnectionManagerFactory;
+import com.redhat.mqe.lib.*;
+import dagger.Binds;
+import dagger.BindsInstance;
+import dagger.Component;
+import dagger.Module;
+
+import javax.inject.Named;
+
+@Module(includes = AacClientModule.Declarations.class)
+final class AacClientModule {
+    @Module
+    interface Declarations {
+        @Binds
+        ConnectionManagerFactory bindConnectionManagerFactory(AacConnectionManagerFactory f);
+
+        @Binds
+        MessageFormatter bindMessageFormatter(AMQPMessageFormatter f);
+
+        @Binds
+        ClientOptionManager bindClientOptionManager(AacClientOptionManager m);
+
+        @Binds
+        @Named("Sender")
+        ClientOptions bindClientOptions(AacSenderOptions o);
+
+        @Binds
+        @Named("Receiver")
+        ClientOptions bindReceiverOptions(AacReceiverOptions o);
+
+        @Binds
+        @Named("Connector")
+        ClientOptions bindConnectorOptions(AacConnectorOptions o);
+    }
+}
+
+@Component(modules = {
+    AacClientModule.class
+})
+interface AacClient extends Client {
+    @Component.Builder
+    interface Builder {
+        @BindsInstance
+        Builder args(@Args String[] args);
+
+        AacClient build();
+    }
+}
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        ConnectionManagerFactory connectionManagerFactory = new AacConnectionManagerFactory();
-        com.redhat.mqe.lib.Main.main(args, new AacClientFactory(), connectionManagerFactory);
+        AacClient client = DaggerAacClient.builder()
+            .args(args).build();
+        com.redhat.mqe.lib.Main.main(args, client);
     }
 }

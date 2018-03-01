@@ -22,10 +22,15 @@ package com.redhat.mqe.acc;
 import com.redhat.mqe.lib.CoreMessageFormatter;
 import org.apache.activemq.artemis.jms.client.ActiveMQDestination;
 
+import javax.inject.Inject;
 import javax.jms.Destination;
 import java.security.InvalidParameterException;
 
 public class AccCoreMessageFormatter extends CoreMessageFormatter {
+    @Inject
+    AccCoreMessageFormatter() {
+    }
+
     @Override
     protected String formatAddress(Destination destination) {
         if (destination == null) {

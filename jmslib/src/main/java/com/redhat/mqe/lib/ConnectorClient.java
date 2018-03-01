@@ -22,6 +22,8 @@ package com.redhat.mqe.lib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jms.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,8 @@ public class ConnectorClient extends CoreClient {
     private static List<Throwable> exceptions = new ArrayList<>();
     private Logger LOG_CLEAN = LoggerFactory.getLogger(MessageFormatter.class); // MessageFormatter?
 
-    public ConnectorClient(String[] arguments, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, ClientOptions options) {
+    @Inject
+    public ConnectorClient(ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, @Named("Connector") ClientOptions options) {
         this.connectionManagerFactory = connectionManagerFactory;
         this.messageFormatter = messageFormatter;
         this.connectorOptions = options;
