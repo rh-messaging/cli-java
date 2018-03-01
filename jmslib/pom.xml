@@ -33,8 +33,7 @@
     <artifactId>jmslib</artifactId>
 
     <properties>
-        <!-- to create a jar with sensible name -->
-        <library.version></library.version>
+        <maven.install.skip>true</maven.install.skip>
     </properties>
 
     <dependencies>
