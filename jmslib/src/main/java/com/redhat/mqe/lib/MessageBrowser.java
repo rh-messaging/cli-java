@@ -19,6 +19,8 @@
 
 package com.redhat.mqe.lib;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jms.*;
 import java.util.Enumeration;
 
@@ -31,7 +33,8 @@ public class MessageBrowser extends CoreClient {
     private String msgSelector;
     ClientOptions clientOptions;
 
-    public MessageBrowser(ClientOptions clientOptions, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter) {
+    @Inject
+    public MessageBrowser(@Named("Receiver") ClientOptions clientOptions, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter) {
         this.connectionManagerFactory = connectionManagerFactory;
         this.messageFormatter = messageFormatter;
         this.clientOptions = clientOptions;
@@ -52,9 +55,13 @@ public class MessageBrowser extends CoreClient {
     }
 
     @Override
-    public void startClient() throws Exception {
+    public void startClient() {
         this.setMessageBrowser(clientOptions);
-        this.browseMessages();
+        try {
+            this.browseMessages();
+        } catch (Exception e) {
+            throw new JmsMessagingException("unable to browse messages", e);
+        }
     }
 
     /**

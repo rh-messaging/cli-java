@@ -22,6 +22,7 @@ package com.redhat.mqe.acc;
 import com.redhat.mqe.lib.ClientOptionManager;
 import com.redhat.mqe.lib.ClientOptions;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -108,6 +109,10 @@ class AccClientOptionManager extends ClientOptionManager {
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_TRUST_ALL, "trustAll");
         CTL_SSL_OPTIONS.put(ClientOptions.CON_SSL_VERIFY_HOST, "verifyHost");
         CONNECTION_TRANSLATION_MAP.putAll(CTL_SSL_OPTIONS);
+    }
+
+    @Inject
+    AccClientOptionManager() {
     }
 
     @Override

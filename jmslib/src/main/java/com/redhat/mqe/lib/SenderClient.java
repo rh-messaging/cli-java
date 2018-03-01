@@ -21,6 +21,8 @@ package com.redhat.mqe.lib;
 
 import com.redhat.mqe.lib.message.MessageProvider;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jms.*;
 import java.util.List;
 
@@ -38,7 +40,8 @@ public class SenderClient extends CoreClient {
     static final String AFTER_SEND_TX_ACTION = "after-send-tx-action";
 
 
-    public SenderClient(String[] arguments, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, ClientOptions options) {
+    @Inject
+    public SenderClient(ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, @Named("Sender") ClientOptions options) {
         this.connectionManagerFactory = connectionManagerFactory;
         this.messageFormatter = messageFormatter;
         this.senderOptions = options;

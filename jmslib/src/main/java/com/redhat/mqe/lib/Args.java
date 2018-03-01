@@ -17,19 +17,10 @@
  * limitations under the License.
  */
 
-package com.redhat.mqe.aoc;
+package com.redhat.mqe.lib;
 
-import com.redhat.mqe.lib.ClientOptions;
-import com.redhat.mqe.lib.ConnectionManagerFactory;
-
-import javax.inject.Inject;
-
-public class AocConnectionManagerFactory extends ConnectionManagerFactory {
-    @Inject
-    AocConnectionManagerFactory() {
-    }
-
-    public AocConnectionManager make(ClientOptions clientOptions, String brokerUri) {
-        return new AocConnectionManager(clientOptions, brokerUri);
-    }
+/**
+ * Annotation to mark the String[] args argument for DI
+ */
+public @interface Args {
 }

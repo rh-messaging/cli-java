@@ -19,11 +19,58 @@
 
 package com.redhat.mqe.aoc;
 
-import com.redhat.mqe.lib.ConnectionManagerFactory;
+import com.redhat.mqe.lib.*;
+import dagger.Binds;
+import dagger.BindsInstance;
+import dagger.Component;
+import dagger.Module;
+
+import javax.inject.Named;
+
+@Component(modules = {
+    AocClientModule.class
+})
+interface AocClient extends Client {
+    @Component.Builder
+    interface Builder {
+        @BindsInstance
+        Builder args(@Args String[] args);
+
+        AocClient build();
+    }
+}
+
+@Module(includes = AocClientModule.Declarations.class)
+final class AocClientModule {
+    @Module
+    interface Declarations {
+        @Binds
+        ConnectionManagerFactory bindConnectionManagerFactory(AocConnectionManagerFactory f);
+
+        @Binds
+        MessageFormatter bindMessageFormatter(OpenwireMessageFormatter f);
+
+        @Binds
+        ClientOptionManager bindClientOptionManager(AocClientOptionManager m);
+
+        @Binds
+        @Named("Sender")
+        ClientOptions bindClientOptions(SenderOptions o);
+
+        @Binds
+        @Named("Receiver")
+        ClientOptions bindReceiverOptions(ReceiverOptions o);
+
+        @Binds
+        @Named("Connector")
+        ClientOptions bindConnectorOptions(ConnectorOptions o);
+    }
+}
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        ConnectionManagerFactory connectionManagerFactory = new AocConnectionManagerFactory();
-        com.redhat.mqe.lib.Main.main(args, new AocClientFactory(), connectionManagerFactory);
+        AocClient client = DaggerAocClient.builder()
+            .args(args).build();
+        com.redhat.mqe.lib.Main.main(args, client);
     }
 }

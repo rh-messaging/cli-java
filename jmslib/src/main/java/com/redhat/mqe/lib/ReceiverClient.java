@@ -19,6 +19,8 @@
 
 package com.redhat.mqe.lib;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.jms.*;
 import java.util.UUID;
 
@@ -70,7 +72,11 @@ public class ReceiverClient extends CoreClient {
     protected ClientOptions rcvrOpts;
     private String writeBinaryMessageFile;
 
-    public ReceiverClient(String[] arguments, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, ClientOptions options) {
+    @Inject
+    protected MessageBrowser messageBrowser;
+
+    @Inject
+    public ReceiverClient(ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, @Named("Receiver") ClientOptions options) {
         this.connectionManagerFactory = connectionManagerFactory;
         this.messageFormatter = messageFormatter;
         this.rcvrOpts = options;
@@ -124,13 +130,21 @@ public class ReceiverClient extends CoreClient {
 
     @Override
     public void startClient() {
+        // Browse if given the option
+        if (this.rcvrOpts.getOption(ReceiverOptions.BROWSER).hasParsedValue()) {
+            messageBrowser.startClient();
+            return;
+        }
+
         this.setReceiverClient(rcvrOpts);
+
         // Unsubscribe given durable topic subscriber
         if (unsubscribe && durableSubscriberName != null) {
             this.unsubscribe();
-        } else {
-            this.consumeMessage();
+            return;
         }
+
+        this.consumeMessage();
     }
 
     private void unsubscribe() {

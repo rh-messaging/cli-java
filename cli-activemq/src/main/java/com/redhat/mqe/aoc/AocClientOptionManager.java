@@ -22,6 +22,7 @@ package com.redhat.mqe.aoc;
 import com.redhat.mqe.lib.ClientOptionManager;
 import com.redhat.mqe.lib.ClientOptions;
 
+import javax.inject.Inject;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -110,6 +111,10 @@ class AocClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_TCP_NO_DELAY, "wireFormat.tcpNoDelayEnabled");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_TIGHT_ENCODING_ENA, "wireFormat.tightEncodingEnabled");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CONN_WATCH_TOPIC_ADVISORIES, "jms.watchTopicAdvisories");
+    }
+
+    @Inject
+    AocClientOptionManager() {
     }
 
     protected void setBrokerOptions(ClientOptions clientOptions, String brokerUrl) {

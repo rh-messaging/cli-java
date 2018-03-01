@@ -19,10 +19,13 @@
 
 package com.redhat.mqe.lib;
 
-public abstract class ClientFactory {
-    public abstract CoreClient makeSenderClient(String[] args, ConnectionManagerFactory connectionManagerFactory);
+/**
+ * Parent interface for Dagger components
+ */
+public interface Client {
+    SenderClient makeSenderClient();
 
-    public abstract CoreClient makeReceiverClient(String[] args, ConnectionManagerFactory connectionManagerFactory);
+    ReceiverClient makeReceiverClient();
 
-    public abstract CoreClient makeConnectorClient(String[] args, ConnectionManagerFactory connectionManagerFactory);
+    ConnectorClient makeConnectorClient();
 }

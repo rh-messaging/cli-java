@@ -22,6 +22,7 @@ package com.redhat.mqe.lib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.util.*;
 
 /**
@@ -29,6 +30,12 @@ import java.util.*;
  * with default options for clients.
  */
 public abstract class ClientOptions {
+
+    @Inject
+        // TODO(jdanek): this initialization is confusing, admittedly
+    void setOptions(ClientOptionManager clientOptionManager, @Args String[] args) {
+        clientOptionManager.applyClientArguments(this, args);
+    }
 
     protected static final Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
     protected static final String OUT = "out";

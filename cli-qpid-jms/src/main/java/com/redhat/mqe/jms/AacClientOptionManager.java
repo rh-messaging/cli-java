@@ -22,6 +22,8 @@ package com.redhat.mqe.jms;
 import com.redhat.mqe.lib.ClientOptionManager;
 import com.redhat.mqe.lib.ClientOptions;
 
+import javax.inject.Inject;
+
 public class AacClientOptionManager extends ClientOptionManager {
     {
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.CON_HEARTBEAT, "amqp.idleTimeout");
@@ -86,6 +88,10 @@ public class AacClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.CON_TCP_SOCK_LINGER, "transport.soLinger");
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.CON_TCP_KEEP_ALIVE, "transport.tcpKeepAlive");
         CONNECTION_TRANSLATION_MAP.put(AacClientOptions.CON_TCP_NO_DELAY, "transport.tcpNoDelay");
+    }
+
+    @Inject
+    AacClientOptionManager() {
     }
 
     @Override

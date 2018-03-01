@@ -22,20 +22,20 @@ package com.redhat.mqe.lib;
 import java.util.Arrays;
 
 public class Main {
-    public static void main(String[] args, ClientFactory clientFactory, ConnectionManagerFactory connectionManagerFactory) throws Exception {
+    public static void main(String[] args, Client clientFactory) throws Exception {
         CoreClient client = null;
         if (args.length > 0) {
             String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
 
             switch (args[0]) {
                 case "sender":
-                    client = clientFactory.makeSenderClient(subArgs, connectionManagerFactory);
+                    client = clientFactory.makeSenderClient();
                     break;
                 case "receiver":
-                    client = clientFactory.makeReceiverClient(subArgs, connectionManagerFactory);
+                    client = clientFactory.makeReceiverClient();
                     break;
                 case "connector":
-                    client = clientFactory.makeConnectorClient(subArgs, connectionManagerFactory);
+                    client = clientFactory.makeConnectorClient();
                     break;
             }
         }

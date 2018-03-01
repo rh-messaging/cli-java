@@ -22,7 +22,10 @@ package com.redhat.mqe.jms;
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManagerFactory;
 
+import javax.inject.Inject;
+
 public class AacConnectionManagerFactory extends ConnectionManagerFactory {
+    @Inject
     public AacConnectionManagerFactory() {
     }
 

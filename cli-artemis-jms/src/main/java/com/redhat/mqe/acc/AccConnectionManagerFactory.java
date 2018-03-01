@@ -22,7 +22,10 @@ package com.redhat.mqe.acc;
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManagerFactory;
 
+import javax.inject.Inject;
+
 public class AccConnectionManagerFactory extends ConnectionManagerFactory {
+    @Inject
     AccConnectionManagerFactory() {
     }
 
