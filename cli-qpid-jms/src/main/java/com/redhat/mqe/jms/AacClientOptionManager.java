@@ -103,6 +103,25 @@ public class AacClientOptionManager extends ClientOptionManager {
     }
 
     @Override
+    protected void setBrokerOptions(ClientOptions clientOptions, String brokerUrl) {
+        // Intercept setBrokerOptions and configure reconnect for the Aac client
+
+        if (Boolean.parseBoolean(clientOptions.getOption(ClientOptions.CON_RECONNECT).getValue())) {
+            // use failover mechanism by default, discovery otherwise
+            String uriProtocol = ClientOptions.FAILOVER_PROTO;
+            checkAndSetOption(ClientOptions.PROTOCOL, uriProtocol, clientOptions);
+            // Set the whole url as failoverUrl. Do not parse it. connection options should come as input "conn-*"
+            //TODO if missing protocol, add amqp by default
+            // failover:(dhcp-75-212.lab.eng.brq.redhat.com:5672,dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
+            // failover:(tcp://dhcp-75-212.lab.eng.brq.redhat.com:5672,tcp://dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
+            brokerUrl = appendMissingProtocol(brokerUrl);
+            checkAndSetOption(ClientOptions.FAILOVER_URL, brokerUrl, clientOptions);
+        } else {
+            super.setBrokerOptions(clientOptions, brokerUrl);
+        }
+    }
+
+    @Override
     protected String getUrlProtocol() {
         return "amqp";
     }
