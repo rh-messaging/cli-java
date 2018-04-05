@@ -19,7 +19,9 @@
 
 import com.redhat.mqe.jms.Main
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.function.Executable
 import java.time.Duration
 
 class AacMainTest : AbstractMainTest() {
@@ -140,6 +142,21 @@ class AacMainTest : AbstractMainTest() {
             main(senderParameters)
             print("Receiving: ")
             main(receiverParameters)
+        }
+    }
+
+    // https://issues.apache.org/jira/browse/QPIDJMS-342
+    @Test
+    fun attemptConnectingToWrongPortWithTimeout() {
+        val senderParameters =
+            ("connector" +
+                " --broker-uri failover:(amqp://127.0.0.1:1883)?jms.connectTimeout=1&failover.maxReconnectAttempts=1&failover.startupMaxReconnectAttempts=1" +
+                ""
+                ).split(" ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(5)) {
+            assertSystemExit(2, Executable {
+                main(senderParameters)
+            })
         }
     }
 }
