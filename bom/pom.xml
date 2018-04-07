@@ -44,6 +44,7 @@
         <plugin.jar.version>3.0.2</plugin.jar.version>
         <plugin.jacoco.version>0.8.0</plugin.jacoco.version>
         <plugin.bundle.version>3.5.0</plugin.bundle.version>
+        <plugin.surefire.version>2.21.0</plugin.surefire.version>
     </properties>
     <dependencyManagement>
         <dependencies>
