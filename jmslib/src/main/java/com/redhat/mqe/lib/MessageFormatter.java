@@ -135,6 +135,7 @@ public abstract class MessageFormatter {
         result.put("id", removeIDprefix((String) result.get("id")));
         result.put("user-id", removeIDprefix((String) result.get("user-id")));
         result.put("correlation-id", removeIDprefix((String) result.get("correlation-id")));
+        result.put("group-sequence", changeMinusOneToZero((long) result.get("group-sequence")));
         return result;
     }
 
@@ -201,6 +202,13 @@ public abstract class MessageFormatter {
             }
         }
         return in_data;
+    }
+
+    protected long changeMinusOneToZero(long n) {
+        if (n == -1) {
+            return 0;
+        }
+        return n;
     }
 
     /**
