@@ -27,6 +27,25 @@
     <version>1.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <repositories>
+        <repository>
+            <id>junit5-SNAPSHOT</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>junit5-SNAPSHOT</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <properties>
         <slfj.version>1.7.25</slfj.version>
         <jopt.version>4.9</jopt.version>
@@ -34,8 +53,8 @@
 
         <kotlin.version>1.2.21</kotlin.version>
         <junit.version>4.12</junit.version>
-        <junit.jupiter.version>5.1.0</junit.jupiter.version>
-        <junit.platform.version>1.1.0</junit.platform.version>
+        <junit.jupiter.version>5.2.0-SNAPSHOT</junit.jupiter.version>
+        <junit.platform.version>1.2.0-SNAPSHOT</junit.platform.version>
         <truth.version>0.40</truth.version>
 
         <plugin.compiler.version>3.7.0</plugin.compiler.version>
