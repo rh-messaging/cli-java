@@ -136,7 +136,6 @@ public abstract class MessageFormatter {
         result.put("user-id", removeIDprefix((String) result.get("user-id")));
         result.put("correlation-id", removeIDprefix((String) result.get("correlation-id")));
         result.put("group-sequence", changeMinusOneToZero((long) result.get("group-sequence")));
-        result.put("creation-time", ((long) result.get("creation-time")) / 1000);  // convert ms -> s
         return result;
     }
 
