@@ -138,17 +138,17 @@ public abstract class MessageFormatter {
         return result;
     }
 
-    protected String getGroupSequenceNumber(Message message, String propertyName) {
+    protected long getGroupSequenceNumber(Message message, String propertyName) {
         try {
             if (message.getStringProperty(propertyName) == null) {
-                return formatInt(0).toString();
+                return 0;
             } else {
-                return formatInt(message.getIntProperty(propertyName)).toString();
+                return message.getLongProperty(propertyName);  // it is UnsignedInteger in qpid-jms; ActiveMQ uses -1
             }
         } catch (JMSException e) {
             e.printStackTrace();
         }
-        return formatInt(0).toString();
+        return 0;
     }
 
     protected String dropDestinationPrefix(String destination) {
