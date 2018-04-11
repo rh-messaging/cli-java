@@ -299,6 +299,21 @@ abstract class AbstractMainTest {
     }
 
     @Test
+    fun sendAndReceiveAnInt() {
+        assertNoSystemExit {
+            val senderParameters =
+                """sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --content-type int --msg-content 1234""".split(" ").toTypedArray()
+            val receiverParameters =
+                "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+        }
+    }
+
+    @Test
     fun sendAndReceiveMessageFromFile() {
         val file = File.createTempFile(address, null)
         try {
