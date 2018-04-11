@@ -43,7 +43,7 @@ public class ObjectMessageProvider extends MessageProvider {
     @Override
     ObjectMessage createTypedMessage() throws JMSException {
         LOG.debug("Filling object data");
-        Content content = (Content) messageContent();
+        final Content content = new Content(globalContentType(), (String) messageContent(), false);
 
         ObjectMessage objectMessage = session.createObjectMessage();
         objectMessage.setObject((Serializable) content.getValue());

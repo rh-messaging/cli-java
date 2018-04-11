@@ -252,7 +252,7 @@ public class MessageProvider implements AutoCloseable {
     }
 
     /**
-     * Create message Content based on provided input.
+     * Create message content based on provided input.
      * This method does not care about types. Creation of object Content
      * takes care of autotype-casting and setting the proper values.
      *
