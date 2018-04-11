@@ -298,10 +298,14 @@ public abstract class MessageFormatter {
                 System.exit(1);
             }
         } else {
-            LOG.error("Unsupported object type {} {}", in_data.getClass().getCanonicalName(), in_data);
-            int_res.append(in_data.toString());
+            handleUnsupportedObjectMessagePayloadType(int_res, in_data);
         }
         return int_res;
+    }
+
+    public void handleUnsupportedObjectMessagePayloadType(StringBuilder int_res, Object in_data) {
+        LOG.error("Unsupported object type {} {}", in_data.getClass().getCanonicalName(), in_data);
+        int_res.append(in_data.toString());
     }
 
     @SuppressWarnings("unchecked")

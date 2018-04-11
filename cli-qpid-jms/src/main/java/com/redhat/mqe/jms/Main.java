@@ -35,7 +35,7 @@ final class AacClientModule {
         ConnectionManagerFactory bindConnectionManagerFactory(AacConnectionManagerFactory f);
 
         @Binds
-        MessageFormatter bindMessageFormatter(AMQPMessageFormatter f);
+        MessageFormatter bindMessageFormatter(AacAMQPMessageFormatter f);
 
         @Binds
         ClientOptionManager bindClientOptionManager(AacClientOptionManager m);

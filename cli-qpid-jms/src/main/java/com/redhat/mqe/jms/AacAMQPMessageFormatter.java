@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Red Hat, Inc.
+ * Copyright (c) 2018 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -17,23 +17,25 @@
  * limitations under the License.
  */
 
-package com.redhat.mqe.lib;
+package com.redhat.mqe.jms;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import java.util.HashMap;
-import java.util.Map;
+import com.redhat.mqe.lib.AMQPMessageFormatter;
+import org.apache.qpid.proton.amqp.Binary;
 
-/**
- * Message output formatter to python dict,
- * map, or any other object printable format.
- * Reusable from old client
- */
-public class AMQPMessageFormatter extends MessageFormatter {
-    public Map<String, Object> formatMessage(Message msg) throws JMSException {
-        Map<String, Object> result = new HashMap<>();
-        addFormatJMS11(msg, result);
-        addFormatJMS20(msg, result);
-        return result;
+import javax.inject.Inject;
+
+public class AacAMQPMessageFormatter extends AMQPMessageFormatter {
+    @Inject
+    public AacAMQPMessageFormatter() {
+    }
+
+    @Override
+    public void handleUnsupportedObjectMessagePayloadType(StringBuilder int_res, Object in_data) {
+        if (in_data instanceof org.apache.qpid.proton.amqp.Binary) {
+            final String s = ((Binary) in_data).getArray().toString();  // this gives Java object reference
+            int_res.append(formatString(s));
+        } else {
+            super.handleUnsupportedObjectMessagePayloadType(int_res, in_data);
+        }
     }
 }
