@@ -20,6 +20,7 @@
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.params.ParameterizedTest
@@ -97,6 +98,7 @@ abstract class AbstractMainTest {
         randomSuffix = BigInteger(130, random).toString(32)
     }
 
+    @Tag("pairwise")
     @ParameterizedTest
     @ValueSource(strings = arrayOf("sender", "receiver", "connector"))
     fun printHelp(client: String) {
@@ -255,6 +257,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("pairwise")
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/sender.csv"))
     fun sendAndReceiveWithAllSenderCLISwitches(senderDynamicOptions: String) {
@@ -272,6 +275,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("pairwise")
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/connector.csv"))
     fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {

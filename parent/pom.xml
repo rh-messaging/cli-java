@@ -153,6 +153,9 @@
                 <configuration>
                     <trimStackTrace>false</trimStackTrace>
                     <forkCount>1</forkCount>
+                    <properties>
+                        <excludeTags>pairwise</excludeTags>
+                    </properties>
                 </configuration>
                 <dependencies>
                     <dependency>
