@@ -33,7 +33,6 @@
         <dagger.version>2.15</dagger.version>
 
         <kotlin.version>1.2.21</kotlin.version>
-        <junit.version>4.12</junit.version>
         <junit.jupiter.version>5.2.0-RC1</junit.jupiter.version>
         <junit.platform.version>1.2.0-RC1</junit.platform.version>
         <truth.version>0.40</truth.version>
@@ -126,12 +125,6 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.jupiter.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
