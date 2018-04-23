@@ -116,10 +116,12 @@
 
     <profiles>
         <profile>
-            <!--build tests only on java 8 and up-->
-            <id>java8</id>
+            <!--build Kotlin tests only when explicitly requested-->
+            <id>tests</id>
             <activation>
-                <jdk>(1.7,)</jdk>
+                <property>
+                    <name>tests</name>
+                </property>
             </activation>
             <build>
                 <plugins>
