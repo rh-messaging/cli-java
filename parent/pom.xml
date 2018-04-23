@@ -151,11 +151,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${plugin.surefire.version}</version>
                 <configuration>
-                    <trimStackTrace>false</trimStackTrace>
                     <forkCount>1</forkCount>
-                    <properties>
-                        <excludeTags>pairwise</excludeTags>
-                    </properties>
                 </configuration>
                 <dependencies>
                     <dependency>
