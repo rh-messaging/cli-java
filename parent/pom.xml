@@ -157,6 +157,7 @@
                 <version>${plugin.surefire.version}</version>
                 <configuration>
                     <trimStackTrace>false</trimStackTrace>
+                    <forkCount>0</forkCount>
                 </configuration>
                 <dependencies>
                     <dependency>
