@@ -21,6 +21,7 @@ package com.redhat.mqe.acc;
 
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManager;
+import com.redhat.mqe.lib.MessagingExceptionListener;
 import org.apache.activemq.artemis.api.core.ActiveMQDisconnectedException;
 import org.apache.activemq.artemis.api.core.ActiveMQNotConnectedException;
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;

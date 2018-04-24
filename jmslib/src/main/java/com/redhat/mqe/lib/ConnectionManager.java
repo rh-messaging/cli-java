@@ -19,9 +19,6 @@
 
 package com.redhat.mqe.lib;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.jms.*;
 
 /**
@@ -42,14 +39,13 @@ abstract public class ConnectionManager {
     protected String username;
     protected static final String QUEUE_OBJECT = "javax.jms.Queue";
     protected static final String TOPIC_OBJECT = "javax.jms.Topic";
+
     /**
      * private static final String AMQ_INITIAL_CONTEXT = "org.apache.qpid.jms.jndi.JmsInitialContextFactory";
      * private static final String QPID_INITIAL_CONTEXT = "org.apache.qpid.jndi.PropertiesFileInitialContextFactory";
      * private static final String WIRE_INITIAL_CONTEXT = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";
      * private static final String ARTEMIS_INITIAL_CONTEXT = "org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory";
      */
-
-    private Logger LOG = LoggerFactory.getLogger(ConnectionManager.class.getName());
 
     public ConnectionManager() {
         // FIXME(jdanek): empty constructor, before I change the hierarchy
@@ -66,16 +62,4 @@ abstract public class ConnectionManager {
     protected abstract Queue createQueue(String queueName);
 
     protected abstract Topic createTopic(String topicName);
-
-    /**
-     * MessagingExceptionListener is created for each connection made.
-     */
-    public class MessagingExceptionListener implements ExceptionListener {
-        @Override
-        public void onException(JMSException e) {
-            LOG.error("ExceptionListener error detected! \n{}\n{}", e.getMessage(), e.getCause());
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
 }

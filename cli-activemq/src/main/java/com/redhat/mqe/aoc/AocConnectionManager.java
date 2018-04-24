@@ -21,6 +21,7 @@ package com.redhat.mqe.aoc;
 
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManager;
+import com.redhat.mqe.lib.MessagingExceptionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
