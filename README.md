@@ -13,23 +13,23 @@ cli-java is a collection of commandline messaging clients suitable for interacti
     mvn package -DskipTests=true  # compile without executing tests (tests require broker)
     java -jar cli-qpid-jms/target/cli-qpid-jms-*.jar sender -b amqp://127.0.0.1:5672 -a myQ --log-msgs dict
 
+### Run tests
+
+    mvn test -Pcoverage,tests
+
 ### Update versions
 
     mvn versions:set -DgenerateBackupPoms=false -DnewVersion=2017.07
 
 ## List of Java clis
 
-(Some of the clis below are not developed yet.)
-
-* qpid-java (AMQP 0-9-1)
 * qpid-jms (AMQP 1.0)
-* Vert.x AMQP Bridge (AMQP 1.0)
 * activemq-client (OpenWire)
 * artemis-jms-client (Artemis Core)
-* hornetq-jms-client (HornetQ)
 
 ## Related projects
 
 * https://github.com/rh-messaging/cli-netlite
 * https://github.com/rh-messaging/cli-rhea
 * https://github.com/rh-messaging/cli-proton-python
+* https://github.com/rh-messaging/cli-proton-ruby
