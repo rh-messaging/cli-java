@@ -34,7 +34,7 @@ import java.time.LocalTime
 import java.util.*
 import kotlin.test.fail
 
-class SystemExitingWithStatus(val status: Int) : Exception()
+class SystemExitingWithStatus(val status: Int) : SecurityException()
 
 class NoExitSecurityManager(val parentManager: SecurityManager?) : SecurityManager() {
     override fun checkExit(status: Int) = throw SystemExitingWithStatus(status)
@@ -408,7 +408,6 @@ abstract class AbstractMainTest {
     open fun sendLargeMessageChangingLimit() {
         val senderParameters =
             ("sender --log-msgs dict" +
-//                " --log-lib debug" +
                 " --address $address" +
                 " --broker-uri $brokerUrl?" +
                 "minLargeMessageSize=250000" +

@@ -20,6 +20,7 @@
 import com.redhat.mqe.jms.Main
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import java.time.Duration
@@ -146,6 +147,7 @@ class AacMainTest : AbstractMainTest() {
     }
 
     // https://issues.apache.org/jira/browse/QPIDJMS-342
+    @Tag("issue")
     @Test
     fun attemptConnectingToWrongPortWithTimeout() {
         val senderParameters =

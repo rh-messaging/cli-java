@@ -21,6 +21,7 @@ package com.redhat.mqe.jms;
 
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManager;
+import com.redhat.mqe.lib.MessagingExceptionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,18 +136,6 @@ public class AacConnectionManager extends ConnectionManager {
      */
     void setDestinationName(String queueOrTopic) {
         this.queueOrTopic = queueOrTopic;
-    }
-
-    /**
-     * MessagingExceptionListener is created for each connection made.
-     */
-    class MessagingExceptionListener implements ExceptionListener {
-        @Override
-        public void onException(JMSException e) {
-            LOG.error("ExceptionListener error detected! \n{}\n{}", e.getMessage(), e.getCause());
-            e.printStackTrace();
-            System.exit(1);
-        }
     }
 
     /**
