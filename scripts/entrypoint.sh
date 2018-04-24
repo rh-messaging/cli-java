@@ -45,7 +45,7 @@ if [[ "$ARTEMIS_MAX_MEMORY" ]]; then
 fi
 
 if [ "$1" = 'amq7-server' ]; then
-	exec su-exec amq7 "./artemis" "run"
+	exec su amq7 -c "./artemis run"
 fi
 
 exec "$@"
