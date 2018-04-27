@@ -71,6 +71,7 @@ public class ReceiverClient extends CoreClient {
 
     protected ClientOptions rcvrOpts;
     private String writeBinaryMessageFile;
+    private String writeMessageContentFile;
 
     @Inject
     protected MessageBrowser messageBrowser;
@@ -121,6 +122,7 @@ public class ReceiverClient extends CoreClient {
             txEndloopAction = options.getOption(TX_ENDLOOP_ACTION).getValue();
             processReplyTo = Boolean.parseBoolean(options.getOption(PROCESS_REPLY_TO).getValue());
             writeBinaryMessageFile = options.getOption(MSG_BINARY_CONTENT_TO_FILE).getValue();
+            writeMessageContentFile = options.getOption(MSG_CONTENT_TO_FILE).getValue();
         }
     }
 
@@ -221,11 +223,18 @@ public class ReceiverClient extends CoreClient {
                 }
 
                 if (msg != null) {
+                    String file = null;
                     if (!writeBinaryMessageFile.isEmpty()) {
+                        file = writeBinaryMessageFile;
+                    }
+                    if (!writeMessageContentFile.isEmpty()) {
+                        file = writeMessageContentFile;
+                    }
+                    if (file != null) {
                         if (Boolean.valueOf(rcvrOpts.getOption(ClientOptions.MSG_CONTENT_STREAM).getValue())) {
-                            Utils.streamBinaryContentToFile(writeBinaryMessageFile, msg, i);
+                            Utils.streamMessageContentToFile(file, msg, i);
                         } else {
-                            Utils.writeBinaryContentToFile(writeBinaryMessageFile, msg, i);
+                            Utils.writeMessageContentToFile(file, msg, i);
                         }
                     }
                     i++;

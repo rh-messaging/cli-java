@@ -68,8 +68,10 @@ public class AacReceiverOptions extends AacClientOptions {
             new Option(CAPACITY, "", "CAPACITY", "-1", "sender|receiver capacity (no effect in jms atm)"),
             new Option(BROWSER, "", "ENABLED", "false", "if true, browse messages instead of reading"),
             new Option(PROCESS_REPLY_TO, "", null, "", "whether to process reply to (true) or ignore it"),
-            new Option(MSG_BINARY_CONTENT_TO_FILE, "", "FILEPATH", "", "write binary data to provided file with prefix")
+            new Option(MSG_BINARY_CONTENT_TO_FILE, "", "FILEPATH", "", "write binary data to provided file with prefix"),
+            new Option(MSG_CONTENT_TO_FILE, "", "FILEPATH", "", "write message content to provided file with prefix")
         ));
+
 //    receiverDefaultOptions.put("forever", "false"); // drain only option
 //    receiverDefaultOptions.put("action", "acknowledge"); // acknowledge, reject, release, noack
 

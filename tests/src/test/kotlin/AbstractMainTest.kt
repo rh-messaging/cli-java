@@ -28,6 +28,7 @@ import org.junit.jupiter.params.provider.CsvFileSource
 import org.junit.jupiter.params.provider.ValueSource
 import java.io.File
 import java.math.BigInteger
+import java.nio.file.Files
 import java.security.Permission
 import java.time.Duration
 import java.time.LocalTime
@@ -373,6 +374,31 @@ abstract class AbstractMainTest {
                 "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true".split(" ").toTypedArray()
             main(senderParameters)
         })
+    }
+
+    @Test
+    fun sendAndReceiveTextMessageFromToFile() {
+        val file = File.createTempFile(address, "input")
+        val outputDirectory = Files.createTempDirectory(address)
+        val output = outputDirectory.resolve("message")
+        val output0 = outputDirectory.resolve("message_0")
+        try {
+            file.writeText("aContent")
+            val senderParameters =
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(" ").toTypedArray()
+            val receiverParameters =
+                "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-to-file $output".split(" ").toTypedArray()
+
+            print("Sending: ")
+            main(senderParameters)
+            print("Receiving: ")
+            main(receiverParameters)
+
+            assertThat(output0.toFile().readText()).isEqualTo(file.readText())
+        } finally {
+            file.delete()
+            outputDirectory.toFile().deleteRecursively()
+        }
     }
 
     @Test

@@ -175,6 +175,7 @@ public abstract class ClientOptions {
     public static final String BROWSER = "recv-browse";
     static final String PROCESS_REPLY_TO = "process-reply-to";
     static final String MSG_BINARY_CONTENT_TO_FILE = "msg-binary-content-to-file";
+    public static final String MSG_CONTENT_TO_FILE = "msg-content-to-file";
 
     /**
      * SENDER
