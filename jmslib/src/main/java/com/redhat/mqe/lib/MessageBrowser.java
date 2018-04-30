@@ -71,14 +71,17 @@ public class MessageBrowser extends CoreClient {
      */
     void browseMessages() throws Exception {
         Connection conn = createConnection(clientOptions);
-        Session ssn = createSession(clientOptions, conn, transacted);
-        QueueBrowser qBrowser = ssn.createBrowser((Queue) getDestination(), msgSelector);
-        conn.start();
-        Enumeration<?> enumMsgs = qBrowser.getEnumeration();
-        while (enumMsgs.hasMoreElements()) {
-            Message msg = (Message) enumMsgs.nextElement();
-            printMessage(clientOptions, msg);
+        try {
+            Session ssn = createSession(clientOptions, conn, transacted);
+            QueueBrowser qBrowser = ssn.createBrowser((Queue) getDestination(), msgSelector);
+            conn.start();
+            Enumeration<?> enumMsgs = qBrowser.getEnumeration();
+            while (enumMsgs.hasMoreElements()) {
+                Message msg = (Message) enumMsgs.nextElement();
+                printMessage(clientOptions, msg);
+            }
+        } finally {
+            close(conn);
         }
-        close(conn);
     }
 }
