@@ -142,10 +142,6 @@ class AccMainTest : AbstractMainTest() {
 
     override fun main(args: Array<String>) = Main.main(args)
 
-    @Disabled("ARTEMIS-1538 trustAll is ignored when specified in the connectionFactory URI")
-    @Test
-    override fun sendSingleMessageAllTrustingTls() = Unit
-
     /**
      * Large message streaming from/to java.io.{Input,Output}Stream is artemis-jms-client only
      */
