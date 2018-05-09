@@ -17,11 +17,11 @@
  * limitations under the License.
  */
 
-import com.redhat.mqe.lib.AbstractMessageFormatterTest
+import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
 import org.apache.qpid.jms.message.JmsBytesMessage
 import org.apache.qpid.jms.provider.amqp.message.AmqpJmsBytesMessageFacade
 import javax.jms.BytesMessage
 
-class AacMessageFormatterTest : AbstractMessageFormatterTest() {
+class AacJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
     override fun getBytesMessage(): BytesMessage = JmsBytesMessage(AmqpJmsBytesMessageFacade())
 }

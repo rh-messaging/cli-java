@@ -48,7 +48,7 @@ final class AocClientModule {
         ConnectionManagerFactory bindConnectionManagerFactory(AocConnectionManagerFactory f);
 
         @Binds
-        MessageFormatter bindMessageFormatter(OpenwireMessageFormatter f);
+        JmsMessageFormatter bindMessageFormatter(OpenwireJmsMessageFormatter f);
 
         @Binds
         ClientOptionManager bindClientOptionManager(AocClientOptionManager m);

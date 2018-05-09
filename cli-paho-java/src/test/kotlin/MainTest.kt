@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
-class AccMainTest : AbstractMainTest() {
+class AmcMainTest : AbstractMainTest() {
 
     override val brokerUrl = "tcp://127.0.0.1:1883"
     override val sslBrokerUrl = "tcp://127.0.0.1:61617"  // or 8883

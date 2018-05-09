@@ -55,7 +55,7 @@ public abstract class CoreClient {
     private List<Queue> queues;
 
     protected ConnectionManagerFactory connectionManagerFactory;
-    protected MessageFormatter messageFormatter;
+    protected JmsMessageFormatter jmsMessageFormatter;
 
     /**
      * Method starts the given client. Serves as entry point.
@@ -344,7 +344,7 @@ public abstract class CoreClient {
     }
 
     /**
-     * Print message using MessageFormatter in given format.
+     * Print message using JmsMessageFormatter in given format.
      * Printing format is specified using LOG_MSGS value
      * as (dict|body|upstream|none).
      *
@@ -358,14 +358,14 @@ public abstract class CoreClient {
         try {
             switch (logMsgs) {
                 case "dict":
-                    messageData = messageFormatter.formatMessageAsDict(message);
+                    messageData = jmsMessageFormatter.formatMessageAsDict(message);
                     break;
                 case "body":
-                    messageData = messageFormatter.formatMessageBody(message);
+                    messageData = jmsMessageFormatter.formatMessageBody(message);
                     break;
                 case "interop":
                 case "json":
-                    messageData = messageFormatter.formatMessageAsInterop(message);
+                    messageData = jmsMessageFormatter.formatMessageAsInterop(message);
                     break;
                 case "none":
                 default:
@@ -378,9 +378,9 @@ public abstract class CoreClient {
         }
         if (messageData != null) {
             if ("json".equals(logMsgs) || "json".equals(out)) {
-                messageFormatter.printMessageAsJson(messageData);
+                jmsMessageFormatter.printMessageAsJson(messageData);
             } else {
-                messageFormatter.printMessageAsPython(messageData);
+                jmsMessageFormatter.printMessageAsPython(messageData);
             }
         }
     }

@@ -43,6 +43,12 @@
             <version>2.9.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>lib</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+        </dependency>
+
         <!--scope provided means that it is a compileOnly dependency-->
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

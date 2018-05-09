@@ -39,12 +39,12 @@ public class ConnectorClient extends CoreClient {
     private ClientOptions connectorOptions;
     private int connectionsOpened = 0;
     private static List<Throwable> exceptions = new ArrayList<>();
-    private Logger LOG_CLEAN = LoggerFactory.getLogger(MessageFormatter.class); // MessageFormatter?
+    private Logger LOG_CLEAN = LoggerFactory.getLogger(JmsMessageFormatter.class); // JmsMessageFormatter?
 
     @Inject
-    public ConnectorClient(ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, @Named("Connector") ClientOptions options) {
+    public ConnectorClient(ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter, @Named("Connector") ClientOptions options) {
         this.connectionManagerFactory = connectionManagerFactory;
-        this.messageFormatter = messageFormatter;
+        this.jmsMessageFormatter = jmsMessageFormatter;
         this.connectorOptions = options;
     }
 

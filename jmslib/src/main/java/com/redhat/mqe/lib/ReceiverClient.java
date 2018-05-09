@@ -76,9 +76,9 @@ public class ReceiverClient extends CoreClient {
     protected MessageBrowser messageBrowser;
 
     @Inject
-    public ReceiverClient(ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, @Named("Receiver") ClientOptions options) {
+    public ReceiverClient(ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter, @Named("Receiver") ClientOptions options) {
         this.connectionManagerFactory = connectionManagerFactory;
-        this.messageFormatter = messageFormatter;
+        this.jmsMessageFormatter = jmsMessageFormatter;
         this.rcvrOpts = options;
         setGlobalClientOptions(rcvrOpts);
         String destinationType = rcvrOpts.getOption(DESTINATION_TYPE).getValue();

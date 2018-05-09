@@ -35,7 +35,7 @@ final class AccClientModule {
         ConnectionManagerFactory bindConnectionManagerFactory(AccConnectionManagerFactory f);
 
         @Binds
-        MessageFormatter bindMessageFormatter(AccCoreMessageFormatter f);
+        JmsMessageFormatter bindMessageFormatter(AccCoreJmsMessageFormatter f);
 
         @Binds
         ClientOptionManager bindClientOptionManager(AccClientOptionManager m);

@@ -41,9 +41,9 @@ public class SenderClient extends CoreClient {
 
 
     @Inject
-    public SenderClient(ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter, @Named("Sender") ClientOptions options) {
+    public SenderClient(ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter, @Named("Sender") ClientOptions options) {
         this.connectionManagerFactory = connectionManagerFactory;
-        this.messageFormatter = messageFormatter;
+        this.jmsMessageFormatter = jmsMessageFormatter;
         this.senderOptions = options;
     }
 

@@ -34,9 +34,9 @@ public class MessageBrowser extends CoreClient {
     ClientOptions clientOptions;
 
     @Inject
-    public MessageBrowser(@Named("Receiver") ClientOptions clientOptions, ConnectionManagerFactory connectionManagerFactory, MessageFormatter messageFormatter) {
+    public MessageBrowser(@Named("Receiver") ClientOptions clientOptions, ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter) {
         this.connectionManagerFactory = connectionManagerFactory;
-        this.messageFormatter = messageFormatter;
+        this.jmsMessageFormatter = jmsMessageFormatter;
         this.clientOptions = clientOptions;
     }
 
