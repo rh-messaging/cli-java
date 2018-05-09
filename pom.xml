@@ -33,6 +33,7 @@
         <module>parent</module>
         <module>tests</module>
 
+        <module>lib</module>
         <module>jmslib</module>
 
         <module>cli-activemq</module>

@@ -26,14 +26,14 @@ import org.junit.jupiter.api.function.Executable
 import javax.jms.BytesMessage
 import javax.jms.Message
 
-class Formatter : MessageFormatter() {
+class JmsFormatter : JmsMessageFormatter() {
     override fun formatMessage(msg: Message?): MutableMap<String, Any> {
         TODO("not implemented")
     }
 }
 
-abstract class AbstractMessageFormatterTest {
-    private val formatter = Formatter()
+abstract class AbstractJmsMessageFormatterTest {
+    private val formatter = JmsFormatter()
 
     abstract fun getBytesMessage(): BytesMessage
 

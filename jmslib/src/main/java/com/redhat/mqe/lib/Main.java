@@ -19,14 +19,10 @@
 
 package com.redhat.mqe.lib;
 
-import java.util.Arrays;
-
 public class Main {
     public static void main(String[] args, Client clientFactory) throws Exception {
         CoreClient client = null;
         if (args.length > 0) {
-            String[] subArgs = Arrays.copyOfRange(args, 1, args.length);
-
             switch (args[0]) {
                 case "sender":
                     client = clientFactory.makeSenderClient();

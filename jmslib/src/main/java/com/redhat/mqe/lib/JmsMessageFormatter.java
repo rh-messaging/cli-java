@@ -19,35 +19,31 @@
 
 package com.redhat.mqe.lib;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
- * MessageFormatter abstraction layer for all protocols.
+ * JmsMessageFormatter abstraction layer for all protocols.
  * <p>
- * Subclasses of MessageFormatter produce data structures containing message data. Use the Formatter classes to print as Python objects,
+ * Subclasses of JmsMessageFormatter produce data structures containing message data. Use the Formatter classes to print as Python objects,
  * JSON, and so on.
  */
-public abstract class MessageFormatter {
+public abstract class JmsMessageFormatter extends MessageFormatter {
+    static Logger LOG = LoggerFactory.getLogger(JmsMessageFormatter.class);
+    private final ObjectMapper json = new ObjectMapper();
     String AMQP_CONTENT_TYPE = "JMS_AMQP_ContentType";
     String OWIRE_AMQP_FIRST_ACQUIRER = "JMS_AMQP_FirstAcquirer";
     String OWIRE_AMQP_SUBJECT = "JMS_AMQP_Subject";
     String OWIRE_AMQP_CONTENT_ENCODING = "JMS_AMQP_ContentEncoding";
     String OWIRE_AMQP_REPLY_TO_GROUP_ID = "JMS_AMQP_ReplyToGroupID";
-
     String AMQP_JMSX_GROUP_SEQ = "JMSXGroupSeq";
     String JMSX_DELIVERY_COUNT = "JMSXDeliveryCount";
     String JMSX_USER_ID = "JMSXUserID";
     String JMSX_GROUP_ID = "JMSXGroupID";
-
-    static Logger LOG = LoggerFactory.getLogger(MessageFormatter.class);
-    private final ObjectMapper json = new ObjectMapper();
 
     /**
      * Print message body as text.
@@ -76,7 +72,7 @@ public abstract class MessageFormatter {
     public abstract Map<String, Object> formatMessage(Message msg) throws JMSException;
 
     public void addFormatInterop(Message msg, Map<String, Object> result) throws JMSException {
-        result.put("delivery-count", substractJMSDeliveryCount(msg.getIntProperty(JMSX_DELIVERY_COUNT)));
+        result.put("delivery-count", subtractJMSDeliveryCount(msg.getIntProperty(JMSX_DELIVERY_COUNT)));
         result.put("first-acquirer", msg.getBooleanProperty(OWIRE_AMQP_FIRST_ACQUIRER));
     }
 
@@ -163,34 +159,6 @@ public abstract class MessageFormatter {
         return destination;
     }
 
-    public void printStatistics(Hashtable<String, Object> msg) throws Exception {
-        LOG.info("STATS {}", formatMap(msg));
-    }
-
-    protected StringBuilder formatBool(Boolean in_data) {
-        StringBuilder int_res = new StringBuilder();
-        if (in_data) {
-            int_res.append("True");
-        } else {
-            int_res.append("False");
-        }
-        return int_res;
-    }
-
-    protected StringBuilder formatCharacter(Character in_data) {
-        return formatString(in_data.toString());
-    }
-
-    protected StringBuilder formatString(String in_data) {
-        StringBuilder int_res = new StringBuilder();
-        if (in_data == null) {
-            int_res.append("None");
-        } else {
-            int_res.append("'").append(quoteStringEscape(in_data)).append("'");
-        }
-        return int_res;
-    }
-
     /**
      * Method removes "ID:" prefix from various JMS message IDs.
      * This should be used only with interoperability formatting.
@@ -211,53 +179,6 @@ public abstract class MessageFormatter {
         return n;
     }
 
-    /**
-     * delivery-count in AMQP is 'failed delivery attempts'.
-     * JMS the count is more like 'sequence of attempts'
-     *
-     * @param value JMSXDeliveryCount
-     * @return JMSXDeliveryCount reduced by 1 (has to be 0+ number)
-     */
-    protected int substractJMSDeliveryCount(int value) {
-        if (value > 0) {
-            value--;
-        }
-        return value;
-    }
-
-    protected StringBuilder formatNumber(Number in_data) {
-        StringBuilder int_res = new StringBuilder();
-        if (in_data instanceof Byte || in_data instanceof Short || in_data instanceof Integer || in_data instanceof Long) {
-            int_res.append(formatLong(in_data.longValue()));
-        } else if (in_data instanceof Float || in_data instanceof Double) {
-            int_res.append(formatDouble(in_data.doubleValue()));
-        }
-        return int_res;
-    }
-
-    protected StringBuilder formatInt(int in_data) {
-        return formatLong((long) in_data);
-    }
-
-    protected StringBuilder formatLong(long in_data) {
-        StringBuilder int_res = new StringBuilder();
-        int_res.append(in_data);
-        return int_res;
-    }
-
-    protected StringBuilder formatFloat(float in_data) {
-        return formatDouble((double) in_data);
-    }
-
-    protected StringBuilder formatDouble(double in_data) {
-        // NOTE We print everything as float because of unnecessary long double output
-        // 3.14 -> 3.140000000908..
-        StringBuilder int_res = new StringBuilder();
-//    int_res.append(String.format("%f", in_data));
-        int_res.append(((Double) in_data).floatValue());
-        return int_res;
-    }
-
     protected String formatAddress(Destination destination) {
         if (destination == null) {
             return null;
@@ -265,47 +186,6 @@ public abstract class MessageFormatter {
 
         final String address = destination.toString();
         return dropDestinationPrefix(address);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected StringBuilder formatObject(Object in_data) {
-        StringBuilder int_res = new StringBuilder();
-        if (in_data == null) {
-            int_res.append("None");
-        } else if (in_data instanceof Boolean) {
-            int_res.append(formatBool((Boolean) in_data));
-        } else if (in_data instanceof Number) {
-            int_res.append(formatNumber((Number) in_data));
-        } else if (in_data instanceof Character) {
-            int_res.append(formatCharacter((Character) in_data));
-        } else if (in_data instanceof String) {
-            int_res.append(formatString((String) in_data));
-        } else if (in_data instanceof List) {
-            List<Object> in_data_list = (List<Object>) in_data;
-            int_res.append(formatList(in_data_list));
-        } else if (in_data instanceof Map) {
-            Map<String, Object> in_data_map = (Map<String, Object>) in_data;
-            int_res.append(formatMap(in_data_map));
-        } else if (in_data instanceof UUID) {
-            int_res.append(formatString(in_data.toString()));
-        } else if (in_data instanceof byte[]) {
-            try {
-                String value = new String((byte[]) in_data, "UTF-8");
-                int_res.append(formatString(value));
-            } catch (UnsupportedEncodingException uee) {
-                LOG.error("Error while getting message properties!", uee.getMessage());
-                uee.printStackTrace();
-                System.exit(1);
-            }
-        } else {
-            handleUnsupportedObjectMessagePayloadType(int_res, in_data);
-        }
-        return int_res;
-    }
-
-    public void handleUnsupportedObjectMessagePayloadType(StringBuilder int_res, Object in_data) {
-        LOG.error("Unsupported object type {} {}", in_data.getClass().getCanonicalName(), in_data);
-        int_res.append(in_data.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -325,32 +205,6 @@ public abstract class MessageFormatter {
             System.exit(1);
         }
         return format;
-    }
-
-    protected StringBuilder formatList(List<Object> objectsList) {
-        StringBuilder listData = new StringBuilder();
-        String delimiter = "";
-        listData.append('[');
-        for (Object o : objectsList) {
-            listData.append(delimiter).append(formatObject(o));
-            delimiter = ", ";
-        }
-        listData.append(']');
-        return listData;
-    }
-
-
-    protected StringBuilder formatMap(Map<String, Object> map) {
-        StringBuilder mapData = new StringBuilder();
-        mapData.append('{');
-        String delimiter = "";
-        for (String key : map.keySet()) {
-            mapData.append(delimiter).append(formatString(key)).append(": ").append(formatObject(map.get(key)));
-            delimiter = ", ";
-        }
-        mapData.append('}');
-        return mapData;
-
     }
 
     @SuppressWarnings("unchecked")
@@ -416,47 +270,5 @@ public abstract class MessageFormatter {
             System.exit(1);
         }
         return null;
-    }
-
-
-    /* ------ Support formatting functions ----- */
-    protected StringBuilder quoteStringEscape(String a) {
-        final char pattern = '\'';
-        StringBuilder int_result = new StringBuilder();
-        for (char c : a.toCharArray()) {
-            if (c == pattern) {
-                int_result.append('\\');
-            }
-            int_result.append(c);
-        }
-        return int_result;
-    }
-
-    public void printMessageAsPython(Map<String, Object> format) {
-        StringBuilder msgString = new StringBuilder();
-        msgString.append("{");
-
-        boolean first = true;
-        for (Map.Entry<String, Object> entry : format.entrySet()) {
-            if (!first) {
-                msgString.append(", ");
-            } else {
-                first = false;
-            }
-            msgString.append("'");
-            msgString.append(entry.getKey());
-            msgString.append("': ");
-            msgString.append(formatObject(entry.getValue()));
-        }
-        msgString.append("}");
-        LOG.info(msgString.toString());
-    }
-
-    void printMessageAsJson(Map<String, Object> format) {
-        try {
-            LOG.info(json.writeValueAsString(format));
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

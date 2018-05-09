@@ -17,30 +17,23 @@
  * limitations under the License.
  */
 
-package com.redhat.mqe.acc;
+package com.redhat.mqe.lib;
 
-import com.redhat.mqe.lib.CoreMessageFormatter;
-import org.apache.activemq.artemis.jms.client.ActiveMQDestination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.inject.Inject;
-import javax.jms.Destination;
-import java.security.InvalidParameterException;
-
-public class AccCoreMessageFormatter extends CoreMessageFormatter {
-    @Inject
-    AccCoreMessageFormatter() {
-    }
-
-    @Override
-    protected String formatAddress(Destination destination) {
-        if (destination == null) {
-            return null;
-        }
-        if (!(destination instanceof ActiveMQDestination)) {
-            throw new InvalidParameterException("Destination must be a Core destination, was " + destination.getClass());
-        }
-
-        String address = ((ActiveMQDestination) destination).getName();
-        return dropDestinationPrefix(address);
+/**
+ * Message output formatter to python dict,
+ * map, or any other object printable format.
+ * Reusable from old client
+ */
+public class AMQPJmsMessageFormatter extends JmsMessageFormatter {
+    public Map<String, Object> formatMessage(Message msg) throws JMSException {
+        Map<String, Object> result = new HashMap<>();
+        addFormatJMS11(msg, result);
+        addFormatJMS20(msg, result);
+        return result;
     }
 }

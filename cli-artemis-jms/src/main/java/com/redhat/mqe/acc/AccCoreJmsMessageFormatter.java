@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Red Hat, Inc.
+ * Copyright (c) 2017 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -17,25 +17,30 @@
  * limitations under the License.
  */
 
-package com.redhat.mqe.jms;
+package com.redhat.mqe.acc;
 
-import com.redhat.mqe.lib.AMQPMessageFormatter;
-import org.apache.qpid.proton.amqp.Binary;
+import com.redhat.mqe.lib.CoreJmsMessageFormatter;
+import org.apache.activemq.artemis.jms.client.ActiveMQDestination;
 
 import javax.inject.Inject;
+import javax.jms.Destination;
+import java.security.InvalidParameterException;
 
-public class AacAMQPMessageFormatter extends AMQPMessageFormatter {
+public class AccCoreJmsMessageFormatter extends CoreJmsMessageFormatter {
     @Inject
-    public AacAMQPMessageFormatter() {
+    AccCoreJmsMessageFormatter() {
     }
 
     @Override
-    public void handleUnsupportedObjectMessagePayloadType(StringBuilder int_res, Object in_data) {
-        if (in_data instanceof org.apache.qpid.proton.amqp.Binary) {
-            final String s = ((Binary) in_data).getArray().toString();  // this gives Java object reference
-            int_res.append(formatString(s));
-        } else {
-            super.handleUnsupportedObjectMessagePayloadType(int_res, in_data);
+    protected String formatAddress(Destination destination) {
+        if (destination == null) {
+            return null;
         }
+        if (!(destination instanceof ActiveMQDestination)) {
+            throw new InvalidParameterException("Destination must be a Core destination, was " + destination.getClass());
+        }
+
+        String address = ((ActiveMQDestination) destination).getName();
+        return dropDestinationPrefix(address);
     }
 }

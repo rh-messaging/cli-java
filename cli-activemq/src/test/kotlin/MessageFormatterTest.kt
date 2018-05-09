@@ -17,10 +17,10 @@
  * limitations under the License.
  */
 
-import com.redhat.mqe.lib.AbstractMessageFormatterTest
+import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
 import org.apache.activemq.command.ActiveMQBytesMessage
 import javax.jms.BytesMessage
 
-class AocMessageFormatterTest : AbstractMessageFormatterTest() {
+class AocJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
     override fun getBytesMessage(): BytesMessage = ActiveMQBytesMessage()
 }

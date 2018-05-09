@@ -19,6 +19,7 @@
 
 package com.redhat.mqe.lib;
 
+import javax.inject.Inject;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import java.util.HashMap;
@@ -29,15 +30,18 @@ import java.util.Map;
  * map, or any other object printable format.
  * Reusable from old client
  */
-public class CoreMessageFormatter extends MessageFormatter {
+public class OpenwireJmsMessageFormatter extends JmsMessageFormatter {
+    @Inject
+    public OpenwireJmsMessageFormatter() {
+    }
+
     /**
      * Openwire -> AMQP mapping http://activemq.apache.org/amqp.html
      */
-    @SuppressWarnings("unchecked")
+    @Override
     public Map<String, Object> formatMessage(Message msg) throws JMSException {
         Map<String, Object> result = new HashMap<>();
         addFormatJMS11(msg, result);
-        addFormatJMS20(msg, result);
         return result;
     }
 }
