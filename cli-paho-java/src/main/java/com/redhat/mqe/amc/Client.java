@@ -56,7 +56,14 @@ abstract class Client {
 
     Client(String[] args) {
         populateOptionParser(parser);
-        OptionSet optionSet = parser.parse(args);  // throws OptionException
+        OptionSet optionSet;
+        try {
+            optionSet = parser.parse(args);
+        } catch (OptionException e) {
+            System.err.println(e.getMessage());
+            printHelp(parser);
+            throw e;
+        }
         setOptionValues(optionSet);
     }
 
