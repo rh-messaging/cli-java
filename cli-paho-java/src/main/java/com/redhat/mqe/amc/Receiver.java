@@ -71,9 +71,7 @@ public class Receiver extends Client implements MqttCallback {
     }
 
     public void messageArrived(String topic, MqttMessage message) {
-//    log.info("Message arrived from " + topic);
-//    log.info("message=" + message.toString());
-        System.out.println(message.toString());
+        printMessage(topic, message);
     }
 
     public void deliveryComplete(IMqttDeliveryToken token) {

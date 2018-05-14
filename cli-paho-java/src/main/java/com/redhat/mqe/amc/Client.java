@@ -26,8 +26,10 @@ import joptsimple.OptionSpec;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,6 +46,7 @@ abstract class Client {
     OptionSpec<Integer> timeout;
     OptionSpec<Integer> msgCount;
     OptionSpec<Void> help;
+    OptionSpec<String> logMsgs;
 
     String cliDestination;
     String cliClientId;
@@ -53,6 +56,8 @@ abstract class Client {
     int cliTimeout;
     int cliMsgCount;
     String cliLogMsgs;
+
+    AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
 
     Client(String[] args) {
         populateOptionParser(parser);
@@ -91,6 +96,9 @@ abstract class Client {
         timeout = parser.accepts("timeout", "receiver timeout in seconds").withRequiredArg().ofType(Integer.class).defaultsTo(10);
         msgCount = parser.acceptsAll(asList("c", "count"), "number of messages").withRequiredArg().ofType(Integer.class).defaultsTo(1);
 
+        logMsgs = parser.accepts("log-msgs", "print messages").withRequiredArg()
+            .ofType(String.class).defaultsTo("none");
+
         help = parser.accepts("help", "This help").forHelp();
 
         return parser;
@@ -107,6 +115,7 @@ abstract class Client {
             cliQos = optionSet.valueOf(qos);
             cliTimeout = optionSet.valueOf(timeout);
             cliMsgCount = optionSet.valueOf(msgCount);
+            cliLogMsgs = optionSet.valueOf(logMsgs);
         }
     }
 
@@ -117,6 +126,25 @@ abstract class Client {
             parser.printHelpOn(System.out);
         } catch (IOException e) {
             throw new RuntimeException("Unable to print help onto stdout", e);
+        }
+    }
+
+    void printMessage(String topic, MqttMessage message) {
+        Map<String, Object> format;
+        switch (cliLogMsgs) {
+            case "none":
+                return;
+            case "body":
+                format = messageFormatter.formatMessageBody(message);
+                break;
+            default:
+                format = messageFormatter.formatMessage(topic, message);
+        }
+
+        if ("json".equals(cliLogMsgs)) {
+            messageFormatter.printMessageAsJson(format);
+        } else {
+            messageFormatter.printMessageAsPython(format);
         }
     }
 
