@@ -73,6 +73,7 @@ public class Sender extends Client {
             message.setQos(cliQos);
             for (int i = 0; i < cliMsgCount; i++) {
                 sender.publish(cliDestination, message);
+                printMessage(cliDestination, message);
             }
         } catch (MqttException me) {
             log.severe("reason " + me.getReasonCode());
