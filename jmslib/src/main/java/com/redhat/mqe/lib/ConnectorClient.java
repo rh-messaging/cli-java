@@ -46,7 +46,6 @@ public class ConnectorClient extends CoreClient {
         this.connectionManagerFactory = connectionManagerFactory;
         this.messageFormatter = messageFormatter;
         this.connectorOptions = options;
-        createConnectionObjects(connectorOptions.getOption(ClientOptions.OBJ_CTRL).getDefaultValue());
     }
 
 
@@ -57,8 +56,10 @@ public class ConnectorClient extends CoreClient {
         if (exceptions.isEmpty()) {
             startConnections();
         }
+
         int count = Integer.parseInt((this.getClientOptions().getOption(ClientOptions.COUNT).getValue()));
-        LOG_CLEAN.info(connectionsOpened + " " + exceptions.size() + " " + count);
+        LOG_CLEAN.info(connectionsOpened + " " + (count - connectionsOpened) + " " + count);
+
         for (Throwable t : exceptions) {
             LOG.error(t.getMessage(), t.getCause());
         }
@@ -75,15 +76,14 @@ public class ConnectorClient extends CoreClient {
     private void startConnections() {
         for (Connection connection : this.getConnections()) {
             try {
-                connection.start();
-                connectionsOpened++;
+                if (connection != null) {
+                    connection.start();
+                    connectionsOpened++;
+                }
             } catch (JMSException e) {
                 exceptions.add(new JmsMessagingException("Failed to start a connection.\n" + e.getMessage(), e.getCause()));
             }
         }
-
-        int count = Integer.parseInt((this.getClientOptions().getOption(ClientOptions.COUNT).getValue()));
-        LOG_CLEAN.info(connectionsOpened + " " + (count - connectionsOpened) + " " + count);
         closeConnObjects(this,
             Double.parseDouble(this.getClientOptions().getOption(ClientOptions.CLOSE_SLEEP).getValue()));
     }
