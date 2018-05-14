@@ -19,38 +19,45 @@
 
 package com.redhat.mqe.amc;
 
+import joptsimple.OptionParser;
 import org.eclipse.paho.client.mqttv3.*;
 
 import java.util.logging.Logger;
 
 public class Receiver extends Client implements MqttCallback {
-    Logger log;
+    private Logger log = setUpLogger("Receiver");
 
-    public Receiver(String cliBroker) {
-        log = setUpLogger("Receiver");
-        broker = cliBroker;
+    public Receiver(String[] args) {
+        super(args);
     }
 
-    public void receive(String topic, String clientid, int timeout) {
+    @Override
+    OptionParser populateOptionParser(OptionParser parser) {
+        super.populateOptionParser(parser);
+        return parser;
+    }
+
+    @Override
+    public void startClient() throws MqttException {
         MqttClient receiver = null;
-        timeout = timeout * 1000;
+        cliTimeout = cliTimeout * 1000;
         try {
-            receiver = new MqttClient(broker, clientid, null);
-            log.fine("Connecting to the broker " + broker);
+            receiver = new MqttClient(cliBroker, cliClientId, null);
+            log.fine("Connecting to the broker " + cliBroker);
             receiver.connect(setConnectionOptions(new MqttConnectOptions()));
             receiver.setCallback(this);
 
-            receiver.subscribe(topic);
-            log.fine("Subscribed to " + topic);
+            receiver.subscribe(cliDestination);
+            log.fine("Subscribed to " + cliDestination);
             // wait for messages to arrive for some time
-            long endTime = System.currentTimeMillis() + timeout;
+            long endTime = System.currentTimeMillis() + cliTimeout;
             while (System.currentTimeMillis() < endTime) {
                 Thread.sleep(200);
             }
-            receiver.unsubscribe(topic);
+            receiver.unsubscribe(cliDestination);
         } catch (MqttException e) {
             log.severe("Error while subscribing!  " + e.getMessage());
-            e.printStackTrace();
+            throw e;
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
@@ -63,8 +70,7 @@ public class Receiver extends Client implements MqttCallback {
         cause.printStackTrace();
     }
 
-    public void messageArrived(String topic, MqttMessage message)
-        throws Exception {
+    public void messageArrived(String topic, MqttMessage message) {
 //    log.info("Message arrived from " + topic);
 //    log.info("message=" + message.toString());
         System.out.println(message.toString());
