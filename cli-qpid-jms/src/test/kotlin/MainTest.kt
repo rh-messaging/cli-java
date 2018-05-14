@@ -156,7 +156,7 @@ class AacMainTest : AbstractMainTest() {
                 ""
                 ).split(" ").toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(5)) {
-            assertSystemExit(2, Executable {
+            assertSystemExit(1, Executable {
                 main(senderParameters)
             })
         }
