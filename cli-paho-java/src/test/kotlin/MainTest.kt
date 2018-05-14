@@ -45,4 +45,17 @@ class AmcMainTest : AbstractMainTest() {
     @Test
     override fun sendSingleMessageAllTrustingTls() {
     }
+
+    @Test
+    fun `send and receive a message`() {
+        val t = Thread({
+            Main.main("receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray())
+        }, "")
+        println("starting receiver")
+        t.start()
+        Thread.sleep(1000)
+        println("starting sender")
+        Main.main("sender --log-msgs dict --broker $brokerUrl --address $address".split(" ").toTypedArray())
+        t.join()
+    }
 }

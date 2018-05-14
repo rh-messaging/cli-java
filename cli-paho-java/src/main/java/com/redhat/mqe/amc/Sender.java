@@ -19,10 +19,14 @@
 
 package com.redhat.mqe.amc;
 
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.util.logging.Logger;
 
@@ -33,35 +37,42 @@ import java.util.logging.Logger;
  * Quality of Service 0: at most once, 1: at least once, 2: exactly once
  */
 public class Sender extends Client {
-    Logger log;
+    OptionSpec<String> content;
+    MemoryPersistence persistence = new MemoryPersistence();
+    private Logger log = setUpLogger("Sender");
 
-    public Sender(String cliBroker) {
-        System.out.println(cliBroker);
-        broker = cliBroker;
-        log = setUpLogger("Sender");
+    public Sender(String[] args) {
+        super(args);
+    }
+
+    @Override
+    OptionParser populateOptionParser(OptionParser parser) {
+        super.populateOptionParser(parser);
+        content = parser.accepts("msg-content", "message content").withRequiredArg()
+            .ofType(String.class).defaultsTo("");
+        return parser;
+    }
+
+    @Override
+    void setOptionValues(OptionSet optionSet) {
+        super.setOptionValues(optionSet);
+        cliContent = optionSet.valueOf(content);
     }
 
     /**
      * Send a message to the topic
-     *
-     * @param topic
-     * @param qos      At most once (0)
-     *                 At least once (1)
-     *                 Exactly once (2)
-     * @param content
-     * @param clientId
-     * @param msgCount
      */
-    public void send(String topic, int qos, String content, String clientId, int msgCount) {
+    @Override
+    public void startClient() throws MqttException {
         MqttClient sender = null;
         try {
-            sender = new MqttClient(broker, clientId, persistence);
+            sender = new MqttClient(cliBroker, cliClientId, persistence);
             log.fine("Connecting to broker: " + broker);
             sender.connect(setConnectionOptions(new MqttConnectOptions()));
-            MqttMessage message = new MqttMessage(content.getBytes());
-            message.setQos(qos);
-            for (int i = 0; i < msgCount; i++) {
-                sender.publish(topic, message);
+            MqttMessage message = new MqttMessage(cliContent.getBytes());
+            message.setQos(cliQos);
+            for (int i = 0; i < cliMsgCount; i++) {
+                sender.publish(cliDestination, message);
             }
         } catch (MqttException me) {
             log.severe("reason " + me.getReasonCode());

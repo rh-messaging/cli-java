@@ -19,20 +19,99 @@
 
 package com.redhat.mqe.amc;
 
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Client {
+import static java.util.Arrays.asList;
 
-    public static String broker;
-    static MemoryPersistence persistence = new MemoryPersistence();
+abstract class Client {
+    OptionParser parser = new OptionParser();
 
+    OptionSpec<String> destination;
+    OptionSpec<String> clientId;
+    OptionSpec<String> broker;
+    OptionSpec<Integer> qos;
+    OptionSpec<Integer> timeout;
+    OptionSpec<Integer> msgCount;
+    OptionSpec<Void> help;
+
+    String cliDestination;
+    String cliClientId;
+    int cliQos;
+    String cliContent;
+    String cliBroker;
+    int cliTimeout;
+    int cliMsgCount;
+    String cliLogMsgs;
+
+    Client(String[] args) {
+        populateOptionParser(parser);
+        OptionSet optionSet = parser.parse(args);  // throws OptionException
+        setOptionValues(optionSet);
+    }
+
+    /**
+     * Method starts the given client. Serves as entry point.
+     */
+    public abstract void startClient() throws Exception;
+
+    /**
+     * Create accepting command line options for parser.
+     *
+     * @return option parser to be used
+     */
+    OptionParser populateOptionParser(OptionParser parser) {
+        broker = parser.acceptsAll(asList("b", "broker"), "broker address").withRequiredArg()
+            .ofType(String.class).defaultsTo("tcp://localhost:1883").describedAs("default mqtt broker address");
+
+        destination = parser.acceptsAll(asList("a", "address"), "mqtt topic name").withRequiredArg()
+            .ofType(String.class).defaultsTo("mqttTopic").describedAs("default mqtt topic destination");
+
+        clientId = parser.accepts("client-id", "client id").withRequiredArg()
+            .ofType(String.class).defaultsTo("");
+
+        qos = parser.accepts("msg-qos", "message QoS (0,1,2)").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+        timeout = parser.accepts("timeout", "receiver timeout in seconds").withRequiredArg().ofType(Integer.class).defaultsTo(10);
+        msgCount = parser.acceptsAll(asList("c", "count"), "number of messages").withRequiredArg().ofType(Integer.class).defaultsTo(1);
+
+        help = parser.accepts("help", "This help").forHelp();
+
+        return parser;
+    }
+
+    void setOptionValues(OptionSet optionSet) {
+        if (optionSet.has(help)) {
+            printHelp(parser);
+            System.exit(0);
+        } else {
+            cliBroker = optionSet.valueOf(broker);
+            cliDestination = optionSet.valueOf(destination);
+            cliClientId = optionSet.valueOf(clientId);
+            cliQos = optionSet.valueOf(qos);
+            cliTimeout = optionSet.valueOf(timeout);
+            cliMsgCount = optionSet.valueOf(msgCount);
+        }
+    }
+
+    private void printHelp(OptionParser parser) {
+        try {
+            System.out.println("Usage: (default credentials admin/admin)");
+            System.out.println("<sender|receiver> <Option> [<Option> <Option>...]");
+            parser.printHelpOn(System.out);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to print help onto stdout", e);
+        }
+    }
 
     static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions) {
         connectOptions.setUserName("admin");
@@ -42,15 +121,10 @@ public class Client {
         return connectOptions;
     }
 
-    void closeClient(MqttClient client) {
+    void closeClient(MqttClient client) throws MqttException {
         if (client != null) {
-            try {
-                client.disconnect();
-                client.close();
-            } catch (MqttException e) {
-                e.printStackTrace();
-            }
-
+            client.disconnect();
+            client.close();
         }
     }
 
