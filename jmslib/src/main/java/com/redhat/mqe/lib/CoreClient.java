@@ -299,8 +299,10 @@ public abstract class CoreClient {
 
     void close(Connection connection) {
         try {
-            LOG.trace("Closing connection " + connection.toString());
-            connection.close();
+            if (connection != null) {
+                LOG.trace("Closing connection " + connection.toString());
+                connection.close();
+            }
         } catch (JMSException e) {
             e.printStackTrace();
             if (e.getCause() instanceof SocketException
