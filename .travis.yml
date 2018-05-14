@@ -15,7 +15,7 @@ env:
 script:
   # https://docs.travis-ci.com/user/docker/
   - docker pull jdanekrh/docker-alpine-openjdk-artemis-snapshot
-  - docker run --rm -v`pwd`/scripts:/mnt -p 5672:5672 -p 61616:61616 -p 5673:5673 -p 61617:61617 --entrypoint bash jdanekrh/docker-alpine-openjdk-artemis-snapshot /mnt/entrypoint.sh amq7-server &
+  - docker run --rm -v`pwd`/scripts:/mnt -p 1883:1883 -p 5672:5672 -p 61616:61616 -p 5673:5673 -p 61617:61617 --entrypoint bash jdanekrh/docker-alpine-openjdk-artemis-snapshot /mnt/entrypoint.sh amq7-server &
   - sleep 10
   - mvn clean package -Ptests,coverage
 
@@ -36,6 +36,8 @@ script:
 
   - java -jar cli-qpid-jms/target/cli-qpid-jms-1.2.2-SNAPSHOT-LATEST.jar sender --address cli-qpid-jms --log-msgs json --count 1
   - java -jar cli-qpid-jms/target/cli-qpid-jms-1.2.2-SNAPSHOT-LATEST.jar receiver --address cli-qpid-jms --log-msgs json --count 1
+
+  - java -jar cli-paho-java/target/cli-paho-java-1.2.2-SNAPSHOT-RELEASE.jar sender --address cli-paho-java --log-msgs json --count 1
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
