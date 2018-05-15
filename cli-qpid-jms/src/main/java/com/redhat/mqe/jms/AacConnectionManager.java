@@ -112,7 +112,6 @@ public class AacConnectionManager extends ConnectionManager {
         } catch (IOException | NamingException | JMSException e) {
             LOG.error(e.getMessage());
             e.printStackTrace();
-            System.exit(1);
         }
     }
 

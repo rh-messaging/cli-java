@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -298,10 +299,16 @@ public abstract class CoreClient {
 
     void close(Connection connection) {
         try {
-            LOG.trace("Closing connection " + connection.toString());
-            connection.close();
+            if (connection != null) {
+                LOG.trace("Closing connection " + connection.toString());
+                connection.close();
+            }
         } catch (JMSException e) {
             e.printStackTrace();
+            if (e.getCause() instanceof SocketException
+                && e.getCause().getMessage().equals("Connection closed by remote host")) {
+                return;  // suppress error, explained at https://issues.apache.org/jira/browse/AMQ-6956
+            }
             System.exit(1);
         }
     }
