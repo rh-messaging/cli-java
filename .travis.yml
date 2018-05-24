@@ -28,5 +28,14 @@ script:
   - java -jar cli-qpid-jms/target/cli-qpid-jms-1.2.2-SNAPSHOT-LATEST.jar sender --address cli-qpid-jms --log-msgs json --count 1
   - java -jar cli-qpid-jms/target/cli-qpid-jms-1.2.2-SNAPSHOT-LATEST.jar receiver --address cli-qpid-jms --log-msgs json --count 1
 
+  - java -jar cli-activemq/target/cli-activemq-1.2.2-SNAPSHOT-LATEST.jar sender --address cli-activemq --log-msgs json --count 1
+  - java -jar cli-activemq/target/cli-activemq-1.2.2-SNAPSHOT-LATEST.jar receiver --address cli-activemq --log-msgs json --count 1
+
+  - java -jar cli-artemis-jms/target/cli-artemis-jms-1.2.2-SNAPSHOT-LATEST.jar sender --address cli-artemis-jms --log-msgs json --count 1
+  - java -jar cli-artemis-jms/target/cli-artemis-jms-1.2.2-SNAPSHOT-LATEST.jar receiver --address cli-artemis-jms --log-msgs json --count 1
+
+  - java -jar cli-qpid-jms/target/cli-qpid-jms-1.2.2-SNAPSHOT-LATEST.jar sender --address cli-qpid-jms --log-msgs json --count 1
+  - java -jar cli-qpid-jms/target/cli-qpid-jms-1.2.2-SNAPSHOT-LATEST.jar receiver --address cli-qpid-jms --log-msgs json --count 1
+
 after_success:
   - bash <(curl -s https://codecov.io/bash)

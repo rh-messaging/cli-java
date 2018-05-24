@@ -178,6 +178,7 @@ class AccMainTest : AbstractMainTest() {
      * Large message streaming from/to java.io.{Input,Output}Stream is artemis-jms-client only
      */
     @Test
+    @Disabled("https://github.com/rh-messaging/cli-java/issues/50")
     fun sendAndReceiveLargeMessageStreamFile() {
         val file = File.createTempFile(address, "input")
         val outputDirectory = Files.createTempDirectory(address)
