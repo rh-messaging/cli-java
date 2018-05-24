@@ -75,6 +75,8 @@ class AccClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_RECONNECT_START_LIMIT, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_RECONNECT_INITIAL_DELAY, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_RECONNECT_WARN_ATTEMPTS, "");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_HA, "ha");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_RECONNECT_ON_SHUTDOWN, "failoverOnServerShutdown");
 
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_SEND_BUF_SIZE, "tcpSendBufferSize");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_TCP_RECV_BUF_SIZE, "tcpReceiveBufferSize");
