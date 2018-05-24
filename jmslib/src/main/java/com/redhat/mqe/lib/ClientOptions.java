@@ -108,6 +108,11 @@ public abstract class ClientOptions {
     public static final String CON_RECONNECT_START_LIMIT = "conn-reconnect-start-limit"; // failover.startupMaxReconnectAttempts
     public static final String CON_RECONNECT_WARN_ATTEMPTS = "conn-reconnect-warn-attempts"; // failover.warnAfterReconnectAttempts
 
+    // acc Core JMS specific options
+    public static final String CON_HA = "conn-ha";                                       // ha
+    public static final String CON_RECONNECT_ON_SHUTDOWN = "conn-reconnect-on-shutdown"; // failoverOnServerShutdown
+
+
     public static final String CON_SSL_KEYSTORE_LOC = "conn-ssl-keystore-location";      // transport.keyStoreLocation
     public static final String CON_SSL_KEYSTORE_PASS = "conn-ssl-keystore-password";     // transport.keyStorePassword
     public static final String CON_SSL_TRUSTSTORE_LOC = "conn-ssl-truststore-location";  // transport.trustStoreLocation
@@ -274,6 +279,8 @@ public abstract class ClientOptions {
                 "the number of attempts made to connect before reporting the connection as failed. The default is value of maxReconnectAttempts"),
             new Option(CON_RECONNECT_INITIAL_DELAY, "", "DELAY", "0", "delay the client will wait before the first attempt to reconnect to a remote peer"),
             new Option(CON_RECONNECT_WARN_ATTEMPTS, "", "ATTEMPTS", "10", "that often the client will log a message indicating that failover reconnection is being attempted"),
+            new Option(CON_HA, "", "ENABLED", "false", "whether connecting broker is in HA topology or not"),
+            new Option(CON_RECONNECT_ON_SHUTDOWN, "", "ENABLED", "true", "whether to failover on live broker shutdown in HA"),
 
             new Option(CON_SSL_KEYSTORE_LOC, "", "LOC", "", "default is to read from the system property \"javax.net.ssl.keyStore\""),
             new Option(CON_SSL_KEYSTORE_PASS, "", "PASS", "", "default is to read from the system property \"javax.net.ssl.keyStorePassword\""),
