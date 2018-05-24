@@ -24,10 +24,7 @@ import org.apache.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.StreamMessage;
+import javax.jms.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -329,7 +326,7 @@ public class Utils {
         return myObj;
     }
 
-    public static void streamBinaryContentToFile(String filePath, Message message, int msgCounter) {
+    public static void streamMessageContentToFile(String filePath, Message message, int msgCounter) {
         try {
             File outputFile = getFilePath(filePath, msgCounter);
             try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
@@ -347,38 +344,42 @@ public class Utils {
     }
 
     /**
-     * Write message binary body to provided file or default one in temp directory.
+     * Write message body (text or binary) to provided file or default one in temp directory.
      *
      * @param filePath file to write data to
      * @param message  to be read and written to provided file
      */
-    public static void writeBinaryContentToFile(String filePath, Message message, int msgCounter) {
+    public static void writeMessageContentToFile(String filePath, Message message, int msgCounter) {
         byte[] readByteArray;
         try {
-            File writeBinaryFile;
-            writeBinaryFile = getFilePath(filePath, msgCounter);
+            File file;
+            file = getFilePath(filePath, msgCounter);
 
-            LOG.debug("Write binary content to file '" + writeBinaryFile.getPath() + "'.");
+            LOG.debug("Write message content to file '" + file.getPath() + "'.");
             if (message instanceof BytesMessage) {
+                LOG.debug("Writing BytesMessage to file");
                 BytesMessage bm = (BytesMessage) message;
                 readByteArray = new byte[(int) bm.getBodyLength()];
                 bm.reset(); // added to be able to read message content
                 bm.readBytes(readByteArray);
-                try (FileOutputStream fos = new FileOutputStream(writeBinaryFile)) {
+                try (FileOutputStream fos = new FileOutputStream(file)) {
                     fos.write(readByteArray);
-                    fos.close();
                 }
-
             } else if (message instanceof StreamMessage) {
-                LOG.debug("Writing StreamMessage to");
+                LOG.debug("Writing StreamMessage to file");
                 StreamMessage sm = (StreamMessage) message;
 //        sm.reset(); TODO haven't tested this one
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(baos);
                 oos.writeObject(sm.readObject());
                 oos.close();
+            } else if (message instanceof TextMessage) {
+                LOG.debug("Writing TextMessage to file");
+                try (FileWriter fileWriter = new FileWriter(file)) {
+                    TextMessage tm = (TextMessage) message;
+                    fileWriter.write(tm.getText());
+                }
             }
-
         } catch (JMSException e) {
             e.printStackTrace();
         } catch (IOException e1) {
@@ -388,12 +389,12 @@ public class Utils {
     }
 
     private static File getFilePath(String filePath, int msgCounter) throws IOException {
-        File writeBinaryFile;
+        File file;
         if (filePath == null || filePath.equals("")) {
-            writeBinaryFile = File.createTempFile("recv_msg_", Long.toString(System.currentTimeMillis()));
+            file = File.createTempFile("recv_msg_", Long.toString(System.currentTimeMillis()));
         } else {
-            writeBinaryFile = new File(filePath + "_" + msgCounter);
+            file = new File(filePath + "_" + msgCounter);
         }
-        return writeBinaryFile;
+        return file;
     }
 }
