@@ -41,6 +41,9 @@ final class AccClientModule {
         ClientOptionManager bindClientOptionManager(AccClientOptionManager m);
 
         @Binds
+        SenderClient bindSenderClient(AccSenderClient m);
+
+        @Binds
         @Named("Sender")
         ClientOptions bindClientOptions(SenderOptions o);
 
@@ -65,6 +68,8 @@ interface AccClient extends Client {
 
         AccClient build();
     }
+
+    AccSenderClient makeAccSenderClient();
 }
 
 public class Main {

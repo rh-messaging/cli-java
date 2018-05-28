@@ -36,7 +36,7 @@ import java.util.Map;
  * Core implementation of creating various connections to brokers using clients.
  */
 public abstract class CoreClient {
-    static Logger LOG = LoggerFactory.getLogger(CoreClient.class);
+    protected static Logger LOG = LoggerFactory.getLogger(CoreClient.class);
     private ConnectionManager connectionManager;
     private static final Map<String, Integer> SESSION_ACK_MAP = new HashMap<>(5);
 
@@ -105,7 +105,7 @@ public abstract class CoreClient {
      * @param transacted    defines whether create transacted session or not
      * @return created session object
      */
-    Session createSession(ClientOptions clientOptions, Connection connection, boolean transacted) {
+    protected Session createSession(ClientOptions clientOptions, Connection connection, boolean transacted) {
         Session session = null;
 //    boolean transacted = Boolean.parseBoolean(clientOptions.getOption(ClientOptions.TRANSACTED).getValue());
         int acknowledgeMode = SESSION_ACK_MAP.get(clientOptions.getOption(ClientOptions.SSN_ACK_MODE).getValue());
@@ -256,7 +256,7 @@ public abstract class CoreClient {
      * @param client     holding all the open connection objects
      * @param closeSleep sleep for given period of time between closings objects
      */
-    static void closeConnObjects(CoreClient client, double closeSleep) {
+    protected static void closeConnObjects(CoreClient client, double closeSleep) {
         long sleepMs = Math.round(closeSleep * 1000);
         if (client.getProducers() != null) {
             if (closeSleep > 0) {
@@ -297,7 +297,7 @@ public abstract class CoreClient {
         }
     }
 
-    void close(Connection connection) {
+    protected void close(Connection connection) {
         try {
             if (connection != null) {
                 LOG.trace("Closing connection " + connection.toString());
@@ -313,7 +313,7 @@ public abstract class CoreClient {
         }
     }
 
-    void close(Session session) {
+    protected void close(Session session) {
         try {
             LOG.trace("Closing session " + session.toString());
             session.close();
@@ -323,7 +323,7 @@ public abstract class CoreClient {
         }
     }
 
-    void close(MessageProducer messageProducer) {
+    protected void close(MessageProducer messageProducer) {
         try {
             LOG.trace("Closing sender " + messageProducer.toString());
             messageProducer.close();
@@ -333,7 +333,7 @@ public abstract class CoreClient {
         }
     }
 
-    void close(MessageConsumer messageConsumer) {
+    protected void close(MessageConsumer messageConsumer) {
         try {
             LOG.trace("Closing receiver " + messageConsumer.toString());
             messageConsumer.close();
@@ -351,7 +351,7 @@ public abstract class CoreClient {
      * @param clientOptions options of the client
      * @param message       to be printed
      */
-    void printMessage(ClientOptions clientOptions, Message message) {
+    protected void printMessage(ClientOptions clientOptions, Message message) {
         final String logMsgs = clientOptions.getOption(ClientOptions.LOG_MSGS).getValue();
         final String out = clientOptions.getOption(ClientOptions.OUT).getValue();
         Map<String, Object> messageData = null;
@@ -391,7 +391,7 @@ public abstract class CoreClient {
      * @param session     to do transaction on this session
      * @param transaction transaction action type to perform
      */
-    static void doTransaction(Session session, String transaction) {
+    protected static void doTransaction(Session session, String transaction) {
         try {
             StringBuilder txLog = new StringBuilder("Performed ");
             switch (transaction.toLowerCase()) {
@@ -426,7 +426,7 @@ public abstract class CoreClient {
      *
      * @param clientOptions options of the client
      */
-    static void setGlobalClientOptions(ClientOptions clientOptions) {
+    protected static void setGlobalClientOptions(ClientOptions clientOptions) {
         if (clientOptions.getOption(ClientOptions.LOG_LEVEL).hasParsedValue()) {
             Utils.setLogLevel(clientOptions.getOption(ClientOptions.LOG_LEVEL).getValue());
         }
