@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Red Hat, Inc.
+ * Copyright (c) 2018 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -17,9 +17,11 @@
  * limitations under the License.
  */
 
-package com.redhat.mqe.lib;
+package com.redhat.mqe.acc;
 
+import com.redhat.mqe.lib.*;
 import com.redhat.mqe.lib.message.MessageProvider;
+import org.apache.activemq.artemis.api.core.ActiveMQUnBlockedException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -27,28 +29,16 @@ import javax.jms.*;
 import java.util.List;
 
 /**
- * SenderClient is able to send various messages with wide options
+ * AccSenderClient is able to send various messages with wide options
  * of settings of these messages.
  */
-public class SenderClient extends CoreClient {
-    protected ClientOptions senderOptions;
-    protected List<Content> content;
-    static final String AMQ_SUBJECT = "JMS_AMQP_Subject";
-    static final String AMQ_USERID = "JMSXUserID";
-    public static final String BEFORE_SEND = "before-send";
-    public static final String AFTER_SEND = "after-send";
-    public static final String AFTER_SEND_TX_ACTION = "after-send-tx-action";
-
+public class AccSenderClient extends com.redhat.mqe.lib.SenderClient {
 
     @Inject
-    public SenderClient(ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter, @Named("Sender") ClientOptions options) {
+    public AccSenderClient(ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter, @Named("Sender") ClientOptions options) {
         this.connectionManagerFactory = connectionManagerFactory;
         this.jmsMessageFormatter = jmsMessageFormatter;
         this.senderOptions = options;
-    }
-
-    public SenderClient() {
-
     }
 
     /**
@@ -103,7 +93,18 @@ public class SenderClient extends CoreClient {
                 }
 
                 // Send messages
-                msgProducer.send(message);
+                try {
+                    msgProducer.send(message);
+                } catch (JMSException jex) {
+                    LOG.error(jex.getCause().toString());
+                    if (jex.getCause() instanceof ActiveMQUnBlockedException) {
+                        // Resend missed messages due to unblocking blocking call.
+                        // See "Handling Blocking Calls During Failover" in link below
+                        // https://activemq.apache.org/artemis/docs/latest/ha.html
+                        LOG.warn("Resending message %d due to unblocking a blocking send.", msgCounter);
+                        msgProducer.send(message);
+                    }
+                }
                 msgCounter++;
                 // Makes message body read only from write only mode
                 if (message instanceof StreamMessage) {
@@ -158,48 +159,4 @@ public class SenderClient extends CoreClient {
         }
     }
 
-    /**
-     * Set default priority, ttl, durability and creating of id,
-     * timestamps for messages of this message producer.
-     *
-     * @param senderOptions specify defined options for messages & messageProducers
-     * @param producer      set this message producer
-     */
-    protected static void setMessageProducer(ClientOptions senderOptions, MessageProducer producer) {
-        try {
-            // set delivery mode - durable/non-durable
-            String deliveryModeArg = senderOptions.getOption(ClientOptions.MSG_DURABLE).getValue().toLowerCase();
-            int deliveryMode = (deliveryModeArg.equals("true") || deliveryModeArg.equals("yes"))
-                ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT;
-            producer.setDeliveryMode(deliveryMode);
-            // set time to live of message if provided
-            if (senderOptions.getOption(ClientOptions.MSG_TTL).hasParsedValue()) {
-                producer.setTimeToLive(Long.parseLong(senderOptions.getOption(ClientOptions.MSG_TTL).getValue()));
-            }
-            // set message priority if provided
-            if (senderOptions.getOption(ClientOptions.MSG_PRIORITY).hasParsedValue()) {
-                int priority = Integer.parseInt(senderOptions.getOption(ClientOptions.MSG_PRIORITY).getValue());
-                if (priority < 0 || priority > 10) {
-                    LOG.warn("Message priority is not in JMS interval <0, 10>.");
-                }
-                producer.setPriority(priority);
-            }
-            // Set Message ID or disable it completely
-            if (senderOptions.getOption(ClientOptions.MSG_ID).hasParsedValue()) {
-                if (senderOptions.getOption(ClientOptions.MSG_ID).getValue().equals("noid")) {
-                    producer.setDisableMessageID(true);
-                }
-            }
-            // Producer does not generate timestamps - for performance only
-            producer.setDisableMessageTimestamp(
-                Boolean.parseBoolean(senderOptions.getOption(ClientOptions.MSG_NOTIMESTAMP).getValue()));
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    protected ClientOptions getClientOptions() {
-        return senderOptions;
-    }
 }

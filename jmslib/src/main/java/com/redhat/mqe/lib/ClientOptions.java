@@ -62,7 +62,7 @@ public abstract class ClientOptions {
     public static final String PASSWORD = "conn-password";                               // jms.password
     static final String HELP = "help";
     static final String SSN_ACK_MODE = "ssn-ack-mode";
-    static final String CLOSE_SLEEP = "close-sleep";
+    public static final String CLOSE_SLEEP = "close-sleep";
 
     public static final String CON_HEARTBEAT = "conn-heartbeat";                         // amqp.idleTimeout=[ms] * 1000ms
     public static final String CON_VHOST = "conn-vhost";                                 // amqp.vhost
@@ -159,9 +159,9 @@ public abstract class ClientOptions {
     static final String TIMEOUT = "timeout";
     public static final String COUNT = "count";
     static final String LOG_MSGS = "log-msgs";
-    static final String TX_SIZE = "tx-size";
-    static final String TX_ACTION = "tx-action";
-    static final String TX_ENDLOOP_ACTION = "tx-endloop-action";
+    public static final String TX_SIZE = "tx-size";
+    public static final String TX_ACTION = "tx-action";
+    public static final String TX_ENDLOOP_ACTION = "tx-endloop-action";
     static final String CAPACITY = "capacity";
 
     public static final String MSG_CONTENT_STREAM = "msg-content-stream";
