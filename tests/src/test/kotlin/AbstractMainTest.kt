@@ -84,17 +84,9 @@ abstract class AbstractMainTest : AbstractTest() {
     fun printHelp(client: String) {
         val parameters =
             "$client --help".split(" ").toTypedArray()
-        val previousManager = System.getSecurityManager()
-        try {
-            val manager = NoExitSecurityManager(previousManager)
-            System.setSecurityManager(manager)
+        assertSystemExit(0, Executable {
             main(parameters)
-            fail("expected exception")
-        } catch (e: SystemExitingWithStatus) {
-            assertThat(e.status).isEqualTo(0)
-        } finally {
-            System.setSecurityManager(previousManager)
-        }
+        })
     }
 
     @Tag("external")
@@ -136,7 +128,9 @@ abstract class AbstractMainTest : AbstractTest() {
             "connector --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(10)) {
             print("Connecting: ")
-            main(connectorParameters)
+            assertNoSystemExit {
+                main(connectorParameters)
+            }
         }
     }
 
