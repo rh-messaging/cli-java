@@ -107,6 +107,7 @@ public abstract class ClientOptions {
     public static final String CON_RETRIES = "conn-reconnect-limit";                     // failover.maxReconnectAttempts (-1)
     public static final String CON_RECONNECT_START_LIMIT = "conn-reconnect-start-limit"; // failover.startupMaxReconnectAttempts
     public static final String CON_RECONNECT_WARN_ATTEMPTS = "conn-reconnect-warn-attempts"; // failover.warnAfterReconnectAttempts
+    public static final String CON_RECONNECT_URL = "conn-reconnect-url";                // additional brokers in broker_list url
 
     // acc Core JMS specific options
     public static final String CON_HA = "conn-ha";                                       // ha
@@ -282,6 +283,7 @@ public abstract class ClientOptions {
             new Option(CON_RECONNECT_WARN_ATTEMPTS, "", "ATTEMPTS", "10", "that often the client will log a message indicating that failover reconnection is being attempted"),
             new Option(CON_HA, "", "ENABLED", "false", "whether connecting broker is in HA topology or not"),
             new Option(CON_RECONNECT_ON_SHUTDOWN, "", "ENABLED", "true", "whether to failover on live broker shutdown in HA"),
+            new Option(CON_RECONNECT_URL, "", "BROKER_URL", "", "additional brokers to add to broker-url as CSV"),
 
             new Option(CON_SSL_KEYSTORE_LOC, "", "LOC", "", "default is to read from the system property \"javax.net.ssl.keyStore\""),
             new Option(CON_SSL_KEYSTORE_PASS, "", "PASS", "", "default is to read from the system property \"javax.net.ssl.keyStorePassword\""),

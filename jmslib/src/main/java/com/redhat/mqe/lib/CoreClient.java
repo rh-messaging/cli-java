@@ -80,6 +80,12 @@ public abstract class CoreClient {
         } else {
             // Use only protocol,credentials,host and port
             brokerUrl = clientOptions.getOption(ClientOptions.BROKER).getValue();
+
+            if (clientOptions.getOption(ClientOptions.CON_RECONNECT_URL).hasParsedValue()) {
+                String reconnectBrokers = clientOptions.getOption(ClientOptions.CON_RECONNECT_URL).getValue();
+                brokerUrl += "," + reconnectBrokers;
+            }
+
             if (clientOptions.getOption(ClientOptions.BROKER_OPTIONS).hasParsedValue()) {
                 brokerUrl += "?" + clientOptions.getOption(ClientOptions.BROKER_OPTIONS).getValue();
             }
