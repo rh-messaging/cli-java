@@ -61,6 +61,17 @@
             <artifactId>artemis-commons</artifactId>
             <version>${artemis.jms.client.version}</version>
         </dependency>
+        <!--workaround for dagger/guava/artemis-commons incompatibility-->
+        <!--solution inspired by:-->
+        <!--https://stackoverflow.com/questions/49928077/fluentfuture-class-not-found-with-multiple-anntationprocessor-->
+        <!--https://github.com/google/guava/issues/2837-->
+        <!--https://github.com/google/guava/issues/2721#issuecomment-275220035-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.4-android</version>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.redhat.cli-java</groupId>
