@@ -263,6 +263,7 @@ public abstract class AacClientOptions extends ClientOptions {
                 "the number of attempts made to connect before reporting the connection as failed. The default is value of maxReconnectAttempts"),
             new Option(CON_RECONNECT_INITIAL_DELAY, "", "DELAY", "0", "delay the client will wait before the first attempt to reconnect to a remote peer"),
             new Option(CON_RECONNECT_WARN_ATTEMPTS, "", "ATTEMPTS", "10", "that often the client will log a message indicating that failover reconnection is being attempted"),
+            new Option(CON_RECONNECT_URL, "", "BROKER_URL", "", "additional brokers to add to broker-url as CSV"),
 
             new Option(CON_SSL_KEYSTORE_LOC, "", "LOC", "", "default is to read from the system property \"javax.net.ssl.keyStore\""),
             new Option(CON_SSL_KEYSTORE_PASS, "", "PASS", "", "default is to read from the system property \"javax.net.ssl.keyStorePassword\""),
