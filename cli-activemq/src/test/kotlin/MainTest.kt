@@ -17,6 +17,7 @@
  * limitations under the License.
  */
 
+import com.redhat.mqe.ClientListener
 import com.redhat.mqe.aoc.Main
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -110,7 +111,7 @@ class AocMainTest : AbstractMainTest() {
 --conn-tight-encoding-ena false
 """.split(" ", "\n").toTypedArray()
 
-    override fun main(args: Array<String>) = Main.main(args)
+    override fun main_(listener: ClientListener, args: Array<String>) = Main.main(listener, args)
 
     @Test
     @Disabled("Invalid connect parameters: {minLargeMessageSize=250000}")
