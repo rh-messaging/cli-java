@@ -17,6 +17,7 @@
  * limitations under the License.
  */
 
+import com.redhat.mqe.ClientListener
 import com.redhat.mqe.amc.Main
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Disabled
@@ -36,7 +37,7 @@ class AmcMainTest : AbstractMainTest() {
 """.split(" ", "\n").toTypedArray()
 
     // skip them all
-    override fun main(args: Array<String>) {
+    override fun main_(listener: ClientListener, args: Array<String>) {
         Assumptions.assumeTrue(false, "skipping all cli-paho-java tests")
         Main.main(args)
     }

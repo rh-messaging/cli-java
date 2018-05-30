@@ -18,6 +18,7 @@
  */
 
 import com.google.common.truth.Truth.assertThat
+import com.redhat.mqe.ClientListener
 import com.redhat.mqe.acc.Main
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -140,7 +141,7 @@ class AccMainTest : AbstractMainTest() {
 --conn-valid-prop-names false
 """.split(" ", "\n").toTypedArray()
 
-    override fun main(args: Array<String>) = Main.main(args)
+    override fun main_(listener: ClientListener, args: Array<String>) = Main.main(listener, args)
 
     /**
      * Large message streaming from/to java.io.{Input,Output}Stream is artemis-jms-client only

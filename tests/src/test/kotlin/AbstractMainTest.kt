@@ -18,6 +18,7 @@
  */
 
 import com.google.common.truth.Truth.assertThat
+import com.redhat.mqe.ClientListener
 import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
@@ -34,6 +35,7 @@ import java.security.Permission
 import java.time.Duration
 import java.time.LocalTime
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.test.fail
 
 class SystemExitingWithStatus(val status: Int) : SecurityException()
@@ -91,7 +93,24 @@ abstract class AbstractMainTest {
 
     val random = Random()
 
-    abstract fun main(args: Array<String>)
+    abstract fun main_(listener: ClientListener, args: Array<String>)
+    fun main(args: Array<String>): List<Map<String, Any>> {
+        val messages = ArrayList<Map<String, Any>>()
+        main_(object : ClientListener {
+            override fun onMessage(message: Map<String, Any>) {
+                messages.add(message)
+            }
+
+            override fun onOutput(output: String?) {
+                TODO("not implemented")
+            }
+
+            override fun onError(error: String?) {
+                TODO("not implemented")
+            }
+        }, args)
+        return messages
+    }
 
     @BeforeEach
     fun setup() {
@@ -450,10 +469,13 @@ abstract class AbstractMainTest {
         val expected = BigInteger(1, md.digest(content.toByteArray())).toString(16)
         print(expected)
         assertNoSystemExit {
-            main(arrayOf(
+            val sent = main(arrayOf(
                 "sender", "--log-msgs", "dict", "--broker", brokerUrl, "--address", address, "--count", "1", "--msg-content", content, "--msg-content-hashed"))
-            main(arrayOf(
+            val received = main(arrayOf(
                 "receiver", "--log-msgs", "dict", "--broker", brokerUrl, "--address", address, "--count", "1", "--msg-content-hashed"))
+
+            assertThat(sent.map { it["content"] as String }).containsExactlyElementsIn(listOf(expected))
+            assertThat(received.map { it["content"] as String }).containsExactlyElementsIn(listOf(expected))
         }
     }
 }
