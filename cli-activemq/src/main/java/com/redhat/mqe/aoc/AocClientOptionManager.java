@@ -132,6 +132,19 @@ class AocClientOptionManager extends ClientOptionManager {
             // failover:(dhcp-75-212.lab.eng.brq.redhat.com:5672,dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
             // failover:(tcp://dhcp-75-212.lab.eng.brq.redhat.com:5672,tcp://dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
             brokerUrl = appendMissingProtocol(brokerUrl);
+
+            // If Failover-url list contains a broker value, add it here
+            if (clientOptions.getOption(ClientOptions.CON_FAILOVER_URLS).hasParsedValue()) {
+                StringBuilder failoverBrokers = new StringBuilder(",");
+                String reconnectBrokers = clientOptions.getOption(ClientOptions.CON_FAILOVER_URLS).getValue();
+
+                for (String brokerFailover : reconnectBrokers.split(",")) {
+                    failoverBrokers.append(appendMissingProtocol(brokerFailover)).append(",");
+                }
+                failoverBrokers.deleteCharAt(failoverBrokers.length() - 1);
+                brokerUrl += failoverBrokers;
+            }
+
             checkAndSetOption(ClientOptions.FAILOVER_URL, brokerUrl, clientOptions);
         } else {
             super.setBrokerOptions(clientOptions, brokerUrl);

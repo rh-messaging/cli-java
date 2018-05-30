@@ -401,6 +401,10 @@ public abstract class ClientOptionManager {
                 // use failover mechanism, conn-reconnect does not perform nor add any other action to the client
                 return;
             }
+            if (option.getName().equals(ClientOptions.CON_FAILOVER_URLS)) {
+                // add CSV of broker urls failover mechanism, conn-reconnect
+                return;
+            }
             LOG.error("Connection option {} is not recognized! ", option.getName());
             System.exit(2);
         }

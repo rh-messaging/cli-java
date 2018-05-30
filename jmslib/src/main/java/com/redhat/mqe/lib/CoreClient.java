@@ -80,12 +80,6 @@ public abstract class CoreClient {
         } else {
             // Use only protocol,credentials,host and port
             brokerUrl = clientOptions.getOption(ClientOptions.BROKER).getValue();
-
-            if (clientOptions.getOption(ClientOptions.CON_RECONNECT_URL).hasParsedValue()) {
-                String reconnectBrokers = clientOptions.getOption(ClientOptions.CON_RECONNECT_URL).getValue();
-                brokerUrl += "," + reconnectBrokers;
-            }
-
             if (clientOptions.getOption(ClientOptions.BROKER_OPTIONS).hasParsedValue()) {
                 brokerUrl += "?" + clientOptions.getOption(ClientOptions.BROKER_OPTIONS).getValue();
             }
@@ -447,11 +441,15 @@ public abstract class CoreClient {
      */
     static String formBrokerUrl(ClientOptions clientOptions) {
         StringBuilder brkCon = new StringBuilder();
-        brkCon.append(clientOptions.getOption(ClientOptions.PROTOCOL).getValue());
+        if (!clientOptions.getOption(ClientOptions.PROTOCOL).getValue().equals("")) {
+            brkCon.append(clientOptions.getOption(ClientOptions.PROTOCOL).getValue()).append(":");
+        }
+
         if (clientOptions.getOption(ClientOptions.FAILOVER_URL).hasParsedValue()) {
-            brkCon.append(":(").append(clientOptions.getOption(ClientOptions.FAILOVER_URL).getValue()).append(")");
+                brkCon.append("(");
+                brkCon.append(clientOptions.getOption(ClientOptions.FAILOVER_URL).getValue()).append(")");
         } else {
-            brkCon.append("://");
+            brkCon.append("//");
             brkCon.append(clientOptions.getOption(ClientOptions.BROKER_HOST).getValue()).append(":")
                 .append(clientOptions.getOption(ClientOptions.BROKER_PORT).getValue());
         }
