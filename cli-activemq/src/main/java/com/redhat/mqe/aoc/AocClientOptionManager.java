@@ -128,9 +128,11 @@ class AocClientOptionManager extends ClientOptionManager {
         if (uriProtocol != null) {
             checkAndSetOption(ClientOptions.PROTOCOL, uriProtocol, clientOptions);
             // Set the whole url as failoverUrl. Do not parse it. connection options should come as input "conn-*"
-            //TODO if missing protocol, add amqp by default
+
             // failover:(dhcp-75-212.lab.eng.brq.redhat.com:5672,dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
             // failover:(tcp://dhcp-75-212.lab.eng.brq.redhat.com:5672,tcp://dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
+            // TODO discovery..
+            // discovery:(tcp://dhcp-75-212.lab.eng.brq.redhat.com:5672,tcp://dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
             brokerUrl = appendMissingProtocol(brokerUrl);
 
             // If Failover-url list contains a broker value, add it here
