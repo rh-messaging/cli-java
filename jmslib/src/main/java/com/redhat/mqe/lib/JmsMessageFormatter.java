@@ -19,11 +19,13 @@
 
 package com.redhat.mqe.lib;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jms.*;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 /**
@@ -34,7 +36,7 @@ import java.util.*;
  */
 public abstract class JmsMessageFormatter extends MessageFormatter {
     static Logger LOG = LoggerFactory.getLogger(JmsMessageFormatter.class);
-    private final ObjectMapper json = new ObjectMapper();
+
     String AMQP_CONTENT_TYPE = "JMS_AMQP_ContentType";
     String OWIRE_AMQP_FIRST_ACQUIRER = "JMS_AMQP_FirstAcquirer";
     String OWIRE_AMQP_SUBJECT = "JMS_AMQP_Subject";
@@ -48,7 +50,7 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
     /**
      * Print message body as text.
      */
-    public Map<String, Object> formatMessageBody(Message message) {
+    public Map<String, Object> formatMessageBody(Message message, boolean hashContent) {
         String content = null;
         if (message instanceof TextMessage) {
             TextMessage textMessage = (TextMessage) message;
@@ -62,21 +64,21 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
         }
 
         Map<String, Object> messageData = new HashMap<>();
-        messageData.put("content", content);
+        messageData.put("content", hashContent ? hash(content) : content);
         return messageData;
     }
 
     /**
      * Returns a Map that is a common foundation for Dict and Interop outputs
      */
-    public abstract Map<String, Object> formatMessage(Message msg) throws JMSException;
+    public abstract Map<String, Object> formatMessage(Message msg, boolean hashContent) throws JMSException;
 
     public void addFormatInterop(Message msg, Map<String, Object> result) throws JMSException {
         result.put("delivery-count", subtractJMSDeliveryCount(msg.getIntProperty(JMSX_DELIVERY_COUNT)));
         result.put("first-acquirer", msg.getBooleanProperty(OWIRE_AMQP_FIRST_ACQUIRER));
     }
 
-    public void addFormatJMS11(Message msg, Map<String, Object> result) throws JMSException {
+    public void addFormatJMS11(Message msg, Map<String, Object> result, boolean hashContent) throws JMSException {
         // Header
         result.put("durable", msg.getJMSDeliveryMode() == DeliveryMode.PERSISTENT);
         result.put("priority", msg.getJMSPriority());
@@ -103,8 +105,19 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
         result.put("properties", formatProperties(msg));
 
         // Application Data
-        result.put("content", formatContent(msg));
+        result.put("content", hashContent ? hash(formatContent(msg)) : formatContent(msg));
         result.put("type", msg.getJMSType()); // not everywhere, amqp does not have it
+    }
+
+    private Object hash(Object o) {
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new JmsMessagingException("Unable to hash message", e);
+        }
+        String content = quoteStringEscape(o.toString()).toString();
+        return new BigInteger(1, md.digest(content.getBytes())).toString(16);
     }
 
     public void addFormatJMS20(Message msg, Map<String, Object> result) throws JMSException {
@@ -116,8 +129,8 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
     /**
      * Print message with as many as possible known client properties.
      */
-    public Map<String, Object> formatMessageAsDict(Message msg) throws JMSException {
-        Map<String, Object> result = formatMessage(msg);
+    public Map<String, Object> formatMessageAsDict(Message msg, boolean hashContent) throws JMSException {
+        Map<String, Object> result = formatMessage(msg, hashContent);
         result.put("redelivered", msg.getJMSRedelivered());
         return result;
     }
@@ -125,8 +138,8 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
     /**
      * Print message in interoperable way for comparing with other clients.
      */
-    public Map<String, Object> formatMessageAsInterop(Message msg) throws JMSException {
-        Map<String, Object> result = formatMessage(msg);
+    public Map<String, Object> formatMessageAsInterop(Message msg, boolean hashContent) throws JMSException {
+        Map<String, Object> result = formatMessage(msg, hashContent);
         addFormatInterop(msg, result);
         result.put("id", removeIDprefix((String) result.get("id")));
         result.put("user-id", removeIDprefix((String) result.get("user-id")));

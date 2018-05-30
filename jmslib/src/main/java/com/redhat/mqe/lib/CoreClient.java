@@ -354,18 +354,19 @@ public abstract class CoreClient {
     protected void printMessage(ClientOptions clientOptions, Message message) {
         final String logMsgs = clientOptions.getOption(ClientOptions.LOG_MSGS).getValue();
         final String out = clientOptions.getOption(ClientOptions.OUT).getValue();
+        boolean hashContent = Boolean.valueOf(clientOptions.getOption(ClientOptions.MSG_CONTENT_HASHED).getValue());
         Map<String, Object> messageData = null;
         try {
             switch (logMsgs) {
                 case "dict":
-                    messageData = jmsMessageFormatter.formatMessageAsDict(message);
+                    messageData = jmsMessageFormatter.formatMessageAsDict(message, hashContent);
                     break;
                 case "body":
-                    messageData = jmsMessageFormatter.formatMessageBody(message);
+                    messageData = jmsMessageFormatter.formatMessageBody(message, hashContent);
                     break;
                 case "interop":
                 case "json":
-                    messageData = jmsMessageFormatter.formatMessageAsInterop(message);
+                    messageData = jmsMessageFormatter.formatMessageAsInterop(message, hashContent);
                     break;
                 case "none":
                 default:
