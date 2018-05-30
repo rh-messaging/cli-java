@@ -29,6 +29,7 @@ import org.junit.jupiter.params.provider.ValueSource
 import java.io.File
 import java.math.BigInteger
 import java.nio.file.Files
+import java.security.MessageDigest
 import java.security.Permission
 import java.time.Duration
 import java.time.LocalTime
@@ -440,5 +441,19 @@ abstract class AbstractMainTest {
                 ""
                 ).split(" ").toTypedArray()
         main(senderParameters)
+    }
+
+    @Test
+    fun `send and receive with --msg-content-hashed option`() {
+        val content = "aContent\n"  // c.f. sha1sum <<<aContent
+        val md = MessageDigest.getInstance("SHA-1")
+        val expected = BigInteger(1, md.digest(content.toByteArray())).toString(16)
+        print(expected)
+        assertNoSystemExit {
+            main(arrayOf(
+                "sender", "--log-msgs", "dict", "--broker", brokerUrl, "--address", address, "--count", "1", "--msg-content", content, "--msg-content-hashed"))
+            main(arrayOf(
+                "receiver", "--log-msgs", "dict", "--broker", brokerUrl, "--address", address, "--count", "1", "--msg-content-hashed"))
+        }
     }
 }
