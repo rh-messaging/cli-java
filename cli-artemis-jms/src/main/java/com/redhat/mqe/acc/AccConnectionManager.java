@@ -88,7 +88,6 @@ public class AccConnectionManager extends ConnectionManager {
         } catch (JMSException e) {
             LOG.error(e.getMessage());
             e.printStackTrace();
-            System.exit(1);
         }
     }
 
