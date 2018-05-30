@@ -104,17 +104,33 @@ public class AacClientOptionManager extends ClientOptionManager {
 
     @Override
     protected void setBrokerOptions(ClientOptions clientOptions, String brokerUrl) {
-        // Intercept setBrokerOptions and configure reconnect for the Aac client
+        // Intercept setBrokerOptions and configure reconnect for the Aoc client
 
+        String uriProtocol = null;
         if (Boolean.parseBoolean(clientOptions.getOption(ClientOptions.CON_RECONNECT).getValue())) {
             // use failover mechanism by default, discovery otherwise
-            String uriProtocol = ClientOptions.FAILOVER_PROTO;
+            uriProtocol = ClientOptions.FAILOVER_PROTO;
+        }
+        if (uriProtocol != null) {
             checkAndSetOption(ClientOptions.PROTOCOL, uriProtocol, clientOptions);
             // Set the whole url as failoverUrl. Do not parse it. connection options should come as input "conn-*"
             //TODO if missing protocol, add amqp by default
             // failover:(dhcp-75-212.lab.eng.brq.redhat.com:5672,dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
             // failover:(tcp://dhcp-75-212.lab.eng.brq.redhat.com:5672,tcp://dhcp-75-219.lab.eng.brq.redhat.com:5672) -->
             brokerUrl = appendMissingProtocol(brokerUrl);
+
+            // If Failover-url list contains a broker value, add it here
+            if (clientOptions.getOption(ClientOptions.CON_FAILOVER_URLS).hasParsedValue()) {
+                StringBuilder failoverBrokers = new StringBuilder(",");
+                String reconnectBrokers = clientOptions.getOption(ClientOptions.CON_FAILOVER_URLS).getValue();
+
+                for (String brokerFailover : reconnectBrokers.split(",")) {
+                    failoverBrokers.append(appendMissingProtocol(brokerFailover)).append(",");
+                }
+                failoverBrokers.deleteCharAt(failoverBrokers.length() - 1);
+                brokerUrl += failoverBrokers;
+            }
+
             checkAndSetOption(ClientOptions.FAILOVER_URL, brokerUrl, clientOptions);
         } else {
             super.setBrokerOptions(clientOptions, brokerUrl);

@@ -64,6 +64,7 @@ public class AccConnectionManager extends ConnectionManager {
 ////                destination = (Destination) initialContext.lookup(this.queueOrTopic);
             }
 
+            LOG.debug("Connection=" + brokerUrl);
             LOG.trace("Destination=" + destination);
             if (clientOptions.getOption(ClientOptions.BROKER_URI).hasParsedValue() || (username == null && password == null)) {
                 connection = factory.createConnection();
