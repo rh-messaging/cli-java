@@ -21,11 +21,12 @@ package com.redhat.mqe.acc;
 
 import com.redhat.mqe.lib.*;
 import com.redhat.mqe.lib.message.MessageProvider;
-import org.apache.activemq.artemis.api.core.ActiveMQUnBlockedException;
+import org.apache.activemq.artemis.api.core.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.*;
+import javax.jms.Message;
 import java.util.List;
 
 /**
@@ -97,7 +98,8 @@ public class AccSenderClient extends com.redhat.mqe.lib.SenderClient {
                     msgProducer.send(message);
                 } catch (JMSException jex) {
                     LOG.error(jex.getCause().toString());
-                    if (jex.getCause() instanceof ActiveMQUnBlockedException) {
+                    if (jex.getCause() instanceof ActiveMQUnBlockedException &&
+                        ((ActiveMQUnBlockedException) jex.getCause()).getType().equals(ActiveMQExceptionType.UNBLOCKED)) {
                         // Resend missed messages due to unblocking blocking call.
                         // See "Handling Blocking Calls During Failover" in link below
                         // https://activemq.apache.org/artemis/docs/latest/ha.html
