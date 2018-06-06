@@ -150,7 +150,6 @@ public class SenderClient extends CoreClient {
         } catch (JMSException | IllegalArgumentException jmse) {
             LOG.error("Error while sending a message!", jmse.getMessage());
             jmse.printStackTrace();
-            System.exit(1);
         } finally {
             double closeSleep = Double.parseDouble(this.getClientOptions().getOption(ClientOptions.CLOSE_SLEEP).getValue());
             closeConnObjects(this, closeSleep);
