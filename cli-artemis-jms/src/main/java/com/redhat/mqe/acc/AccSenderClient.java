@@ -105,6 +105,8 @@ public class AccSenderClient extends com.redhat.mqe.lib.SenderClient {
                         // https://activemq.apache.org/artemis/docs/latest/ha.html
                         LOG.warn("Resending message %d due to unblocking a blocking send.", msgCounter);
                         msgProducer.send(message);
+                    } else {
+                        throw jex;
                     }
                 }
                 msgCounter++;
