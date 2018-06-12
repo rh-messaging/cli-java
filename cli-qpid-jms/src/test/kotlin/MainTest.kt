@@ -17,6 +17,7 @@
  * limitations under the License.
  */
 
+import com.redhat.mqe.ClientListener
 import com.redhat.mqe.jms.Main
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
@@ -127,7 +128,7 @@ class AacMainTest : AbstractMainTest() {
 --conn-valid-prop-names false
 """.split(" ", "\n").toTypedArray()
 
-    override fun main(args: Array<String>) = Main.main(args)
+    override fun main_(listener: ClientListener, args: Array<String>) = Main.main(listener, args)
 
     /**
      * transport.logBytes option in qpid-jms

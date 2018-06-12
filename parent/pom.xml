@@ -51,6 +51,18 @@
             <artifactId>jopt-simple</artifactId>
         </dependency>
 
+        <!--project interfaces-->
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>cli</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+            <!--scope provided would make sense here, regarding OSGi usecase for-->
+            <!--the ClientListener class. for now it's easier to put it into the-->
+            <!--uberjar, because we are not doing anything with OSGi anyways-->
+            <!--separate OSGi bundle jar may be needed in the future-->
+            <!--<scope>provided</scope>-->
+        </dependency>
+
         <!--test dependencies-->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -106,6 +118,12 @@
             <groupId>com.google.dagger</groupId>
             <artifactId>dagger-compiler</artifactId>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>13.0</version>
+            <scope>provided</scope>
         </dependency>
         <!--for java 9+-->
         <dependency>

@@ -75,7 +75,6 @@ class AocConnectionManager extends ConnectionManager {
         } catch (NamingException | JMSException e) {
             LOG.error(e.getMessage());
             e.printStackTrace();
-            System.exit(1);
         }
     }
 
