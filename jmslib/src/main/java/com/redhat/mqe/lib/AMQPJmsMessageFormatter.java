@@ -30,9 +30,9 @@ import java.util.Map;
  * Reusable from old client
  */
 public class AMQPJmsMessageFormatter extends JmsMessageFormatter {
-    public Map<String, Object> formatMessage(Message msg) throws JMSException {
+    public Map<String, Object> formatMessage(Message msg, boolean hashContent) throws JMSException {
         Map<String, Object> result = new HashMap<>();
-        addFormatJMS11(msg, result);
+        addFormatJMS11(msg, result, hashContent);
         addFormatJMS20(msg, result);
         return result;
     }

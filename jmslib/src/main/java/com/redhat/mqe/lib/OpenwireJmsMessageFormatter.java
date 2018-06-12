@@ -39,9 +39,9 @@ public class OpenwireJmsMessageFormatter extends JmsMessageFormatter {
      * Openwire -> AMQP mapping http://activemq.apache.org/amqp.html
      */
     @Override
-    public Map<String, Object> formatMessage(Message msg) throws JMSException {
+    public Map<String, Object> formatMessage(Message msg, boolean hashContent) throws JMSException {
         Map<String, Object> result = new HashMap<>();
-        addFormatJMS11(msg, result);
+        addFormatJMS11(msg, result, hashContent);
         return result;
     }
 }

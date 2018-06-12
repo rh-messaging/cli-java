@@ -165,6 +165,7 @@ public abstract class ClientOptions {
     public static final String TX_ENDLOOP_ACTION = "tx-endloop-action";
     static final String CAPACITY = "capacity";
 
+    public static final String MSG_CONTENT_HASHED = "msg-content-hashed";
     public static final String MSG_CONTENT_STREAM = "msg-content-stream";
 
     /**
@@ -313,6 +314,7 @@ public abstract class ClientOptions {
             new Option(DURATION, "0"),
             new Option(FAILOVER_URL, ""),
 
+            new Option(MSG_CONTENT_HASHED, "", "", "false", "print the message content as a hash (SHA1)"),
             new Option(MSG_CONTENT_STREAM, "", "", "false", "should the message be streamed, must be used with binary content on sender"),
 
             // OpenWire
