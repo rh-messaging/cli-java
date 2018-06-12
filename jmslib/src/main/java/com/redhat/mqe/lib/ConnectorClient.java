@@ -19,9 +19,6 @@
 
 package com.redhat.mqe.lib;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.*;
@@ -39,7 +36,6 @@ public class ConnectorClient extends CoreClient {
     private ClientOptions connectorOptions;
     private int connectionsOpened = 0;
     private static List<Throwable> exceptions = new ArrayList<>();
-    private Logger LOG_CLEAN = LoggerFactory.getLogger(JmsMessageFormatter.class); // JmsMessageFormatter?
 
     @Inject
     public ConnectorClient(ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter, @Named("Connector") ClientOptions options) {
@@ -58,7 +54,7 @@ public class ConnectorClient extends CoreClient {
         }
 
         int count = Integer.parseInt((this.getClientOptions().getOption(ClientOptions.COUNT).getValue()));
-        LOG_CLEAN.info(connectionsOpened + " " + (count - connectionsOpened) + " " + count);
+        jmsMessageFormatter.printConnectorStatistics(connectionsOpened, count - connectionsOpened, count);
 
         for (Throwable t : exceptions) {
             LOG.error(t.getMessage(), t.getCause());

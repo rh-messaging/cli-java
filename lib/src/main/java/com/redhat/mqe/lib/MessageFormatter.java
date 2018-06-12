@@ -40,10 +40,6 @@ public abstract class MessageFormatter {
     static Logger LOG = LoggerFactory.getLogger(MessageFormatter.class);
     private final ObjectMapper json = new ObjectMapper();
 
-    public void printStatistics(Hashtable<String, Object> msg) throws Exception {
-        LOG.info("STATS {}", formatMap(msg));
-    }
-
     protected StringBuilder formatBool(Boolean in_data) {
         StringBuilder int_res = new StringBuilder();
         if (in_data) {
@@ -212,14 +208,26 @@ public abstract class MessageFormatter {
             msgString.append(formatObject(entry.getValue()));
         }
         msgString.append("}");
-        LOG.info(msgString.toString());
+        printMessage(msgString.toString());
     }
 
     public void printMessageAsJson(Map<String, Object> format) {
         try {
-            LOG.info(json.writeValueAsString(format));
+            printMessage(json.writeValueAsString(format));
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void printMessage(String message) {
+        System.out.println(message);
+    }
+
+    public void printStatistics(Hashtable<String, Object> msg) {
+        System.out.println("STATS " + formatMap(msg));
+    }
+
+    public void printConnectorStatistics(int connectionsOpened, int connectionsFailed, int connectionsTotal) {
+        System.out.println(connectionsOpened + " " + connectionsFailed + " " + connectionsTotal);
     }
 }
