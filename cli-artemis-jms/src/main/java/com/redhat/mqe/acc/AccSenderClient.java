@@ -19,14 +19,16 @@
 
 package com.redhat.mqe.acc;
 
-import com.redhat.mqe.lib.*;
+import com.redhat.mqe.lib.ClientOptions;
+import com.redhat.mqe.lib.ConnectionManagerFactory;
+import com.redhat.mqe.lib.JmsMessageFormatter;
+import com.redhat.mqe.lib.Utils;
 import com.redhat.mqe.lib.message.MessageProvider;
 import org.apache.activemq.artemis.api.core.ActiveMQUnBlockedException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jms.*;
-import java.util.List;
 
 /**
  * AccSenderClient is able to send various messages with wide options
@@ -103,6 +105,8 @@ public class AccSenderClient extends com.redhat.mqe.lib.SenderClient {
                         // https://activemq.apache.org/artemis/docs/latest/ha.html
                         LOG.warn("Resending message %d due to unblocking a blocking send.", msgCounter);
                         msgProducer.send(message);
+                    } else {
+                        throw jex;
                     }
                 }
                 msgCounter++;
