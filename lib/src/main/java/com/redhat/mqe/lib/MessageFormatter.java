@@ -180,15 +180,21 @@ public abstract class MessageFormatter {
 
     /* ------ Support formatting functions ----- */
     protected StringBuilder quoteStringEscape(String a) {
-        final char pattern = '\'';
-        StringBuilder int_result = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         for (char c : a.toCharArray()) {
-            if (c == pattern) {
-                int_result.append('\\');
+            if (c == '\'') {
+                builder.append("\\'");
+            } else if (c == '\0') {
+                builder.append("\\0");
+            } else if (c == '\n') {
+                builder.append("\\n");
+            } else if (c == '\r') {
+                builder.append("\\r");
+            } else {
+                builder.append(c);
             }
-            int_result.append(c);
         }
-        return int_result;
+        return builder;
     }
 
     public void printMessageAsPython(Map<String, Object> format) {
