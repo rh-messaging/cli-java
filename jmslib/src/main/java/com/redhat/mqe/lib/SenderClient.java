@@ -103,7 +103,18 @@ public class SenderClient extends CoreClient {
                 }
 
                 // Send messages
-                msgProducer.send(message);
+                try {
+                    msgProducer.send(message);
+                } catch (JMSSecurityException e) {
+                    throw e;
+                } catch (JMSException jex) {
+                    if (jex.getMessage().contains("[condition = amqp:connection:forced]")) {  // qpid-jms
+                        LOG.warn("Resending message %d due to unblocking a blocking send.", msgCounter);
+                        msgProducer.send(message);
+                    } else {
+                        throw jex;
+                    }
+                }
                 msgCounter++;
                 // Makes message body read only from write only mode
                 if (message instanceof StreamMessage) {
