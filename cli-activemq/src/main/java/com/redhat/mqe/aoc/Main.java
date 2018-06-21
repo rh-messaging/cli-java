@@ -20,7 +20,6 @@
 package com.redhat.mqe.aoc;
 
 import com.redhat.mqe.ClientListener;
-import com.redhat.mqe.lib.Client;
 import com.redhat.mqe.lib.*;
 import dagger.Binds;
 import dagger.BindsInstance;
@@ -38,7 +37,7 @@ final class AocClientModule {
         ConnectionManagerFactory bindConnectionManagerFactory(AocConnectionManagerFactory f);
 
         @Binds
-        JmsMessageFormatter bindMessageFormatter(OpenwireJmsMessageFormatter f);
+        JmsMessageFormatter bindMessageFormatter(AocOpenwireJmsMessageFormatter f);
 
         @Binds
         ClientOptionManager bindClientOptionManager(AocClientOptionManager m);

@@ -21,6 +21,6 @@ import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
 import org.apache.activemq.command.ActiveMQBytesMessage
 import javax.jms.BytesMessage
 
-class AocJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
+class AocOpenwireJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
     override fun getBytesMessage(): BytesMessage = ActiveMQBytesMessage()
 }
