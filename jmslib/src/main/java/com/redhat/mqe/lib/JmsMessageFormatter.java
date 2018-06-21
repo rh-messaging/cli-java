@@ -116,7 +116,7 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
         } catch (NoSuchAlgorithmException e) {
             throw new JmsMessagingException("Unable to hash message", e);
         }
-        String content = quoteStringEscape(o.toString()).toString();
+        String content = o.toString();
         return new BigInteger(1, md.digest(content.getBytes())).toString(16);
     }
 
