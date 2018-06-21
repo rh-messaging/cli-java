@@ -78,14 +78,16 @@ public abstract class MessageFormatter {
         return value;
     }
 
-    protected StringBuilder formatNumber(Number in_data) {
-        StringBuilder int_res = new StringBuilder();
-        if (in_data instanceof Byte || in_data instanceof Short || in_data instanceof Integer || in_data instanceof Long) {
-            int_res.append(formatLong(in_data.longValue()));
-        } else if (in_data instanceof Float || in_data instanceof Double) {
-            int_res.append(formatDouble(in_data.doubleValue()));
+    protected StringBuilder formatNumber(Number number) {
+        StringBuilder builder = new StringBuilder();
+        if (number instanceof Byte || number instanceof Short || number instanceof Integer || number instanceof Long) {
+            builder.append(formatLong(number.longValue()));
+        } else if (number instanceof Float || number instanceof Double) {
+            builder.append(formatDouble(number.doubleValue()));
+        } else { // can be e.g. org.apache.qpid.proton.amqp;UnsignedInteger
+            builder.append(number); // toString{} formats UnsignedIntegers just fine
         }
-        return int_res;
+        return builder;
     }
 
     protected StringBuilder formatInt(int in_data) {
