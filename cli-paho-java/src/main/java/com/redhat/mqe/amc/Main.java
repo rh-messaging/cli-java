@@ -19,6 +19,8 @@
 
 package com.redhat.mqe.amc;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 import java.util.Arrays;
 
 public class Main {
@@ -37,8 +39,18 @@ public class Main {
                 }
             }
         }
-
         if (client != null) {
+            final Client finalClient = client;
+            Runtime.getRuntime().addShutdownHook(new Thread() {
+                @Override
+                public void run() {
+                        try {
+                            finalClient.closeClient();
+                        } catch (MqttException e) {
+                            e.printStackTrace();
+                        }
+                    }
+            });
             client.startClient();
         } else {
             printHelpAndExit();
