@@ -41,6 +41,8 @@ public class Sender extends Client {
     MemoryPersistence persistence = new MemoryPersistence();
     private Logger log = setUpLogger("Sender");
 
+    private MqttClient sender = null;
+
     public Sender(String[] args) {
         super(args);
     }
@@ -63,7 +65,6 @@ public class Sender extends Client {
      */
     @Override
     public void startClient() throws MqttException {
-        MqttClient sender = null;
         try {
             sender = new MqttClient(cliBroker, cliClientId, persistence);
             log.info("Connecting to broker: " + cliBroker);
@@ -88,8 +89,13 @@ public class Sender extends Client {
             ex.printStackTrace();
             System.exit(1);
         } finally {
-            closeClient(sender);
+            closeClient();
             log.info("Disconnected");
         }
+    }
+
+    @Override
+    void closeClient() throws MqttException {
+        closeClient(sender);
     }
 }

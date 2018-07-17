@@ -225,8 +225,8 @@ abstract class Client {
         return connectOptions;
     }
 
-    void closeClient(MqttClient client) throws MqttException {
-        if (client != null) {
+    static void closeClient(MqttClient client) throws MqttException {
+        if (client != null && client.isConnected()) {
             try {
                 client.disconnect();
                 client.close();
@@ -242,5 +242,7 @@ abstract class Client {
         log.setLevel(Level.WARN);
         return log;
     }
+
+    abstract void closeClient() throws MqttException;
 
 }

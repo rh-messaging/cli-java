@@ -27,6 +27,8 @@ import org.eclipse.paho.client.mqttv3.*;
 public class Receiver extends Client implements MqttCallback {
     private Logger log = setUpLogger("Receiver");
 
+    private MqttClient receiver = null;
+
     public Receiver(String[] args) {
         super(args);
     }
@@ -38,8 +40,12 @@ public class Receiver extends Client implements MqttCallback {
     }
 
     @Override
+    void closeClient() throws MqttException {
+        closeClient(receiver);
+    }
+
+    @Override
     public void startClient() throws MqttException {
-        MqttClient receiver = null;
         cliTimeout = cliTimeout * 1000;
         try {
             receiver = new MqttClient(cliBroker, cliClientId, null);
@@ -66,7 +72,7 @@ public class Receiver extends Client implements MqttCallback {
             ex.printStackTrace();
             System.exit(1);
         } finally {
-            closeClient(receiver);
+            closeClient();
         }
     }
 
