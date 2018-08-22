@@ -47,7 +47,7 @@ abstract class Client {
     OptionSpec<Integer> msgCount;
     OptionSpec<Void> help;
     OptionSpec<String> logMsgs;
-    OptionSpec<Integer> willFlag;
+    OptionSpec<Boolean> willFlag;
     OptionSpec<String> willMessage;
     OptionSpec<Integer> willQos;
     OptionSpec<Boolean> willRetained;
@@ -61,7 +61,7 @@ abstract class Client {
     int cliTimeout;
     int cliMsgCount;
     String cliLogMsgs;
-    int cliWillFlag;
+    Boolean cliWillFlag;
     String cliWillMessage;
     int cliWillQos;
     Boolean cliWillRetained;
@@ -109,15 +109,15 @@ abstract class Client {
         logMsgs = parser.accepts("log-msgs", "print messages").withRequiredArg()
             .ofType(String.class).defaultsTo("none");
 
-        willFlag = parser.accepts("will-flag", "will flag (0,1) ").withRequiredArg().ofType(Integer.class).defaultsTo(0);
+        willFlag = parser.accepts("conn-will-flag", "will flag (true, false)").withRequiredArg().ofType(Boolean.class).defaultsTo(false);
 
-        willMessage = parser.accepts("will-message", "will message").withRequiredArg().ofType(String.class).defaultsTo("");
+        willMessage = parser.accepts("conn-will-message", "will message body").withRequiredArg().ofType(String.class).defaultsTo("");
 
-        willQos = parser.accepts("will-qos", "will QoS (0,1,2) ").withRequiredArg().ofType(Integer.class).defaultsTo(0);
+        willQos = parser.accepts("conn-will-qos", "will QoS (0,1,2) ").withRequiredArg().ofType(Integer.class).defaultsTo(0);
 
-        willRetained = parser.accepts("will-retained", "is will retained").withRequiredArg().ofType(Boolean.class).defaultsTo(false);
+        willRetained = parser.accepts("conn-will-retained", "is will retained (true, false)").withRequiredArg().ofType(Boolean.class).defaultsTo(false);
 
-        willDestination = parser.accepts("will-destination", "will topic name").withRequiredArg().ofType(String.class).defaultsTo("");
+        willDestination = parser.accepts("conn-will-destination", "will topic name").withRequiredArg().ofType(String.class).defaultsTo("");
 
         help = parser.accepts("help", "This help").forHelp();
 

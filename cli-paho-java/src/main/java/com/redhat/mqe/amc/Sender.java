@@ -71,14 +71,14 @@ public class Sender extends Client {
 
             MqttConnectOptions connectOptions = new MqttConnectOptions();
 
-            if (cliWillFlag == 1) {
+            if (cliWillFlag) {
                 if (cliWillDestination.isEmpty()) {
                     log.severe("Will destination cannot be empty.");
                     System.exit(0);
                 }
 
                 if (cliWillMessage.isEmpty()) {
-                    log.severe("Will message cannot be empty.");
+                    log.severe("Will message body cannot be empty.");
                     System.exit(0);
                 }
 
