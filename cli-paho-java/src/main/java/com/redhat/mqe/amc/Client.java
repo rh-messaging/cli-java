@@ -47,6 +47,11 @@ abstract class Client {
     OptionSpec<Integer> msgCount;
     OptionSpec<Void> help;
     OptionSpec<String> logMsgs;
+    OptionSpec<Boolean> willFlag;
+    OptionSpec<String> willMessage;
+    OptionSpec<Integer> willQos;
+    OptionSpec<Boolean> willRetained;
+    OptionSpec<String> willDestination;
 
     String cliDestination;
     String cliClientId;
@@ -56,6 +61,11 @@ abstract class Client {
     int cliTimeout;
     int cliMsgCount;
     String cliLogMsgs;
+    Boolean cliWillFlag;
+    String cliWillMessage;
+    int cliWillQos;
+    Boolean cliWillRetained;
+    String cliWillDestination;
 
     AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
 
@@ -99,6 +109,16 @@ abstract class Client {
         logMsgs = parser.accepts("log-msgs", "print messages").withRequiredArg()
             .ofType(String.class).defaultsTo("none");
 
+        willFlag = parser.accepts("conn-will-flag", "will flag (true, false)").withRequiredArg().ofType(Boolean.class).defaultsTo(false);
+
+        willMessage = parser.accepts("conn-will-message", "will message body").withRequiredArg().ofType(String.class).defaultsTo("");
+
+        willQos = parser.accepts("conn-will-qos", "will QoS (0,1,2) ").withRequiredArg().ofType(Integer.class).defaultsTo(0);
+
+        willRetained = parser.accepts("conn-will-retained", "is will retained (true, false)").withRequiredArg().ofType(Boolean.class).defaultsTo(false);
+
+        willDestination = parser.accepts("conn-will-destination", "will topic name").withRequiredArg().ofType(String.class).defaultsTo("");
+
         help = parser.accepts("help", "This help").forHelp();
 
         return parser;
@@ -116,6 +136,11 @@ abstract class Client {
             cliTimeout = optionSet.valueOf(timeout);
             cliMsgCount = optionSet.valueOf(msgCount);
             cliLogMsgs = optionSet.valueOf(logMsgs);
+            cliWillFlag = optionSet.valueOf(willFlag);
+            cliWillMessage = optionSet.valueOf(willMessage);
+            cliWillQos = optionSet.valueOf(willQos);
+            cliWillRetained = optionSet.valueOf(willRetained);
+            cliWillDestination = optionSet.valueOf(willDestination);
         }
     }
 
