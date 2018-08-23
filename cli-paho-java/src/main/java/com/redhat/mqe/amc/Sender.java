@@ -85,7 +85,7 @@ public class Sender extends Client {
                 connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
             }
 
-            sender.connect(setConnectionOptions(connectOptions));
+            sender.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword));
             MqttMessage message = new MqttMessage(cliContent.getBytes());
             message.setQos(cliQos);
             for (int i = 0; i < cliMsgCount; i++) {
