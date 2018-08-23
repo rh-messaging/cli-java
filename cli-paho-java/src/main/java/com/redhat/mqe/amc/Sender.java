@@ -70,20 +70,7 @@ public class Sender extends Client {
             log.fine("Connecting to broker: " + broker);
 
             MqttConnectOptions connectOptions = new MqttConnectOptions();
-
-            if (cliWillFlag) {
-                if (cliWillDestination.isEmpty()) {
-                    log.severe("Will destination cannot be empty.");
-                    System.exit(0);
-                }
-
-                if (cliWillMessage.isEmpty()) {
-                    log.severe("Will message body cannot be empty.");
-                    System.exit(0);
-                }
-
-                connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
-            }
+            checkWillOptions(connectOptions);
 
             sender.connect(setConnectionOptions(connectOptions));
             MqttMessage message = new MqttMessage(cliContent.getBytes());
