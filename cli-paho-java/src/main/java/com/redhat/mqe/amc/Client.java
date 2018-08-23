@@ -30,6 +30,7 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.IOException;
 import java.util.Map;
+
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,7 +118,7 @@ abstract class Client {
 
         willRetained = parser.accepts("conn-will-retained", "is will retained (true, false)").withRequiredArg().ofType(Boolean.class).defaultsTo(false);
 
-        willDestination = parser.accepts("conn-will-destination", "will topic name").withRequiredArg().ofType(String.class).defaultsTo("");
+        willDestination = parser.accepts("conn-will-destination", "will topic name").withRequiredArg().ofType(String.class);
 
         help = parser.accepts("help", "This help").forHelp();
 
@@ -195,5 +196,16 @@ abstract class Client {
         handler.setLevel(Level.FINE);
         log.addHandler(handler);
         return log;
+    }
+
+    void checkWillOptions(MqttConnectOptions connectOptions) {
+        Logger log = setUpLogger("Will parameters checker");
+        if (cliWillFlag) {
+            try {
+                connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
+            } catch (IllegalArgumentException e) {
+                log.severe("Will destination cannot be empty.");
+            }
+        }
     }
 }
