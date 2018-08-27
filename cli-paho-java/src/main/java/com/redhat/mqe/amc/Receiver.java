@@ -44,7 +44,25 @@ public class Receiver extends Client implements MqttCallback {
         try {
             receiver = new MqttClient(cliBroker, cliClientId, null);
             log.fine("Connecting to the broker " + cliBroker);
-            receiver.connect(setConnectionOptions(new MqttConnectOptions()));
+
+            MqttConnectOptions connectOptions = new MqttConnectOptions();
+
+            if (cliWillFlag) {
+                if (cliWillDestination.isEmpty()) {
+                    log.severe("Will destination cannot be empty.");
+                    System.exit(0);
+                }
+
+                if (cliWillMessage.isEmpty()) {
+                    log.severe("Will message body cannot be empty.");
+                    System.exit(0);
+                }
+
+                connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
+            }
+
+
+            receiver.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword));
             receiver.setCallback(this);
 
             receiver.subscribe(cliDestination);

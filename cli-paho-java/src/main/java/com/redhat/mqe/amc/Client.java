@@ -52,6 +52,8 @@ abstract class Client {
     OptionSpec<Integer> willQos;
     OptionSpec<Boolean> willRetained;
     OptionSpec<String> willDestination;
+    OptionSpec<String> username;
+    OptionSpec<String> password;
 
     String cliDestination;
     String cliClientId;
@@ -66,6 +68,8 @@ abstract class Client {
     int cliWillQos;
     Boolean cliWillRetained;
     String cliWillDestination;
+    String cliUsername;
+    String cliPassword;
 
     AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
 
@@ -119,6 +123,10 @@ abstract class Client {
 
         willDestination = parser.accepts("conn-will-destination", "will topic name").withRequiredArg().ofType(String.class).defaultsTo("");
 
+        username = parser.accepts("conn-username", "username").withRequiredArg().ofType(String.class).defaultsTo("");
+
+        password = parser.accepts("conn-password", "password").withRequiredArg().ofType(String.class).defaultsTo("");
+
         help = parser.accepts("help", "This help").forHelp();
 
         return parser;
@@ -141,6 +149,8 @@ abstract class Client {
             cliWillQos = optionSet.valueOf(willQos);
             cliWillRetained = optionSet.valueOf(willRetained);
             cliWillDestination = optionSet.valueOf(willDestination);
+            cliUsername = optionSet.valueOf(username);
+            cliPassword = optionSet.valueOf(password);
         }
     }
 
@@ -173,9 +183,13 @@ abstract class Client {
         }
     }
 
-    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions) {
-        connectOptions.setUserName("admin");
-        connectOptions.setPassword("admin".toCharArray());
+    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions, String username, String password) {
+
+        if (!username.isEmpty()) {
+            connectOptions.setUserName(username);
+            connectOptions.setPassword(password.toCharArray());
+        }
+
         connectOptions.setCleanSession(true);
 
         return connectOptions;
