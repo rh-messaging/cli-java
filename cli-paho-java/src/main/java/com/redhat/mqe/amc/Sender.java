@@ -28,7 +28,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -67,7 +67,7 @@ public class Sender extends Client {
         MqttClient sender = null;
         try {
             sender = new MqttClient(cliBroker, cliClientId, persistence);
-            log.fine("Connecting to broker: " + broker);
+            log.info("Connecting to broker: " + broker);
 
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             checkWillOptions(connectOptions);
@@ -80,15 +80,15 @@ public class Sender extends Client {
                 printMessage(cliDestination, message);
             }
         } catch (MqttException me) {
-            log.severe("reason " + me.getReasonCode());
-            log.severe("msg " + me.getMessage());
-            log.severe("loc " + me.getLocalizedMessage());
-            log.severe("cause " + me.getCause());
-            log.severe("excep " + me);
+            log.error("reason " + me.getReasonCode());
+            log.error("msg " + me.getMessage());
+            log.error("loc " + me.getLocalizedMessage());
+            log.error("cause " + me.getCause());
+            log.error("excep " + me);
             me.printStackTrace();
         } finally {
             closeClient(sender);
-            log.fine("Disconnected");
+            log.info("Disconnected");
         }
     }
 }

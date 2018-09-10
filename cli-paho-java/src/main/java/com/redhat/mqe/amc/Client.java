@@ -23,6 +23,7 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import org.apache.log4j.Level;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -31,13 +32,13 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import java.io.IOException;
 import java.util.Map;
 
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 import static java.util.Arrays.asList;
 
 abstract class Client {
+    private Logger log = setUpLogger("Client");
+
     OptionParser parser = new OptionParser();
 
     OptionSpec<String> destination;
@@ -191,20 +192,16 @@ abstract class Client {
 
     protected Logger setUpLogger(String name) {
         Logger log = Logger.getLogger(name);
-        ConsoleHandler handler = new ConsoleHandler();
-        log.setLevel(Level.FINE);
-        handler.setLevel(Level.FINE);
-        log.addHandler(handler);
+        log.setLevel(Level.INFO);
         return log;
     }
 
     void checkWillOptions(MqttConnectOptions connectOptions) {
-        Logger log = setUpLogger("Will parameters checker");
         if (cliWillFlag) {
             try {
                 connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
             } catch (IllegalArgumentException e) {
-                log.severe("Will destination cannot be empty.");
+                log.warn("Will destination cannot be empty.");
             }
         }
     }
