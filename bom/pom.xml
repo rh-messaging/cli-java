@@ -40,7 +40,7 @@
         <plugin.compiler.version>3.8.0</plugin.compiler.version>
         <plugin.assembly.version>3.1.0</plugin.assembly.version>
         <plugin.enforcer.version>3.0.0-M2</plugin.enforcer.version>
-        <plugin.jar.version>3.0.2</plugin.jar.version>
+        <plugin.jar.version>3.1.0</plugin.jar.version>
         <plugin.jacoco.version>0.8.0</plugin.jacoco.version>
         <plugin.bundle.version>3.5.0</plugin.bundle.version>
         <plugin.surefire.version>2.22.0</plugin.surefire.version>
