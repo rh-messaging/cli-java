@@ -34,6 +34,7 @@
     <packaging>pom</packaging>
 
     <properties>
+        <excludeTests>external</excludeTests>
         <bundle.symbolic.name.suffix>ChildPomResponsibility</bundle.symbolic.name.suffix>
         <jar.main.class>ChildPomResponsibility</jar.main.class>
         <library.version>ChildPomResponsibility</library.version>
@@ -135,36 +136,10 @@
 
     <profiles>
         <profile>
-            <!--build Kotlin tests only when explicitly requested-->
             <id>tests</id>
-            <activation>
-                <property>
-                    <name>tests</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>kotlin-maven-plugin</artifactId>
-                        <groupId>org.jetbrains.kotlin</groupId>
-                        <version>${kotlin.version}</version>
-                        <executions>
-                            <execution>
-                                <id>test-compile</id>
-                                <goals>
-                                    <goal>test-compile</goal>
-                                </goals>
-                                <configuration>
-                                    <sourceDirs>
-                                        <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
-                                        <sourceDir>${project.basedir}/src/test/java</sourceDir>
-                                    </sourceDirs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <excludeTests/>
+            </properties>
         </profile>
         <profile>
             <id>coverage</id>
@@ -203,6 +178,9 @@
                 <version>${plugin.surefire.version}</version>
                 <configuration>
                     <forkCount>1</forkCount>
+                    <properties>
+                        <excludeTags>${excludeTests}</excludeTags>
+                    </properties>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -228,6 +206,26 @@
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>test-compile</id>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                                <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                                <sourceDir>${project.build.directory}/generated-sources/annotations</sourceDir>
+                            </sourceDirs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <!--Don't create default jar without dependencies -->
