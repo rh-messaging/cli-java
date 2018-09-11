@@ -32,7 +32,7 @@
         <jopt.version>5.0.4</jopt.version>
         <dagger.version>2.17</dagger.version>
 
-        <kotlin.version>1.2.21</kotlin.version>
+        <kotlin.version>1.2.61</kotlin.version>
         <junit.jupiter.version>5.1.1</junit.jupiter.version>
         <junit.platform.version>1.1.1</junit.platform.version>
         <truth.version>0.40</truth.version>
