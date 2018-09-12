@@ -33,22 +33,22 @@ class InteractionTest {
         val message = mock(Message::class.java)
 
         val session = mock(Session::class.java)
-        `when`(session.createProducer(any(Destination::class.java)))
-            .thenReturn(producer)
-        `when`(session.createProducer(null))
-            .thenReturn(producer)
+        given(session.createProducer(any(Destination::class.java)))
+            .willReturn(producer)
+        given(session.createProducer(null))
+            .willReturn(producer)
         given(session.createMessage()).willReturn(message)
 
         val connection = mock(Connection::class.java)
-        `when`(connection.createSession(anyBoolean(), anyInt()))
-            .thenReturn(session)
+        given(connection.createSession(anyBoolean(), anyInt()))
+            .willReturn(session)
 
         val connectionManager = mock(ConnectionManager::class.java)
         given(connectionManager.getConnection()).willReturn(connection)
 
         val connectionManagerFactory = mock(ConnectionManagerFactory::class.java)
-        `when`(connectionManagerFactory.make(any(ClientOptions::class.java), anyString()))
-            .thenReturn(connectionManager)
+        given(connectionManagerFactory.make(any(ClientOptions::class.java), anyString()))
+            .willReturn(connectionManager)
 
         val args = arrayOf("sender")
         val client = DaggerFakeClient.builder()
