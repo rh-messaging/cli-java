@@ -58,8 +58,7 @@ class InteractionTest {
             .args(args)
             .build()
 
-        // may need changing, put in mock ClientOptions instead?
-        main(args, client)  // or client.makeSenderClient().startClient()?
+        main(args, client)  // or client.makeSenderClient().startClient()
 
         verify(producer).send(message)
     }
