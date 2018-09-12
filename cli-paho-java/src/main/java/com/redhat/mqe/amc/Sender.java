@@ -67,7 +67,7 @@ public class Sender extends Client {
         MqttClient sender = null;
         try {
             sender = new MqttClient(cliBroker, cliClientId, persistence);
-            log.info("Connecting to broker: " + broker);
+            log.info("Connecting to broker: " + cliBroker);
 
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             checkWillOptions(connectOptions);
