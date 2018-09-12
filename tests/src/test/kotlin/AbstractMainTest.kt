@@ -22,6 +22,7 @@ import com.redhat.mqe.ClientListener
 import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.params.ParameterizedTest
@@ -119,7 +120,7 @@ abstract class AbstractMainTest {
         randomSuffix = BigInteger(130, random).toString(32)
     }
 
-    @Tag("pairwise")
+    @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
     @ValueSource(strings = arrayOf("sender", "receiver", "connector"))
     fun printHelp(client: String) {
@@ -138,6 +139,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveSingleMessage() {
         val senderParameters =
@@ -152,6 +154,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendBrowseAndReceiveSingleMessage() {
         val senderParameters =
@@ -168,6 +171,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun connectConnector() {
         val connectorParameters =
@@ -178,6 +182,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveSingleMessageUsingCredentials() {
         val senderParameters =
@@ -192,6 +197,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendBrowseAndReceiveSingleMessageWithEmptySelector() {
         val senderParameters =
@@ -208,6 +214,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendSingleMessageWithoutProtocolInBrokerUrl() {
         val brokerUrl = brokerUrl.substringAfter(":")
@@ -219,6 +226,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveSingleMessageLogInterop() {
         val senderParameters =
@@ -233,6 +241,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveSingleMessageLogJson() {
         val senderParameters =
@@ -247,6 +256,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveSingleMessageLogJsonFloatType() {
         val senderParameters =
@@ -261,6 +271,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/receiver.csv"))
     fun sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions: String) {
@@ -278,7 +289,7 @@ abstract class AbstractMainTest {
         }
     }
 
-    @Tag("pairwise")
+    @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/sender.csv"))
     fun sendAndReceiveWithAllSenderCLISwitches(senderDynamicOptions: String) {
@@ -296,7 +307,7 @@ abstract class AbstractMainTest {
         }
     }
 
-    @Tag("pairwise")
+    @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/connector.csv"))
     fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {
@@ -310,6 +321,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveListMessage() {
         val senderParameters =
@@ -323,6 +335,7 @@ abstract class AbstractMainTest {
         main(receiverParameters)
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveAnInt() {
         assertNoSystemExit {
@@ -338,6 +351,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveMessageFromFile() {
         val file = File.createTempFile(address, null)
@@ -357,6 +371,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveBinaryMessageFromFile() {
         val file = File.createTempFile(address, null)
@@ -376,6 +391,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendMessageFromNonexistentFile() {
         assertSystemExit(2, Executable {
@@ -386,6 +402,7 @@ abstract class AbstractMainTest {
         })
     }
 
+    @Tag("external")
     @Test
     fun sendBinaryMessageFromNonexistentFile() {
         assertSystemExit(2, Executable {
@@ -396,6 +413,7 @@ abstract class AbstractMainTest {
         })
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveTextMessageFromToFile() {
         val file = File.createTempFile(address, "input")
@@ -421,6 +439,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     fun sendAndReceiveMessageToTopic() {
         val senderParameters =
@@ -439,6 +458,7 @@ abstract class AbstractMainTest {
         t.join()
     }
 
+    @Tag("external")
     @Test
     open fun sendSingleMessageAllTrustingTls() {
         assertNoSystemExit {
@@ -450,6 +470,7 @@ abstract class AbstractMainTest {
         }
     }
 
+    @Tag("external")
     @Test
     open fun sendLargeMessageChangingLimit() {
         val senderParameters =
@@ -462,6 +483,7 @@ abstract class AbstractMainTest {
         main(senderParameters)
     }
 
+    @Tag("external")
     @Test
     fun `send and receive with --msg-content-hashed option`() {
         val content = "aContent\n"  // c.f. sha1sum <<<aContent

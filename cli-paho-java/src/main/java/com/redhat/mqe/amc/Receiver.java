@@ -48,7 +48,7 @@ public class Receiver extends Client implements MqttCallback {
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             checkWillOptions(connectOptions);
 
-            receiver.connect(setConnectionOptions(connectOptions));
+            receiver.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword));
             receiver.setCallback(this);
 
             receiver.subscribe(cliDestination);

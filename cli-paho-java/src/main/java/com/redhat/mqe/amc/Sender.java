@@ -67,12 +67,12 @@ public class Sender extends Client {
         MqttClient sender = null;
         try {
             sender = new MqttClient(cliBroker, cliClientId, persistence);
-            log.info("Connecting to broker: " + broker);
+            log.info("Connecting to broker: " + cliBroker);
 
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             checkWillOptions(connectOptions);
 
-            sender.connect(setConnectionOptions(connectOptions));
+            sender.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword));
             MqttMessage message = new MqttMessage(cliContent.getBytes());
             message.setQos(cliQos);
             for (int i = 0; i < cliMsgCount; i++) {

@@ -24,6 +24,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -31,8 +32,6 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.IOException;
 import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 import static java.util.Arrays.asList;
 
@@ -54,6 +53,8 @@ abstract class Client {
     OptionSpec<Integer> willQos;
     OptionSpec<Boolean> willRetained;
     OptionSpec<String> willDestination;
+    OptionSpec<String> username;
+    OptionSpec<String> password;
 
     String cliDestination;
     String cliClientId;
@@ -68,6 +69,8 @@ abstract class Client {
     int cliWillQos;
     Boolean cliWillRetained;
     String cliWillDestination;
+    String cliUsername;
+    String cliPassword;
 
     AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
 
@@ -121,6 +124,9 @@ abstract class Client {
 
         willDestination = parser.accepts("conn-will-destination", "will topic name").withRequiredArg().ofType(String.class);
 
+        username = parser.accepts("conn-username", "username").withRequiredArg().ofType(String.class).defaultsTo("");
+        password = parser.accepts("conn-password", "password").withRequiredArg().ofType(String.class);
+
         help = parser.accepts("help", "This help").forHelp();
 
         return parser;
@@ -132,6 +138,9 @@ abstract class Client {
             System.exit(0);
         } else {
             cliBroker = optionSet.valueOf(broker);
+            if (!cliBroker.startsWith("tcp://")) {
+                cliBroker = "tcp://" + cliBroker;
+            }
             cliDestination = optionSet.valueOf(destination);
             cliClientId = optionSet.valueOf(clientId);
             cliQos = optionSet.valueOf(qos);
@@ -143,6 +152,8 @@ abstract class Client {
             cliWillQos = optionSet.valueOf(willQos);
             cliWillRetained = optionSet.valueOf(willRetained);
             cliWillDestination = optionSet.valueOf(willDestination);
+            cliUsername = optionSet.valueOf(username);
+            cliPassword = optionSet.valueOf(password);
         }
     }
 
@@ -175,9 +186,14 @@ abstract class Client {
         }
     }
 
-    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions) {
-        connectOptions.setUserName("admin");
-        connectOptions.setPassword("admin".toCharArray());
+    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions, String username, String password) {
+        if (!username.isEmpty()) {
+            connectOptions.setUserName(username);
+            if (password != null) {
+                connectOptions.setPassword(password.toCharArray());
+            }
+        }
+
         connectOptions.setCleanSession(true);
 
         return connectOptions;
@@ -185,14 +201,19 @@ abstract class Client {
 
     void closeClient(MqttClient client) throws MqttException {
         if (client != null) {
-            client.disconnect();
-            client.close();
+            try {
+                client.disconnect();
+                client.close();
+            } catch (MqttException e) {
+                client.close();
+                throw e;
+            }
         }
     }
 
     protected Logger setUpLogger(String name) {
         Logger log = Logger.getLogger(name);
-        log.setLevel(Level.INFO);
+        log.setLevel(Level.WARN);
         return log;
     }
 
