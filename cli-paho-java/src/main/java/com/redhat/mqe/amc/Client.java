@@ -138,6 +138,9 @@ abstract class Client {
             System.exit(0);
         } else {
             cliBroker = optionSet.valueOf(broker);
+            if (!cliBroker.startsWith("tcp://")) {
+                cliBroker = "tcp://" + cliBroker;
+            }
             cliDestination = optionSet.valueOf(destination);
             cliClientId = optionSet.valueOf(clientId);
             cliQos = optionSet.valueOf(qos);
@@ -198,14 +201,19 @@ abstract class Client {
 
     void closeClient(MqttClient client) throws MqttException {
         if (client != null) {
-            client.disconnect();
-            client.close();
+            try {
+                client.disconnect();
+                client.close();
+            } catch (MqttException e) {
+                client.close();
+                throw e;
+            }
         }
     }
 
     protected Logger setUpLogger(String name) {
         Logger log = Logger.getLogger(name);
-        log.setLevel(Level.INFO);
+        log.setLevel(Level.WARN);
         return log;
     }
 
