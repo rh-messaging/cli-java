@@ -104,7 +104,7 @@ abstract class Client {
         destination = parser.acceptsAll(asList("a", "address"), "mqtt topic name").withRequiredArg()
             .ofType(String.class).defaultsTo("mqttTopic").describedAs("default mqtt topic destination");
 
-        clientId = parser.accepts("client-id", "client id").withRequiredArg()
+        clientId = parser.accepts("conn-clientid", "client id").withRequiredArg()
             .ofType(String.class).defaultsTo("");
 
         qos = parser.accepts("msg-qos", "message QoS (0,1,2)").withRequiredArg().ofType(Integer.class).defaultsTo(1);
