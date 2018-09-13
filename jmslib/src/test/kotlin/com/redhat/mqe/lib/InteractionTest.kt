@@ -25,34 +25,41 @@ import org.mockito.BDDMockito.given
 import org.mockito.Mockito.*
 import javax.jms.*
 
-class InteractionTest {
-    @Test
-    fun `test run sender no params`() {
-        val producer = mock(MessageProducer::class.java)
+class JmsMocks {
+    val message = mock(Message::class.java)
+    val producer = mock(MessageProducer::class.java)
+    val consumer = mock(MessageConsumer::class.java)
+    val session = mock(Session::class.java)
+    val connection = mock(Connection::class.java)
+    val connectionManager = mock(ConnectionManager::class.java)
+    val connectionManagerFactory = mock(ConnectionManagerFactory::class.java)
 
-        val message = mock(Message::class.java)
-
-        val session = mock(Session::class.java)
+    init {
+        given(consumer.receive(anyLong()))
+            .willReturn(message, null)
         given(session.createProducer(any(Destination::class.java)))
             .willReturn(producer)
         given(session.createProducer(null))
             .willReturn(producer)
         given(session.createMessage()).willReturn(message)
-
-        val connection = mock(Connection::class.java)
+        given(session.createConsumer(isNull(), anyString(), anyBoolean()))
+            .willReturn(consumer)
         given(connection.createSession(anyBoolean(), anyInt()))
             .willReturn(session)
-
-        val connectionManager = mock(ConnectionManager::class.java)
         given(connectionManager.getConnection()).willReturn(connection)
-
-        val connectionManagerFactory = mock(ConnectionManagerFactory::class.java)
         given(connectionManagerFactory.make(any(ClientOptions::class.java), anyString()))
             .willReturn(connectionManager)
+    }
+}
+
+class InteractionTest {
+    @Test
+    fun `test run sender no params`() {
+        val mocks = JmsMocks()
 
         val args = arrayOf("sender")
         val client = DaggerFakeClient.builder()
-            .connectionManagerFactory(connectionManagerFactory)
+            .connectionManagerFactory(mocks.connectionManagerFactory)
             .messageFormatter(mock(JmsMessageFormatter::class.java))
             .clientOptionManager(mock(ClientOptionManager::class.java))
             .args(args)
@@ -60,6 +67,23 @@ class InteractionTest {
 
         main(args, client)  // or client.makeSenderClient().startClient()
 
-        verify(producer).send(message)
+        verify(mocks.producer, times(1)).send(mocks.message)
+    }
+
+    @Test
+    fun `test run receiver no params`() {
+        val mocks = JmsMocks()
+
+        val args = arrayOf("receiver")
+        val client = DaggerFakeClient.builder()
+            .connectionManagerFactory(mocks.connectionManagerFactory)
+            .messageFormatter(mock(JmsMessageFormatter::class.java))
+            .clientOptionManager(mock(ClientOptionManager::class.java))
+            .args(args)
+            .build()
+
+        main(args, client)  // or client.makeSenderClient().startClient()
+
+        verify(mocks.consumer, times(2)).receive(anyLong())
     }
 }
