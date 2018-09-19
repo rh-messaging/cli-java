@@ -36,7 +36,7 @@
     <properties>
         <bundle.symbolic.name.suffix>aoc</bundle.symbolic.name.suffix>
         <jar.main.class>com.redhat.mqe.aoc.Main</jar.main.class>
-        <activemq.client.version>5.15.5</activemq.client.version>
+        <activemq.client.version>LATEST</activemq.client.version>
         <library.version>${activemq.client.version}</library.version>
     </properties>
 

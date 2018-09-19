@@ -87,7 +87,7 @@ class AocClientOptionManager extends ClientOptionManager {
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_ENA_PROTOS, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_DIS_PROTOS, "");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_TRUST_ALL, null);
-        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_VERIFY_HOST, "");
+        CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_VERIFY_HOST, "verifyHostName");
         CONNECTION_TRANSLATION_MAP.put(ClientOptions.CON_SSL_KEYALIAS, "");
 
         // http://activemq.apache.org/tcp-transport-reference.html
