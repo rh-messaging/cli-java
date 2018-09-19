@@ -86,6 +86,9 @@ public class Sender extends Client {
             log.error("cause " + me.getCause());
             log.error("excep " + me);
             me.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
         } finally {
             closeClient(sender);
             log.info("Disconnected");
