@@ -222,7 +222,7 @@ abstract class Client {
             try {
                 connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
             } catch (IllegalArgumentException e) {
-                log.warn("Will destination cannot be empty.");
+                throw new IllegalArgumentException("Will destination cannot be empty.", e);
             }
         }
     }
