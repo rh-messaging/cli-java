@@ -55,6 +55,7 @@ abstract class Client {
     OptionSpec<String> willDestination;
     OptionSpec<String> username;
     OptionSpec<String> password;
+    OptionSpec<Integer> keepAlive;
 
     String cliDestination;
     String cliClientId;
@@ -71,6 +72,7 @@ abstract class Client {
     String cliWillDestination;
     String cliUsername;
     String cliPassword;
+    Integer cliKeepAlive;
 
     AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
 
@@ -127,6 +129,10 @@ abstract class Client {
         username = parser.accepts("conn-username", "username").withRequiredArg().ofType(String.class).defaultsTo("");
         password = parser.accepts("conn-password", "password").withRequiredArg().ofType(String.class);
 
+        /*If the Keep Alive value is non-zero and the Server does not receive a Control Packet from the Client within one and a half times the Keep Alive time period,
+         it MUST disconnect the Network Connection to the Client as if the network had failed */
+        keepAlive = parser.accepts("conn-heartbeat", "keep alive interval").withRequiredArg().ofType(Integer.class);
+
         help = parser.accepts("help", "This help").forHelp();
 
         return parser;
@@ -154,6 +160,7 @@ abstract class Client {
             cliWillDestination = optionSet.valueOf(willDestination);
             cliUsername = optionSet.valueOf(username);
             cliPassword = optionSet.valueOf(password);
+            cliKeepAlive = optionSet.valueOf(keepAlive);
         }
     }
 
@@ -186,11 +193,19 @@ abstract class Client {
         }
     }
 
-    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions, String username, String password) {
+    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions, String username, String password, Integer keepAlive) {
         if (!username.isEmpty()) {
             connectOptions.setUserName(username);
             if (password != null) {
                 connectOptions.setPassword(password.toCharArray());
+            }
+        }
+
+        if (keepAlive != null) {
+            try {
+                connectOptions.setKeepAliveInterval(keepAlive);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Keep alive interval cannot be a negative number.", e);
             }
         }
 
@@ -222,7 +237,7 @@ abstract class Client {
             try {
                 connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
             } catch (IllegalArgumentException e) {
-                log.warn("Will destination cannot be empty.");
+                throw new IllegalArgumentException("Will destination cannot be empty.", e);
             }
         }
     }

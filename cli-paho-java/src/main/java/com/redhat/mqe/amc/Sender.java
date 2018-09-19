@@ -58,7 +58,6 @@ public class Sender extends Client {
         super.setOptionValues(optionSet);
         cliContent = optionSet.valueOf(content);
     }
-
     /**
      * Send a message to the topic
      */
@@ -72,7 +71,7 @@ public class Sender extends Client {
             MqttConnectOptions connectOptions = new MqttConnectOptions();
             checkWillOptions(connectOptions);
 
-            sender.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword));
+            sender.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword, cliKeepAlive));
             MqttMessage message = new MqttMessage(cliContent.getBytes());
             message.setQos(cliQos);
             for (int i = 0; i < cliMsgCount; i++) {
@@ -86,6 +85,9 @@ public class Sender extends Client {
             log.error("cause " + me.getCause());
             log.error("excep " + me);
             me.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
         } finally {
             closeClient(sender);
             log.info("Disconnected");
