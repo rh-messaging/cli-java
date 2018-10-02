@@ -20,46 +20,78 @@
 package com.redhat.mqe.lib
 
 import com.redhat.mqe.lib.Main.main
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
+import org.mockito.Mock
 import org.mockito.Mockito.*
+import org.mockito.MockitoAnnotations
 import javax.jms.*
 
 class InteractionTest {
-    @Test
-    fun `test run sender no params`() {
-        val producer = mock(MessageProducer::class.java)
+    @Mock
+    lateinit var message: Message
+    @Mock
+    lateinit var producer: MessageProducer
+    @Mock
+    lateinit var consumer: MessageConsumer
+    @Mock
+    lateinit var session: Session
+    @Mock
+    lateinit var connection: Connection
+    @Mock
+    lateinit var connectionManager: ConnectionManager
+    @Mock
+    lateinit var connectionManagerFactory: ConnectionManagerFactory
 
-        val message = mock(Message::class.java)
+    @BeforeEach
+    fun setUpMocks() {
+        MockitoAnnotations.initMocks(this)
 
-        val session = mock(Session::class.java)
+        given(consumer.receive(anyLong()))
+            .willReturn(message, null)
+
         given(session.createProducer(any(Destination::class.java)))
             .willReturn(producer)
         given(session.createProducer(null))
             .willReturn(producer)
         given(session.createMessage()).willReturn(message)
+        given(session.createConsumer(isNull(), anyString(), anyBoolean()))
+            .willReturn(consumer)
 
-        val connection = mock(Connection::class.java)
         given(connection.createSession(anyBoolean(), anyInt()))
             .willReturn(session)
-
-        val connectionManager = mock(ConnectionManager::class.java)
         given(connectionManager.getConnection()).willReturn(connection)
-
-        val connectionManagerFactory = mock(ConnectionManagerFactory::class.java)
         given(connectionManagerFactory.make(any(ClientOptions::class.java), anyString()))
             .willReturn(connectionManager)
+    }
 
+    @Test
+    fun `test run sender no params`() {
         val args = arrayOf("sender")
-        val client = DaggerFakeClient.builder()
+        val client = createFakeClient(args)
+
+        main(args, client)  // or client.makeSenderClient().startClient()
+
+        verify(producer, times(1)).send(message)
+    }
+
+    @Test
+    fun `test run receiver no params`() {
+        val args = arrayOf("receiver")
+        val client = createFakeClient(args)
+
+        main(args, client)  // or client.makeSenderClient().startClient()
+
+        verify(consumer, times(2)).receive(anyLong())
+    }
+
+    private fun createFakeClient(args: Array<String>): FakeClient {
+        return DaggerFakeClient.builder()
             .connectionManagerFactory(connectionManagerFactory)
             .messageFormatter(mock(JmsMessageFormatter::class.java))
             .clientOptionManager(mock(ClientOptionManager::class.java))
             .args(args)
             .build()
-
-        main(args, client)  // or client.makeSenderClient().startClient()
-
-        verify(producer).send(message)
     }
 }
