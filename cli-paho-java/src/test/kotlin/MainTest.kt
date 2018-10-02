@@ -21,8 +21,10 @@ import com.redhat.mqe.ClientListener
 import com.redhat.mqe.amc.Main
 import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
+@Tag("external")
 class AmcMainTest : AbstractMainTest() {
 
     override val brokerUrl = "tcp://127.0.0.1:1883"
@@ -31,7 +33,7 @@ class AmcMainTest : AbstractMainTest() {
     override val senderAdditionalOptions = """
 """.split(" ", "\n").toTypedArray()
 
-// cannot set Client ID, because more than one connection is created, and these would clash
+    // cannot set Client ID, because more than one connection is created, and these would clash
 //--conn-clientid aClientId
     override val connectorAdditionalOptions = """
 """.split(" ", "\n").toTypedArray()

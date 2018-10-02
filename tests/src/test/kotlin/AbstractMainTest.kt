@@ -77,6 +77,7 @@ fun assertNoSystemExit(executable: () -> Unit) {
     }
 }
 
+@Tag("external")
 abstract class AbstractMainTest {
     abstract val brokerUrl: String
     abstract val sslBrokerUrl: String
