@@ -23,8 +23,6 @@ import com.redhat.mqe.acc.Main
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import java.io.File
-import java.nio.file.Files
 
 @Tag("external")
 class AccMainTest : AbstractMainTest() {

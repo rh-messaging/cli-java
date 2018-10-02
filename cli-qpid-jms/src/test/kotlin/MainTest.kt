@@ -24,7 +24,6 @@ import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
-import java.time.Duration
 
 @Tag("external")
 class AacMainTest : AbstractMainTest() {
