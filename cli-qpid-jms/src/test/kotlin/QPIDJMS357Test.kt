@@ -20,6 +20,7 @@
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.util.*
@@ -27,7 +28,7 @@ import javax.jms.Connection
 import javax.jms.ConnectionFactory
 import javax.jms.Session
 
-@Tag("issue")
+@Tags(Tag("issue"), Tag("external"))
 class QPIDJMS357Test {
     val prefix: String = "QPIDJMS357Test_"
     lateinit var randomSuffix: String
