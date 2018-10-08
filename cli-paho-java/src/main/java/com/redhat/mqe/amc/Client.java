@@ -56,6 +56,7 @@ abstract class Client {
     OptionSpec<String> username;
     OptionSpec<String> password;
     OptionSpec<Integer> keepAlive;
+    OptionSpec<Boolean> reconnect;
 
     String cliDestination;
     String cliClientId;
@@ -73,6 +74,7 @@ abstract class Client {
     String cliUsername;
     String cliPassword;
     Integer cliKeepAlive;
+    Boolean cliReconnect;
 
     AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
 
@@ -133,6 +135,8 @@ abstract class Client {
          it MUST disconnect the Network Connection to the Client as if the network had failed */
         keepAlive = parser.accepts("conn-heartbeat", "keep alive interval").withRequiredArg().ofType(Integer.class);
 
+        reconnect = parser.accepts("conn-reconnect", "automatic reconnect (true, false)").withRequiredArg().ofType(Boolean.class).defaultsTo(true);
+
         help = parser.accepts("help", "This help").forHelp();
 
         return parser;
@@ -161,6 +165,7 @@ abstract class Client {
             cliUsername = optionSet.valueOf(username);
             cliPassword = optionSet.valueOf(password);
             cliKeepAlive = optionSet.valueOf(keepAlive);
+            cliReconnect = optionSet.valueOf(reconnect);
         }
     }
 
