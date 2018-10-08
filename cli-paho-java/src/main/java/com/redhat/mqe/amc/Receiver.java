@@ -64,6 +64,9 @@ public class Receiver extends Client implements MqttCallback {
             throw e;
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
         } finally {
             closeClient(receiver);
         }
