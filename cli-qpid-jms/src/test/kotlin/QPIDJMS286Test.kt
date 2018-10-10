@@ -1,5 +1,6 @@
 import com.google.common.truth.Truth
 import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
 
 /*
@@ -21,7 +22,7 @@ import org.junit.jupiter.api.Test
  * limitations under the License.
  */
 
-@Tag("issue")
+@Tags(Tag("issue"), Tag("external"))
 class QPIDJMS286Test {
     @Test
     fun `uri options are not visible in thread names`() {

@@ -29,21 +29,22 @@
 
     <properties>
         <slfj.version>1.7.25</slfj.version>
-        <jopt.version>4.9</jopt.version>
-        <dagger.version>2.15</dagger.version>
+        <jopt.version>5.0.4</jopt.version>
+        <dagger.version>2.17</dagger.version>
 
-        <kotlin.version>1.2.21</kotlin.version>
-        <junit.jupiter.version>5.1.1</junit.jupiter.version>
-        <junit.platform.version>1.1.1</junit.platform.version>
-        <truth.version>0.40</truth.version>
+        <kotlin.version>1.2.61</kotlin.version>
+        <junit.jupiter.version>5.3.1</junit.jupiter.version>
+        <junit.platform.version>1.3.1</junit.platform.version>
+        <truth.version>0.42</truth.version>
+        <mockito.version>2.22.0</mockito.version>
 
-        <plugin.compiler.version>3.7.0</plugin.compiler.version>
+        <plugin.compiler.version>3.8.0</plugin.compiler.version>
         <plugin.assembly.version>3.1.0</plugin.assembly.version>
-        <plugin.enforcer.version>3.0.0-M1</plugin.enforcer.version>
-        <plugin.jar.version>3.0.2</plugin.jar.version>
-        <plugin.jacoco.version>0.8.0</plugin.jacoco.version>
-        <plugin.bundle.version>3.5.0</plugin.bundle.version>
-        <plugin.surefire.version>2.19.1</plugin.surefire.version>
+        <plugin.enforcer.version>3.0.0-M2</plugin.enforcer.version>
+        <plugin.jar.version>3.1.0</plugin.jar.version>
+        <plugin.jacoco.version>0.8.2</plugin.jacoco.version>
+        <plugin.bundle.version>4.0.0</plugin.bundle.version>
+        <plugin.surefire.version>2.22.0</plugin.surefire.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -141,6 +142,12 @@
                 <groupId>com.google.truth</groupId>
                 <artifactId>truth</artifactId>
                 <version>${truth.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
 

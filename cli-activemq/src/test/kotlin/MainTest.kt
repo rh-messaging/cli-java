@@ -20,8 +20,10 @@
 import com.redhat.mqe.ClientListener
 import com.redhat.mqe.aoc.Main
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
+@Tag("external")
 class AocMainTest : AbstractMainTest() {
 
     override val brokerUrl = "tcp://127.0.0.1:61616"
@@ -82,7 +84,7 @@ class AocMainTest : AbstractMainTest() {
 --property-type String
 """.split(" ", "\n").toTypedArray()
 
-// cannot set Client ID, because more than one connection is created, and these would clash
+    // cannot set Client ID, because more than one connection is created, and these would clash
 //--conn-clientid aClientId
     override val connectorAdditionalOptions = """
 --conn-tcp-traffic-class 2

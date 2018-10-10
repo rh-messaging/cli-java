@@ -20,9 +20,9 @@
 package com.redhat.mqe.amc;
 
 import joptsimple.OptionParser;
+import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.*;
 
-import java.util.logging.Logger;
 
 public class Receiver extends Client implements MqttCallback {
     private Logger log = setUpLogger("Receiver");
@@ -43,12 +43,16 @@ public class Receiver extends Client implements MqttCallback {
         cliTimeout = cliTimeout * 1000;
         try {
             receiver = new MqttClient(cliBroker, cliClientId, null);
-            log.fine("Connecting to the broker " + cliBroker);
-            receiver.connect(setConnectionOptions(new MqttConnectOptions()));
+            log.info("Connecting to the broker " + cliBroker);
+
+            MqttConnectOptions connectOptions = new MqttConnectOptions();
+            checkWillOptions(connectOptions);
+
+            receiver.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword, cliKeepAlive));
             receiver.setCallback(this);
 
             receiver.subscribe(cliDestination);
-            log.fine("Subscribed to " + cliDestination);
+            log.info("Subscribed to " + cliDestination);
             // wait for messages to arrive for some time
             long endTime = System.currentTimeMillis() + cliTimeout;
             while (System.currentTimeMillis() < endTime) {
@@ -56,7 +60,7 @@ public class Receiver extends Client implements MqttCallback {
             }
             receiver.unsubscribe(cliDestination);
         } catch (MqttException e) {
-            log.severe("Error while subscribing!  " + e.getMessage());
+            log.error("Error while subscribing!  " + e.getMessage());
             throw e;
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -66,7 +70,7 @@ public class Receiver extends Client implements MqttCallback {
     }
 
     public void connectionLost(Throwable cause) {
-        log.severe("Connection lost! " + cause.getMessage());
+        log.warn("Connection lost! " + cause.getMessage());
         cause.printStackTrace();
     }
 

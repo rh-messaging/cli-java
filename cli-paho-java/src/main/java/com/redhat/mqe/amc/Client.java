@@ -23,6 +23,8 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -30,13 +32,12 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static java.util.Arrays.asList;
 
 abstract class Client {
+    private Logger log = setUpLogger("Client");
+
     OptionParser parser = new OptionParser();
 
     OptionSpec<String> destination;
@@ -52,6 +53,9 @@ abstract class Client {
     OptionSpec<Integer> willQos;
     OptionSpec<Boolean> willRetained;
     OptionSpec<String> willDestination;
+    OptionSpec<String> username;
+    OptionSpec<String> password;
+    OptionSpec<Integer> keepAlive;
 
     String cliDestination;
     String cliClientId;
@@ -66,6 +70,9 @@ abstract class Client {
     int cliWillQos;
     Boolean cliWillRetained;
     String cliWillDestination;
+    String cliUsername;
+    String cliPassword;
+    Integer cliKeepAlive;
 
     AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
 
@@ -99,7 +106,7 @@ abstract class Client {
         destination = parser.acceptsAll(asList("a", "address"), "mqtt topic name").withRequiredArg()
             .ofType(String.class).defaultsTo("mqttTopic").describedAs("default mqtt topic destination");
 
-        clientId = parser.accepts("client-id", "client id").withRequiredArg()
+        clientId = parser.accepts("conn-clientid", "client id").withRequiredArg()
             .ofType(String.class).defaultsTo("");
 
         qos = parser.accepts("msg-qos", "message QoS (0,1,2)").withRequiredArg().ofType(Integer.class).defaultsTo(1);
@@ -117,7 +124,14 @@ abstract class Client {
 
         willRetained = parser.accepts("conn-will-retained", "is will retained (true, false)").withRequiredArg().ofType(Boolean.class).defaultsTo(false);
 
-        willDestination = parser.accepts("conn-will-destination", "will topic name").withRequiredArg().ofType(String.class).defaultsTo("");
+        willDestination = parser.accepts("conn-will-destination", "will topic name").withRequiredArg().ofType(String.class);
+
+        username = parser.accepts("conn-username", "username").withRequiredArg().ofType(String.class).defaultsTo("");
+        password = parser.accepts("conn-password", "password").withRequiredArg().ofType(String.class);
+
+        /*If the Keep Alive value is non-zero and the Server does not receive a Control Packet from the Client within one and a half times the Keep Alive time period,
+         it MUST disconnect the Network Connection to the Client as if the network had failed */
+        keepAlive = parser.accepts("conn-heartbeat", "keep alive interval").withRequiredArg().ofType(Integer.class);
 
         help = parser.accepts("help", "This help").forHelp();
 
@@ -130,6 +144,9 @@ abstract class Client {
             System.exit(0);
         } else {
             cliBroker = optionSet.valueOf(broker);
+            if (!cliBroker.startsWith("tcp://")) {
+                cliBroker = "tcp://" + cliBroker;
+            }
             cliDestination = optionSet.valueOf(destination);
             cliClientId = optionSet.valueOf(clientId);
             cliQos = optionSet.valueOf(qos);
@@ -141,6 +158,9 @@ abstract class Client {
             cliWillQos = optionSet.valueOf(willQos);
             cliWillRetained = optionSet.valueOf(willRetained);
             cliWillDestination = optionSet.valueOf(willDestination);
+            cliUsername = optionSet.valueOf(username);
+            cliPassword = optionSet.valueOf(password);
+            cliKeepAlive = optionSet.valueOf(keepAlive);
         }
     }
 
@@ -173,9 +193,22 @@ abstract class Client {
         }
     }
 
-    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions) {
-        connectOptions.setUserName("admin");
-        connectOptions.setPassword("admin".toCharArray());
+    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions, String username, String password, Integer keepAlive) {
+        if (!username.isEmpty()) {
+            connectOptions.setUserName(username);
+            if (password != null) {
+                connectOptions.setPassword(password.toCharArray());
+            }
+        }
+
+        if (keepAlive != null) {
+            try {
+                connectOptions.setKeepAliveInterval(keepAlive);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Keep alive interval cannot be a negative number.", e);
+            }
+        }
+
         connectOptions.setCleanSession(true);
 
         return connectOptions;
@@ -183,17 +216,29 @@ abstract class Client {
 
     void closeClient(MqttClient client) throws MqttException {
         if (client != null) {
-            client.disconnect();
-            client.close();
+            try {
+                client.disconnect();
+                client.close();
+            } catch (MqttException e) {
+                client.close();
+                throw e;
+            }
         }
     }
 
     protected Logger setUpLogger(String name) {
         Logger log = Logger.getLogger(name);
-        ConsoleHandler handler = new ConsoleHandler();
-        log.setLevel(Level.FINE);
-        handler.setLevel(Level.FINE);
-        log.addHandler(handler);
+        log.setLevel(Level.WARN);
         return log;
+    }
+
+    void checkWillOptions(MqttConnectOptions connectOptions) {
+        if (cliWillFlag) {
+            try {
+                connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Will destination cannot be empty.", e);
+            }
+        }
     }
 }

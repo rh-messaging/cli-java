@@ -28,7 +28,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import java.util.logging.Logger;
+import org.apache.log4j.Logger;
 
 
 /**
@@ -58,7 +58,6 @@ public class Sender extends Client {
         super.setOptionValues(optionSet);
         cliContent = optionSet.valueOf(content);
     }
-
     /**
      * Send a message to the topic
      */
@@ -67,25 +66,12 @@ public class Sender extends Client {
         MqttClient sender = null;
         try {
             sender = new MqttClient(cliBroker, cliClientId, persistence);
-            log.fine("Connecting to broker: " + broker);
+            log.info("Connecting to broker: " + cliBroker);
 
             MqttConnectOptions connectOptions = new MqttConnectOptions();
+            checkWillOptions(connectOptions);
 
-            if (cliWillFlag) {
-                if (cliWillDestination.isEmpty()) {
-                    log.severe("Will destination cannot be empty.");
-                    System.exit(0);
-                }
-
-                if (cliWillMessage.isEmpty()) {
-                    log.severe("Will message body cannot be empty.");
-                    System.exit(0);
-                }
-
-                connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
-            }
-
-            sender.connect(setConnectionOptions(connectOptions));
+            sender.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword, cliKeepAlive));
             MqttMessage message = new MqttMessage(cliContent.getBytes());
             message.setQos(cliQos);
             for (int i = 0; i < cliMsgCount; i++) {
@@ -93,15 +79,18 @@ public class Sender extends Client {
                 printMessage(cliDestination, message);
             }
         } catch (MqttException me) {
-            log.severe("reason " + me.getReasonCode());
-            log.severe("msg " + me.getMessage());
-            log.severe("loc " + me.getLocalizedMessage());
-            log.severe("cause " + me.getCause());
-            log.severe("excep " + me);
+            log.error("reason " + me.getReasonCode());
+            log.error("msg " + me.getMessage());
+            log.error("loc " + me.getLocalizedMessage());
+            log.error("cause " + me.getCause());
+            log.error("excep " + me);
             me.printStackTrace();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            System.exit(1);
         } finally {
             closeClient(sender);
-            log.fine("Disconnected");
+            log.info("Disconnected");
         }
     }
 }

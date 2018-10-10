@@ -21,10 +21,12 @@ import com.google.common.truth.Truth.assertThat
 import com.redhat.mqe.ClientListener
 import com.redhat.mqe.acc.Main
 import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
 
+@Tag("external")
 class AccMainTest : AbstractMainTest() {
 
     override val brokerUrl = "tcp://127.0.0.1:61616"
@@ -93,7 +95,7 @@ class AccMainTest : AbstractMainTest() {
 --property-type String
 """.split(" ", "\n").toTypedArray()
 
-// cannot set Client ID, because more than one connection is created, and these would clash
+    // cannot set Client ID, because more than one connection is created, and these would clash
 //--conn-clientid aClientId
     override val connectorAdditionalOptions = """
 --conn-async-acks true

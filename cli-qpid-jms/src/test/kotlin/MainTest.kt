@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
 import java.time.Duration
 
+@Tag("external")
 class AacMainTest : AbstractMainTest() {
 
     override val brokerUrl = "amqp://127.0.0.1:5672"
@@ -88,7 +89,7 @@ class AacMainTest : AbstractMainTest() {
 """.split(" ", "\n").toTypedArray()
 
 
-// cannot set Client ID, because more than one connection is created, and these would clash
+    // cannot set Client ID, because more than one connection is created, and these would clash
 //--conn-clientid aClientId
     override val connectorAdditionalOptions = """
 --conn-async-send true
