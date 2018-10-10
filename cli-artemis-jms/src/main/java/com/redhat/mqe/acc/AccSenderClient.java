@@ -24,7 +24,7 @@ import com.redhat.mqe.lib.ConnectionManagerFactory;
 import com.redhat.mqe.lib.JmsMessageFormatter;
 import com.redhat.mqe.lib.Utils;
 import com.redhat.mqe.lib.message.MessageProvider;
-import org.apache.activemq.artemis.api.core.ActiveMQUnBlockedException;
+import org.apache.activemq.artemis.api.core.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -99,7 +99,8 @@ public class AccSenderClient extends com.redhat.mqe.lib.SenderClient {
                     msgProducer.send(message);
                 } catch (JMSException jex) {
                     LOG.error(jex.getCause().toString());
-                    if (jex.getCause() instanceof ActiveMQUnBlockedException) {
+                    if (jex.getCause() instanceof ActiveMQUnBlockedException &&
+                        ((ActiveMQUnBlockedException) jex.getCause()).getType().equals(ActiveMQExceptionType.UNBLOCKED)) {
                         // Resend missed messages due to unblocking blocking call.
                         // See "Handling Blocking Calls During Failover" in link below
                         // https://activemq.apache.org/artemis/docs/latest/ha.html
@@ -155,7 +156,6 @@ public class AccSenderClient extends com.redhat.mqe.lib.SenderClient {
         } catch (JMSException | IllegalArgumentException jmse) {
             LOG.error("Error while sending a message!", jmse.getMessage());
             jmse.printStackTrace();
-            System.exit(1);
         } finally {
             double closeSleep = Double.parseDouble(this.getClientOptions().getOption(ClientOptions.CLOSE_SLEEP).getValue());
             closeConnObjects(this, closeSleep);
