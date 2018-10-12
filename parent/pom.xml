@@ -90,13 +90,6 @@
             <artifactId>junit-jupiter-params</artifactId>
         </dependency>
 
-        <!-- Only required to run tests in an IntelliJ IDEA that bundles an older version -->
-        <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-launcher</artifactId>
-            <version>${junit.platform.version}</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -180,22 +173,15 @@
 
     <build>
         <plugins>
+            <!--https://maven.apache.org/surefire/maven-surefire-plugin/examples/junit-platform.html#Filtering_by_Tags-->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${plugin.surefire.version}</version>
                 <configuration>
                     <forkCount>1</forkCount>
-                    <properties>
-                        <excludeTags>${excludeTests}</excludeTags>
-                    </properties>
+                    <excludedGroups>${excludeTests}</excludedGroups>
                 </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>${junit.platform.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
