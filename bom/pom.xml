@@ -35,7 +35,7 @@
         <kotlin.version>1.2.61</kotlin.version>
         <junit.jupiter.version>5.3.1</junit.jupiter.version>
         <truth.version>0.42</truth.version>
-        <mockito.version>2.22.0</mockito.version>
+        <mockito.version>2.23.0</mockito.version>
 
         <plugin.compiler.version>3.8.0</plugin.compiler.version>
         <plugin.assembly.version>3.1.0</plugin.assembly.version>
