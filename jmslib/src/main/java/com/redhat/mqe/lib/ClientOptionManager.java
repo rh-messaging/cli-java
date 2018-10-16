@@ -146,6 +146,10 @@ public abstract class ClientOptionManager {
                         }
                     }
                 }
+
+                // SetClientOptions() case: ClientOptions.BROKER
+                setBrokerUrlFromOptions(clientOptions, options);
+
                 clientOptions.setUpdatedOptions(updatedOptions);
                 createConnectionOptions(clientOptions);
                 if (clientOptions.getUpdatedOptionsMap().keySet().contains(ClientOptions.BROKER)
@@ -165,6 +169,12 @@ public abstract class ClientOptionManager {
             printHelp(parser);
             System.exit(2);
         }
+    }
+
+    private void setBrokerUrlFromOptions(ClientOptions clientOptions, OptionSet options) {
+        Option brokerOption = clientOptions.getOption(ClientOptions.BROKER);
+        setBrokerOptions(clientOptions, (String) options.valueOf(ClientOptions.BROKER));
+        brokerOption.setParsedValue(CoreClient.formBrokerUrl(clientOptions));
     }
 
     protected void createConnectionOptions(ClientOptions clientOptions) {
@@ -208,11 +218,7 @@ public abstract class ClientOptionManager {
 
             switch (optionName) {
                 case ClientOptions.BROKER:
-                    setBrokerOptions(clientOptions, (String) options.valueOf(optionName));
-                    // Set parsed value from options (set without "broker options" only when --broker arg.)
-                    // TODO broker uses other (may not be parsed values!) FIX THIS
-                    clientOption.setParsedValue(CoreClient.formBrokerUrl(clientOptions));
-                    // formatAddress and set type & name for ConnectionManager
+                    // Broker value is set once all options are parsed and set via setBrokerUrlFromOptions
                     break;
                 case ClientOptions.ADDRESS:
                     String address = (String) options.valueOf(ClientOptions.ADDRESS);
