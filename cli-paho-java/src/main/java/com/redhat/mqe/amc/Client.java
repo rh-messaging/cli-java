@@ -198,22 +198,28 @@ abstract class Client {
         }
     }
 
-    static MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions, String username, String password, Integer keepAlive) {
-        if (!username.isEmpty()) {
-            connectOptions.setUserName(username);
-            if (password != null) {
-                connectOptions.setPassword(password.toCharArray());
+    protected MqttConnectOptions setConnectionOptions(MqttConnectOptions connectOptions) {
+        if (cliWillFlag) {
+            try {
+                connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Will destination cannot be empty.", e);
             }
         }
-
-        if (keepAlive != null) {
+        if (!cliUsername.isEmpty()) {
+            connectOptions.setUserName(cliUsername);
+            if (cliPassword != null) {
+                connectOptions.setPassword(cliPassword.toCharArray());
+            }
+        }
+         if (cliKeepAlive != null) {
             try {
-                connectOptions.setKeepAliveInterval(keepAlive);
+                connectOptions.setKeepAliveInterval(cliKeepAlive);
             } catch (IllegalArgumentException e) {
                 throw new IllegalArgumentException("Keep alive interval cannot be a negative number.", e);
             }
         }
-
+        connectOptions.setAutomaticReconnect(cliReconnect);
         connectOptions.setCleanSession(true);
 
         return connectOptions;
@@ -237,13 +243,4 @@ abstract class Client {
         return log;
     }
 
-    void checkWillOptions(MqttConnectOptions connectOptions) {
-        if (cliWillFlag) {
-            try {
-                connectOptions.setWill(cliWillDestination, cliWillMessage.getBytes(), cliWillQos, cliWillRetained);
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Will destination cannot be empty.", e);
-            }
-        }
-    }
 }

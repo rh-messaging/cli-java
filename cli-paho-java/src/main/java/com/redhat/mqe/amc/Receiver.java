@@ -46,11 +46,9 @@ public class Receiver extends Client implements MqttCallback {
             log.info("Connecting to the broker " + cliBroker);
 
             MqttConnectOptions connectOptions = new MqttConnectOptions();
-            checkWillOptions(connectOptions);
+            receiver.connect(setConnectionOptions(connectOptions));
 
-            receiver.connect(setConnectionOptions(connectOptions, cliUsername, cliPassword, cliKeepAlive));
             receiver.setCallback(this);
-
             receiver.subscribe(cliDestination);
             log.info("Subscribed to " + cliDestination);
             // wait for messages to arrive for some time
