@@ -34,13 +34,14 @@
 
     <properties>
         <maven.install.skip>true</maven.install.skip>
+        <jackson.version>2.9.7</jackson.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.9.2</version>
+            <version>${jackson.version}</version>
         </dependency>
 
         <dependency>
