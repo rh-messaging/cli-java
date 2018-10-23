@@ -74,6 +74,17 @@
             <artifactId>truth</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-amqp-protocol</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-server</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
