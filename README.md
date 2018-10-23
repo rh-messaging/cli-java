@@ -20,6 +20,10 @@ When using IntelliJ IDEA Ultimate Edition, select "Open" (not "Import Project") 
     mvn test -Ptests
     
     mvn test -Pcoverage,tests  # collect coverage using JaCoCo
+    
+    mvn clean test -Dmaven.test.failure.ignore
+    find -wholename "*/surefire-reports/TEST-*.xml" | zip -j@ test_results.zip
+    
 
 ### Update versions
 
