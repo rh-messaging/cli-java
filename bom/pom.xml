@@ -35,6 +35,7 @@
 
         <kotlin.version>1.2.61</kotlin.version>
         <junit.jupiter.version>5.3.1</junit.jupiter.version>
+        <junit.pioneer.version>0.2.2</junit.pioneer.version>
         <truth.version>0.42</truth.version>
         <mockito.version>2.23.0</mockito.version>
 
@@ -143,6 +144,12 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit-pioneer</groupId>
+                <artifactId>junit-pioneer</artifactId>
+                <version>${junit.pioneer.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
