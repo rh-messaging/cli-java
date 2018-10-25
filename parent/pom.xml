@@ -39,7 +39,6 @@
         <jar.main.class>ChildPomResponsibility</jar.main.class>
         <library.version>ChildPomResponsibility</library.version>
         <jar.finalName>${project.artifactId}-${project.version}</jar.finalName>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
