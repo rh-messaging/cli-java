@@ -27,15 +27,28 @@ import org.apache.activemq.artemis.spi.core.remoting.Acceptor;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 
 // https://activemq.apache.org/artemis/docs/latest/embedding-activemq.html
 public class Broker implements Closeable {
+    private final Path tempDir;
     public EmbeddedActiveMQ embeddedBroker = new EmbeddedActiveMQ();
     public Configuration configuration = new ConfigurationImpl();
     public int amqpPort = -1;
+
+    public Broker() {
+        tempDir = null;
+    }
+
+    public Broker(Path tempDir) {
+        this.tempDir = tempDir;
+    }
 
     public void startBroker() {
         ConfigurationUtils.validateConfiguration(configuration);
@@ -66,6 +79,37 @@ public class Broker implements Closeable {
             try {
                 int port = findRandomOpenPortOnAllLocalInterfaces();
                 Acceptor acceptor = embeddedBroker.getActiveMQServer().getRemotingService().createAcceptor("amqp", "tcp://127.0.0.1:" + port + "?protocols=AMQP");
+                acceptor.start();  // this will throw if the port is not available
+                return port;
+            } catch (Exception e) {
+                lastException = e;
+            }
+        }
+        throw new RuntimeException("Failed to bind to an available port", lastException);
+    }
+
+    /**
+     * @return port where the acceptor listens
+     */
+    public int addAMQPSAcceptor(InputStream keyStore) {
+        if (this.tempDir == null) {
+            throw new IllegalStateException("Broker must be created with tempDir to use this");
+        }
+
+        Path keyStorePath = null;
+        try {
+            keyStorePath = Files.createTempFile(tempDir, "keyStore", "");
+            Files.copy(keyStore, keyStorePath, StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not write keyStore to tempDir", e);
+        }
+
+        Exception lastException = null;
+        for (int i = 0; i < 10; i++) {
+            try {
+                int port = findRandomOpenPortOnAllLocalInterfaces();
+                Acceptor acceptor = embeddedBroker.getActiveMQServer().getRemotingService().createAcceptor("amqps",
+                    "tcp://0.0.0.0:" + port + "?sslEnabled=true;keyStorePath=" + keyStorePath + ";keyStorePassword=secureexample;tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300");
                 acceptor.start();  // this will throw if the port is not available
                 return port;
             } catch (Exception e) {
