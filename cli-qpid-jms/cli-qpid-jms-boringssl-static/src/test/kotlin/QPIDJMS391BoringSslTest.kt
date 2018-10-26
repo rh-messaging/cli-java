@@ -17,4 +17,14 @@
  * limitations under the License.
  */
 
-class QPIDJMS391BoringSslTest : QPIDJMS391Test()
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
+
+class QPIDJMS391BoringSslTest : QPIDJMS391Test() {
+    @BeforeEach
+    fun skipOnTravisCI() {
+        val travis = System.getenv("TRAVIS")
+        val ci = System.getenv("CI") == "true"
+        Assumptions.assumeFalse(travis == "true" && ci)
+    }
+}
