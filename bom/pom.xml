@@ -52,7 +52,7 @@
         <plugin.jar.version>3.1.0</plugin.jar.version>
         <plugin.jacoco.version>0.8.2</plugin.jacoco.version>
         <plugin.bundle.version>4.0.0</plugin.bundle.version>
-        <plugin.surefire.version>2.22.1</plugin.surefire.version>
+        <plugin.surefire.version>3.0.0-M1</plugin.surefire.version>
     </properties>
     <dependencyManagement>
         <dependencies>
