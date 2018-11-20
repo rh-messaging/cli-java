@@ -288,7 +288,7 @@ public abstract class AacClientOptions extends ClientOptions {
             new Option(CON_TCP_KEEP_ALIVE, "", "ENABLED", "false", "send tcp keep alive packets"),
             new Option(CON_TCP_NO_DELAY, "", "ENABLED", "true", "use tcp_nodelay (automatic concatenation of small packets into bigger frames)"),
 
-            new Option(TRANSACTED, "false"),
+            new Option(TRANSACTED, "", "ENABLED", "false", "whether the session is transacted or not"),
             new Option(MSG_DURABLE, "false"),
             new Option(DURATION, "0"),
             new Option(FAILOVER_URL, ""),
