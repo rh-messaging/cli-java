@@ -30,7 +30,6 @@
     </parent>
 
     <artifactId>cli-qpid-jms-tcnative-dynamic</artifactId>
-    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>

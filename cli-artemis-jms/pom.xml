@@ -31,7 +31,6 @@
     </parent>
 
     <artifactId>cli-artemis-jms</artifactId>
-    <packaging>bundle</packaging>
 
     <properties>
         <bundle.symbolic.name.suffix>acc</bundle.symbolic.name.suffix>
@@ -102,5 +101,14 @@
             </properties>
         </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
