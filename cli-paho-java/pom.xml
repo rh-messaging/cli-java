@@ -31,7 +31,6 @@
     </parent>
 
     <artifactId>cli-paho-java</artifactId>
-    <packaging>bundle</packaging>
 
     <properties>
         <bundle.symbolic.name.suffix>amc</bundle.symbolic.name.suffix>
@@ -68,4 +67,12 @@
         </repository>
     </repositories>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -30,7 +30,6 @@
     </parent>
 
     <artifactId>cli-qpid-jms</artifactId>
-    <packaging>bundle</packaging>
 
     <build>
         <plugins>

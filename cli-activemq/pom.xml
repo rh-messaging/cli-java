@@ -31,7 +31,6 @@
     </parent>
 
     <artifactId>cli-activemq</artifactId>
-    <packaging>bundle</packaging>
 
     <properties>
         <bundle.symbolic.name.suffix>aoc</bundle.symbolic.name.suffix>
@@ -67,5 +66,14 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

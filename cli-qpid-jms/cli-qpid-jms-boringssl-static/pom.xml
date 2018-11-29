@@ -30,7 +30,6 @@
     </parent>
 
     <artifactId>cli-qpid-jms-boringssl-static</artifactId>
-    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
