@@ -193,6 +193,17 @@
                                         </manifestEntries>
                                     </transformer>
                                 </transformers>
+                                <filters>
+                                    <filter>
+                                        <!--https://stackoverflow.com/questions/999489/invalid-signature-file-when-attempting-to-run-a-jar-->
+                                        <artifact>*:*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
                             </configuration>
                         </execution>
                     </executions>
