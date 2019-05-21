@@ -24,8 +24,8 @@ import dagger.Binds;
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.Module;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import javax.inject.Named;
 
 

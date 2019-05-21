@@ -44,6 +44,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.redhat.cli-java</groupId>
             <artifactId>lib</artifactId>
             <version>1.2.2-SNAPSHOT</version>
