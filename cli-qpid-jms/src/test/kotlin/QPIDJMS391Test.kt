@@ -24,13 +24,11 @@ import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager
 import org.apache.log4j.*
 import org.apache.log4j.spi.LoggingEvent
 import org.apache.qpid.jms.transports.TransportSupport
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Tag
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
 import org.junitpioneer.jupiter.TempDirectory
 import util.Broker
+import java.io.File
 import java.math.BigInteger
 import java.nio.file.Path
 import java.util.*
@@ -39,13 +37,18 @@ import javax.jms.ConnectionFactory
 import javax.jms.Session
 
 @Tag("issue")
-abstract class QPIDJMS391Test {
+class QPIDJMS391Test {
     val prefix: String = "QPIDJMS391Test_"
     lateinit var randomSuffix: String
     val address: String
         get() = prefix + randomSuffix
 
     val random = Random()
+
+    @BeforeEach
+    fun checkIfOnRhel() {
+        Assumptions.assumeTrue(File("/etc/redhat-release").exists())
+    }
 
     @BeforeEach
     fun setUp() {

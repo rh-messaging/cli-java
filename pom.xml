@@ -47,9 +47,5 @@
         <module>cli-artemis-jms</module>
         <module>cli-paho-java</module>
         <module>cli-qpid-jms</module>
-
-        <module>cli-qpid-jms/cli-qpid-jms-parent</module>
-        <module>cli-qpid-jms/cli-qpid-jms-boringssl-static</module>
-        <module>cli-qpid-jms/cli-qpid-jms-tcnative-dynamic</module>
     </modules>
 </project>
