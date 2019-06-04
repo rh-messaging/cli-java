@@ -47,7 +47,7 @@ class ConnectWithoutPassword {
             broker.startBroker();
 
             ConnectionFactory f = new org.apache.qpid.jms.JmsConnectionFactory(
-                "failover:(amqp://127.0.0.1:" + broker.amqpPort + ")");
+                "failover:(amqp://127.0.0.1:" + broker.addAMQPAcceptor() + ")");
             Assertions.assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
                 Assertions.assertThrows(JMSSecurityException.class, () -> {
                     Connection c = f.createConnection();
@@ -63,7 +63,7 @@ class ConnectWithoutPassword {
             broker.startBroker();
 
             ConnectionFactory f = new org.apache.qpid.jms.JmsConnectionFactory(
-                "failover:(amqp://127.0.0.1:" + broker.amqpPort + ")");
+                "failover:(amqp://127.0.0.1:" + broker.addAMQPAcceptor() + ")");
             Assertions.assertTimeoutPreemptively(Duration.ofSeconds(5), () -> {
                 Assertions.assertThrows(JMSSecurityException.class, () -> {
                     Connection c = f.createConnection("someUser", "somePassword_wrong");

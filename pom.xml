@@ -47,5 +47,6 @@
         <module>cli-artemis-jms</module>
         <module>cli-paho-java</module>
         <module>cli-qpid-jms</module>
+        <module>broker</module>
     </modules>
 </project>

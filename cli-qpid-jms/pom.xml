@@ -30,6 +30,7 @@
     </parent>
 
     <artifactId>cli-qpid-jms</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
         <bundle.symbolic.name.suffix>jms</bundle.symbolic.name.suffix>
@@ -88,8 +89,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-server</artifactId>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>broker</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>

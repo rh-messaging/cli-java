@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Red Hat, Inc.
+ * Copyright (c) 2019 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -24,8 +24,8 @@ import org.apache.activemq.artemis.core.config.ConfigurationUtils;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.spi.core.remoting.Acceptor;
+import org.junit.jupiter.api.extension.ExtensionContext;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
@@ -36,11 +36,10 @@ import java.nio.file.StandardCopyOption;
 
 
 // https://activemq.apache.org/artemis/docs/latest/embedding-activemq.html
-public class Broker implements Closeable {
-    private final Path tempDir;
+public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableResource {
+    public Path tempDir;
     public EmbeddedActiveMQ embeddedBroker = new EmbeddedActiveMQ();
     public Configuration configuration = new ConfigurationImpl();
-    public int amqpPort = -1;
 
     public Broker() {
         tempDir = null;
@@ -55,7 +54,6 @@ public class Broker implements Closeable {
         embeddedBroker.setConfiguration(configuration);
         try {
             embeddedBroker.start();
-            amqpPort = addAMQPAcceptor();
         } catch (Exception e) {
             throw new RuntimeException("Failed to start the embedded broker", e);
         }
@@ -73,12 +71,27 @@ public class Broker implements Closeable {
     /**
      * @return port where the acceptor listens
      */
-    int addAMQPAcceptor() {
+    public int addAMQPAcceptor() {
         Exception lastException = null;
         for (int i = 0; i < 10; i++) {
             try {
                 int port = findRandomOpenPortOnAllLocalInterfaces();
                 Acceptor acceptor = embeddedBroker.getActiveMQServer().getRemotingService().createAcceptor("amqp", "tcp://127.0.0.1:" + port + "?protocols=AMQP");
+                acceptor.start();  // this will throw if the port is not available
+                return port;
+            } catch (Exception e) {
+                lastException = e;
+            }
+        }
+        throw new RuntimeException("Failed to bind to an available port", lastException);
+    }
+
+    int addCoreAcceptor() {
+        Exception lastException = null;
+        for (int i = 0; i < 10; i++) {
+            try {
+                int port = findRandomOpenPortOnAllLocalInterfaces();
+                Acceptor acceptor = embeddedBroker.getActiveMQServer().getRemotingService().createAcceptor("core", "tcp://127.0.0.1:" + port + "?protocols=CORE");
                 acceptor.start();  // this will throw if the port is not available
                 return port;
             } catch (Exception e) {

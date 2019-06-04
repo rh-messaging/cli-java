@@ -5,10 +5,18 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.SimpleLayout;
 import org.apache.qpid.jms.exceptions.JMSSecuritySaslException;
 import org.apache.qpid.jms.exceptions.JmsConnectionFailedException;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import util.Broker;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.JMSSecurityException;
+import javax.jms.Session;
 
 import static com.google.common.truth.Truth.assertThat;
 
@@ -34,7 +42,7 @@ class QPIDJMS412Test {
             broker.startBroker();
 
             ConnectionFactory f = new org.apache.qpid.jms.JmsConnectionFactory(
-                "failover:(amqp://127.0.0.1:" + broker.amqpPort + ")");
+                "failover:(amqp://127.0.0.1:" + broker.addAMQPAcceptor() + ")");
             Assertions.assertThrows(JMSSecurityException.class, () -> {
                 Connection c = f.createConnection(USER_NAME, "wrong_" + PASSWORD);
                 c.start();
@@ -54,7 +62,7 @@ class QPIDJMS412Test {
             broker2.startBroker();
 
             ConnectionFactory f = new org.apache.qpid.jms.JmsConnectionFactory(
-                "failover:(amqp://127.0.0.1:" + broker.amqpPort + ",amqp://127.0.0.1:" + broker2.amqpPort + ")");
+                "failover:(amqp://127.0.0.1:" + broker.addAMQPAcceptor() + ",amqp://127.0.0.1:" + broker2.addAMQPAcceptor() + ")");
             Connection c = f.createConnection(USER_NAME, PASSWORD);
             c.start();
 
