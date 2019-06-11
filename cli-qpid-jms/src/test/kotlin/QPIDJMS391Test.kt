@@ -82,7 +82,7 @@ class QPIDJMS391Test {
 
         val messages = ala.loggingEvents.map { it.renderedMessage }
         assertThat(messages)
-            .comparingElementsUsing(RegexpCorrespondence())
+            .comparingElementsUsing(Correspondence.from(::regexpCorrespondence, "RegexpCorrespondence())"))
             .contains("OpenSSL Enabled: Version .* of OpenSSL will be used")
 
         broker.close()
@@ -103,22 +103,34 @@ class QPIDJMS391Test {
     }
 
     companion object {
+        private val overrideDefaultTLS = "com.ibm.jsse2.overrideDefaultTLS"
+
         @JvmStatic
         @BeforeAll
         internal fun configureLogging() {
             val consoleAppender = ConsoleAppender(SimpleLayout(), ConsoleAppender.SYSTEM_OUT)
             LogManager.getRootLogger().addAppender(consoleAppender)
         }
-    }
-}
 
-class RegexpCorrespondence : Correspondence<String, String>() {
-    override fun toString(): String {
-        return "Must match an expected regexp"
-    }
+        @JvmStatic
+        fun regexpCorrespondence(actual: String?, expected: String?): Boolean {
+            return actual!!.matches(Regex(expected!!))
+        }
 
-    override fun compare(actual: String?, expected: String?): Boolean {
-        return actual!!.matches(Regex(expected!!))
+
+        @JvmStatic
+        @BeforeAll
+        fun setProperty() {
+            // ENTMQBR-640, enable TLSv1.1 and TLSv1.2 on IBM Java 8
+            // https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/jsse2Docs/matchsslcontext_tls.html
+            System.setProperty(overrideDefaultTLS, "true")
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun unsetProperty() {
+            System.clearProperty(overrideDefaultTLS)
+        }
     }
 }
 
@@ -133,4 +145,3 @@ class ArrayListAppender : AppenderSkeleton() {
 
     override fun close() = Unit
 }
-
