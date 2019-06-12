@@ -21,4 +21,8 @@ package com.redhat.mqe.lib;
 
 public abstract class ConnectionManagerFactory {
     protected abstract ConnectionManager make(ClientOptions clientOptions, String brokerUri);
+
+    protected ConnectionManager makeJndi(ClientOptions clientOptions, String brokerUri) {
+        return new JndiConnectionManager(clientOptions, brokerUri);
+    }
 }

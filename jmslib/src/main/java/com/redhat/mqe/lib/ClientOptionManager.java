@@ -19,14 +19,25 @@
 
 package com.redhat.mqe.lib;
 
-import joptsimple.*;
+import joptsimple.ArgumentAcceptingOptionSpec;
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+import joptsimple.OptionSpecBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -409,6 +420,10 @@ public abstract class ClientOptionManager {
             }
             if (option.getName().equals(ClientOptions.CON_FAILOVER_URLS)) {
                 // add CSV of broker urls failover mechanism, conn-reconnect
+                return;
+            }
+            if (option.getName().equals(ClientOptions.CONN_USE_CONFIG_FILE)) {
+                // will use jndi connection factory, nothing to do here
                 return;
             }
             LOG.error("Connection option {} is not recognized! ", option.getName());

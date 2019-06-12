@@ -25,7 +25,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Queue;
+import javax.jms.Session;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -91,7 +98,12 @@ public abstract class CoreClient {
                 brokerUrl += "?" + clientOptions.getOption(ClientOptions.BROKER_OPTIONS).getValue();
             }
         }
-        connectionManager = connectionManagerFactory.make(clientOptions, brokerUrl);
+
+        if (clientOptions.getOption(ClientOptions.CONN_USE_CONFIG_FILE).hasParsedValue()) {
+            connectionManager = connectionManagerFactory.makeJndi(clientOptions, brokerUrl);
+        } else {
+            connectionManager = connectionManagerFactory.make(clientOptions, brokerUrl);
+        }
         Connection connection = connectionManager.getConnection();
         addConnection(connection);
         return connection;

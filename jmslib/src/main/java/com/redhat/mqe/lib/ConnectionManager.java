@@ -19,7 +19,11 @@
 
 package com.redhat.mqe.lib;
 
-import javax.jms.*;
+import javax.jms.Connection;
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.Queue;
+import javax.jms.Topic;
 
 /**
  * Subclasses are responsible for assigning to attributes
@@ -46,10 +50,6 @@ abstract public class ConnectionManager {
      * private static final String WIRE_INITIAL_CONTEXT = "org.apache.activemq.jndi.ActiveMQInitialContextFactory";
      * private static final String ARTEMIS_INITIAL_CONTEXT = "org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory";
      */
-
-    public ConnectionManager() {
-        // FIXME(jdanek): empty constructor, before I change the hierarchy
-    }
 
     Connection getConnection() {
         return this.connection;
