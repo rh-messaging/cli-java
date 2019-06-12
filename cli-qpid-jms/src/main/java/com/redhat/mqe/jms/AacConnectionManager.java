@@ -22,39 +22,26 @@ package com.redhat.mqe.jms;
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManager;
 import com.redhat.mqe.lib.MessagingExceptionListener;
+import org.apache.qpid.jms.JmsConnectionFactory;
+import org.apache.qpid.jms.JmsQueue;
+import org.apache.qpid.jms.JmsTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.*;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+import javax.jms.Connection;
+import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.jms.Topic;
 
 public class AacConnectionManager extends ConnectionManager {
-    private Context context;
-    private String customConnectionFactory = "connectionfactory.amqFactory";
-    private String customQueue = "queue.amqQueue";
-    private String customTopic = "topic.amqTopic";
-    private String destinationQueue = "amqQueue";
-    private String destinationTopic = "amqTopic";
-    String connectionFactory = "amqFactory"; // default amqp://localhost:5672
-    String password;
-    String queueOrTopic = "amqQueue";
-    String username;
     static final String QUEUE_OBJECT = "javax.jms.Queue";
     static final String TOPIC_OBJECT = "javax.jms.Topic";
-    private static final String AMQ_INITIAL_CONTEXT = "org.apache.qpid.jms.jndi.JmsInitialContextFactory";
-    private static final String QPID_INITIAL_CONTEXT = "org.apache.qpid.jndi.PropertiesFileInitialContextFactory";
-
-    private static final String EXTERNAL_JNDI_PROPERTY = "aac1.jndi";
     private Logger LOG = LoggerFactory.getLogger(AacConnectionManager.class.getName());
 
-    AacConnectionManager(ClientOptions clientOptions, String connectionFactory) {
+    AacConnectionManager(ClientOptions clientOptions, String brokerUrl) {
+        String username = null;
+        String password = null;
+
         if (clientOptions.getOption(AacClientOptions.USERNAME).hasParsedValue()) {
             username = clientOptions.getOption(AacClientOptions.USERNAME).getValue();
         }
@@ -62,46 +49,20 @@ public class AacConnectionManager extends ConnectionManager {
             password = clientOptions.getOption(AacClientOptions.PASSWORD).getValue();
         }
         try {
-            Properties props = new Properties();
-            String jndiFilePath;
-            if ((jndiFilePath = System.getProperty(EXTERNAL_JNDI_PROPERTY)) != null) {
-                // load property file from an absolute path to the file
-                try (FileInputStream fileInputStream = new FileInputStream(new File(jndiFilePath))) {
-                    props.load(fileInputStream);
-                }
-            } else {
-                // fallback to use resources/jndi.properties file
-                jndiFilePath = "/jndi.properties";
-                try (InputStream inputStream = this.getClass().getResourceAsStream(jndiFilePath)) {
-                    props.load(inputStream);
-                }
-            }
-            if (connectionFactory.contains("://")) {
-                // override connectionFactory by this option in jndi/properties
-                props.setProperty(customConnectionFactory, connectionFactory);
-            }
-      /* TODO if external JNDI is supported, how to read/create Provider objects from it?
-        if (externalJNDI) {
-          load properties, search for queue/topic property & use it
-        } else { */
-            context = new InitialContext(props);
-            factory = (ConnectionFactory) context.lookup(this.connectionFactory);
+            factory = new JmsConnectionFactory(brokerUrl);
 
             if (clientOptions.getOption(AacClientOptions.DESTINATION_TYPE).getValue().equals(TOPIC_OBJECT)) {
                 destination = createTopic(clientOptions.getOption(AacClientOptions.ADDRESS).getValue());
             } else if (clientOptions.getOption(AacClientOptions.DESTINATION_TYPE).getValue().equals(QUEUE_OBJECT)) {
                 destination = createQueue(clientOptions.getOption(AacClientOptions.ADDRESS).getValue());
             } else {
-                // reserved for future other destination types
-                LOG.warn("Not sure what type of Destination to create. Falling back to Destination");
-                destination = (Destination) context.lookup(this.queueOrTopic);
+                throw new RuntimeException("Not sure what type of Destination to create.");
             }
 
-            LOG.debug("Connection=" + connectionFactory);
+            LOG.debug("Connection=" + brokerUrl);
             LOG.trace("Destination=" + destination);
             if (clientOptions.getOption(AacClientOptions.BROKER_URI).hasParsedValue()
                 || (username == null && password == null)) {
-//          || CoreClient.isAMQClient()) { this will work for Qpid JMS AMQP Client as well, but we will be nicer
                 connection = factory.createConnection();
             } else {
                 LOG.trace("Using credentials " + username + ":" + password);
@@ -109,7 +70,7 @@ public class AacConnectionManager extends ConnectionManager {
             }
 
             connection.setExceptionListener(new MessagingExceptionListener());
-        } catch (IOException | NamingException | JMSException e) {
+        } catch (JMSException e) {
             LOG.error(e.getMessage());
             e.printStackTrace();
         }
@@ -117,24 +78,6 @@ public class AacConnectionManager extends ConnectionManager {
 
     Connection getConnection() {
         return this.connection;
-    }
-
-    Destination getDestination() {
-        return destination;
-    }
-
-    /**
-     * @param connectionFactory - often referred to as broker url
-     */
-    void setConnectionFactory(String connectionFactory) {
-        this.connectionFactory = connectionFactory;
-    }
-
-    /**
-     * @param queueOrTopic - destination can be either queue or topic
-     */
-    void setDestinationName(String queueOrTopic) {
-        this.queueOrTopic = queueOrTopic;
     }
 
     /**
@@ -145,7 +88,7 @@ public class AacConnectionManager extends ConnectionManager {
      */
     @Override
     protected Queue createQueue(String queueName) {
-        return (Queue) createJMSProviderObject("queue", queueName);
+        return new JmsQueue(queueName);
     }
 
     /**
@@ -156,32 +99,6 @@ public class AacConnectionManager extends ConnectionManager {
      */
     @Override
     protected Topic createTopic(String topicName) {
-        return (Topic) createJMSProviderObject("topic", topicName);
-    }
-
-    /**
-     * Creates an object using qpid/amq initial context factory.
-     *
-     * @param className can be any of the qpid/amq supported JNDI properties:
-     *                  connectionFactory, queue, topic, destination.
-     * @param address   of the connection or node to create.
-     */
-    protected Object createJMSProviderObject(String className, String address) {
-        final String initialContext = AMQ_INITIAL_CONTEXT;
-        Properties properties = new Properties();
-        /* Name of the object is the same as class of the object */
-        String name = className;
-        properties.setProperty("java.naming.factory.initial", initialContext);
-        properties.setProperty(className + "." + name, address);
-
-        Object jmsProviderObject = null;
-        try {
-            Context context = new InitialContext(properties);
-            jmsProviderObject = context.lookup(name);
-            context.close();
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }
-        return jmsProviderObject;
+        return new JmsTopic(topicName);
     }
 }
