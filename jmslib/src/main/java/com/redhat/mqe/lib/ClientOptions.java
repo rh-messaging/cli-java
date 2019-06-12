@@ -23,7 +23,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Interface provides support for manipulating
@@ -167,6 +171,8 @@ public abstract class ClientOptions {
 
     public static final String MSG_CONTENT_HASHED = "msg-content-hashed";
     public static final String MSG_CONTENT_STREAM = "msg-content-stream";
+
+    public static final String CONN_USE_CONFIG_FILE = "conn-use-config-file";
 
     /**
      * RECEIVER Options
@@ -316,6 +322,8 @@ public abstract class ClientOptions {
 
             new Option(MSG_CONTENT_HASHED, "", "", "false", "print the message content as a hash (SHA1)"),
             new Option(MSG_CONTENT_STREAM, "", "", "false", "should the message be streamed, must be used with binary content on sender"),
+
+            new Option(CONN_USE_CONFIG_FILE, "", "jndi.properties", "false", "configure connection from JNDI .properties file"),
 
             // OpenWire
             new Option(CONN_SERVER_STACK_TRACE_ENA, "", "ENABLED", "true", "should the stack trace of exception that occur on the broker be sent to the client?"),
