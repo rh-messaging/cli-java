@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2017 Red Hat, Inc.
+  ~ Copyright (c) 2019 Red Hat, Inc.
   ~
   ~ Licensed to the Apache Software Foundation (ASF) under one or more
   ~ contributor license agreements. See the NOTICE file distributed with
@@ -18,20 +18,18 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>bom</artifactId>
+        <artifactId>parent</artifactId>
         <groupId>com.redhat.cli-java</groupId>
         <version>1.2.2-SNAPSHOT</version>
-        <relativePath>../bom/pom.xml</relativePath>
+        <relativePath>../parent/pom.xml</relativePath>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <packaging>jar</packaging>
+    <artifactId>interop</artifactId>
 
-    <artifactId>cli</artifactId>
 
 </project>
