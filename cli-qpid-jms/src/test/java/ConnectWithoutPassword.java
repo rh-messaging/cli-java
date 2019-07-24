@@ -22,7 +22,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.SimpleLayout;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import util.Broker;
 
@@ -41,7 +40,6 @@ class ConnectWithoutPassword {
     }
 
     @Test
-    @Disabled("ENTMQBR-2063")
     void reconnectOneServerNoAuthGuestNotConfigured() {
         try (Broker broker = new Broker()) {
             broker.startBroker();
