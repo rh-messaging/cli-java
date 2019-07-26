@@ -24,6 +24,10 @@ When using IntelliJ IDEA Ultimate Edition, select "Open" (not "Import Project") 
     mvn clean test -Dmaven.test.failure.ignore
     find -wholename "*/surefire-reports/TEST-*.xml" | zip -j@ test_results.zip
     
+### Update dependencies
+
+     mvn versions:display-dependency-updates
+     mvn versions:display-plugin-updates
 
 ### Update versions
 
