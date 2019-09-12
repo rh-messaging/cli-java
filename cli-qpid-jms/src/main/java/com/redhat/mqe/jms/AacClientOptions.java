@@ -300,7 +300,8 @@ public abstract class AacClientOptions extends ClientOptions {
             new Option(MSG_CONTENT_HASHED, "", "", "false", "print the message content as a hash (SHA1)"),
             new Option(MSG_CONTENT_STREAM, "", "", "false", "should the message be streamed, must be used with binary content on sender"),
 
-            new Option(CONN_USE_CONFIG_FILE, "", "jndi.properties", "false", "configure connection from JNDI .properties file")
+            new Option(CONN_USE_CONFIG_FILE, "", "jndi.properties", "false", "configure connection from JNDI .properties file"),
+            new Option(TRACE_MESSAGES, "", "false", "false", "sender|receiver will send traces to Jaeger agent on localhost")
         ));
         translationDtestJmsMap.put("", "");
 

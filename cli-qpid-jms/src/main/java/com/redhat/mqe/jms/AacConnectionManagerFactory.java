@@ -19,6 +19,7 @@
 
 package com.redhat.mqe.jms;
 
+import com.redhat.mqe.lib.Args;
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManagerFactory;
 
@@ -26,10 +27,15 @@ import javax.inject.Inject;
 
 public class AacConnectionManagerFactory extends ConnectionManagerFactory {
     @Inject
+    @Args
+    String[] args;
+
+    @Inject
     public AacConnectionManagerFactory() {
     }
 
     public AacConnectionManager make(ClientOptions clientOptions, String brokerUri) {
-        return new AacConnectionManager(clientOptions, brokerUri);
+        String serviceName = "aac1_" + (args.length > 0 ? args[0] : "null");
+        return new AacConnectionManager(serviceName, clientOptions, brokerUri);
     }
 }

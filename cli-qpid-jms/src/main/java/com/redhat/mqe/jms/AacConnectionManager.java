@@ -38,7 +38,11 @@ public class AacConnectionManager extends ConnectionManager {
     static final String TOPIC_OBJECT = "javax.jms.Topic";
     private Logger LOG = LoggerFactory.getLogger(AacConnectionManager.class.getName());
 
-    AacConnectionManager(ClientOptions clientOptions, String brokerUrl) {
+    AacConnectionManager(String serviceName, ClientOptions clientOptions, String brokerUrl) {
+        if (Boolean.parseBoolean(clientOptions.getOption(ClientOptions.TRACE_MESSAGES).getValue())) {
+            Tracing.register(serviceName);
+        }
+
         String username = null;
         String password = null;
 
@@ -48,6 +52,7 @@ public class AacConnectionManager extends ConnectionManager {
         if (clientOptions.getOption(AacClientOptions.PASSWORD).hasParsedValue()) {
             password = clientOptions.getOption(AacClientOptions.PASSWORD).getValue();
         }
+
         try {
             factory = new JmsConnectionFactory(brokerUrl);
 
