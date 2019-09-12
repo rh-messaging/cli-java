@@ -37,7 +37,7 @@
         <jar.main.class>com.redhat.mqe.jms.Main</jar.main.class>
         <qpid.jms.client.version>LATEST</qpid.jms.client.version>
         <library.version>${qpid.jms.client.version}</library.version>
-        <tcnative.version>LATEST</tcnative.version>
+        <tcnative.version>2.0.25.Final</tcnative.version>
         <tcnative.classifier>linux-x86_64-fedora</tcnative.classifier>
     </properties>
 
