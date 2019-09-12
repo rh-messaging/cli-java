@@ -99,6 +99,9 @@ public class AacClientOptionManager extends ClientOptionManager {
         if (Boolean.parseBoolean(clientOptions.getOption(ClientOptions.LOG_BYTES).getValue())) {
             connectionOptionsUrlMap.put("transport.traceBytes", "true");
         }
+        if (Boolean.parseBoolean(clientOptions.getOption(ClientOptions.TRACE_MESSAGES).getValue())) {
+            connectionOptionsUrlMap.put("jms.tracing", "opentracing");
+        }
         super.createConnectionOptions(clientOptions);
     }
 

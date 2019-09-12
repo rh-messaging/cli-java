@@ -168,6 +168,7 @@ public abstract class ClientOptions {
     public static final String TX_ACTION = "tx-action";
     public static final String TX_ENDLOOP_ACTION = "tx-endloop-action";
     static final String CAPACITY = "capacity";
+    public static final String TRACE_MESSAGES = "trace-messages";
 
     public static final String MSG_CONTENT_HASHED = "msg-content-hashed";
     public static final String MSG_CONTENT_STREAM = "msg-content-stream";
@@ -324,6 +325,8 @@ public abstract class ClientOptions {
             new Option(MSG_CONTENT_STREAM, "", "", "false", "should the message be streamed, must be used with binary content on sender"),
 
             new Option(CONN_USE_CONFIG_FILE, "", "jndi.properties", "false", "configure connection from JNDI .properties file"),
+
+            new Option(TRACE_MESSAGES, "", "false", "false", "sender|receiver will send traces to Jaeger agent on localhost"),
 
             // OpenWire
             new Option(CONN_SERVER_STACK_TRACE_ENA, "", "ENABLED", "true", "should the stack trace of exception that occur on the broker be sent to the client?"),
