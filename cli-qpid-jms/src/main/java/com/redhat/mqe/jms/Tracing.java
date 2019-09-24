@@ -38,7 +38,7 @@ public final class Tracing {
         ReporterConfiguration reporterConfig = ReporterConfiguration.fromEnv()
             .withLogSpans(true);
 
-        Configuration config = new Configuration(service)
+        Configuration config = Configuration.fromEnv(service)
             .withSampler(samplerConfig)
             .withReporter(reporterConfig);
 
