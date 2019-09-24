@@ -42,6 +42,11 @@ public final class Tracing {
             .withSampler(samplerConfig)
             .withReporter(reporterConfig);
 
+        String agentHost = System.getenv("JAEGER_AGENT_HOST");
+        if (agentHost != null) {
+            config.getReporter().getSenderConfiguration().withAgentHost(agentHost);
+        }
+
         return config.getTracer();
     }
 
