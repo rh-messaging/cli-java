@@ -19,11 +19,15 @@
 
 package util;
 
+import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.ConfigurationUtils;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.spi.core.remoting.Acceptor;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.SimpleLayout;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.io.IOException;
@@ -42,11 +46,21 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
     public Configuration configuration = new ConfigurationImpl();
 
     public Broker() {
-        tempDir = null;
+        this(null);
     }
 
     public Broker(Path tempDir) {
         this.tempDir = tempDir;
+        configureBroker(configuration);
+    }
+
+    /**
+     * Set configuration for the test broker. Delta from broker's default configuration.
+     *
+     * @param configuration configuration to apply the delta to
+     */
+    private static void configureBroker(Configuration configuration) {
+        configuration.setMaxDiskUsage(100); // my laptop is constantly running out of disk space
     }
 
     public void startBroker() {
@@ -69,13 +83,24 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
     }
 
     /**
+     * Configures a log4j appender if there isn't any, so that log messages flood the stdout
+     */
+    public static void configureLogging() {
+        if (LogManager.getRootLogger().getAllAppenders().hasMoreElements()) {
+            return;
+        }
+        ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT);
+        LogManager.getRootLogger().addAppender(consoleAppender);
+    }
+
+    /**
      * @return port where the acceptor listens
      */
     public int addAMQPAcceptor() {
         Exception lastException = null;
         for (int i = 0; i < 10; i++) {
             try {
-                int port = findRandomOpenPortOnAllLocalInterfaces();
+                int port = findRandomAvailablePortOnAllLocalInterfaces();
                 Acceptor acceptor = embeddedBroker.getActiveMQServer().getRemotingService().createAcceptor("amqp", "tcp://127.0.0.1:" + port + "?protocols=AMQP");
                 acceptor.start();  // this will throw if the port is not available
                 return port;
@@ -90,7 +115,7 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
         Exception lastException = null;
         for (int i = 0; i < 10; i++) {
             try {
-                int port = findRandomOpenPortOnAllLocalInterfaces();
+                int port = findRandomAvailablePortOnAllLocalInterfaces();
                 Acceptor acceptor = embeddedBroker.getActiveMQServer().getRemotingService().createAcceptor("core", "tcp://127.0.0.1:" + port + "?protocols=CORE");
                 acceptor.start();  // this will throw if the port is not available
                 return port;
@@ -120,7 +145,7 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
         Exception lastException = null;
         for (int i = 0; i < 10; i++) {
             try {
-                int port = findRandomOpenPortOnAllLocalInterfaces();
+                int port = findRandomAvailablePortOnAllLocalInterfaces();
                 Acceptor acceptor = embeddedBroker.getActiveMQServer().getRemotingService().createAcceptor("amqps",
                     "tcp://0.0.0.0:" + port + "?sslEnabled=true;keyStorePath=" + keyStorePath + ";keyStorePassword=secureexample;tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300");
                 acceptor.start();  // this will throw if the port is not available
@@ -132,12 +157,16 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
         throw new RuntimeException("Failed to bind to an available port", lastException);
     }
 
+    public org.apache.activemq.artemis.core.server.Queue getProxyToQueue(String queueName) {
+        return embeddedBroker.getActiveMQServer().locateQueue(SimpleString.toSimpleString(queueName));
+    }
+
     /**
      * @return port number (there is a race so it may not be available anymore)
      * @throws IOException
      */
     // https://stackoverflow.com/questions/2675362/how-to-find-an-available-port
-    private int findRandomOpenPortOnAllLocalInterfaces() throws IOException {
+    private int findRandomAvailablePortOnAllLocalInterfaces() throws IOException {
         try (ServerSocket socket = new ServerSocket()) {
             socket.setReuseAddress(true);
             socket.bind(new InetSocketAddress(0));
