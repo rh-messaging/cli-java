@@ -148,6 +148,21 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
         return result;
     }
 
+    /**
+     * Print message in interoperable way for comparing with other clients but without body.
+     * This is suitable for large messages
+     */
+    public Map<String, Object> formatMessageAsLargeInterop(Message msg, boolean hashContent) throws JMSException {
+        Map<String, Object> result = formatMessage(msg, hashContent);
+        addFormatInterop(msg, result);
+        result.put("id", removeIDprefix((String) result.get("id")));
+        result.put("user-id", removeIDprefix((String) result.get("user-id")));
+        result.put("correlation-id", removeIDprefix((String) result.get("correlation-id")));
+        result.put("group-sequence", changeMinusOneToZero((long) result.get("group-sequence")));
+        result.put("content", "<omitted due to large message size>");
+        return result;
+    }
+
     protected long getGroupSequenceNumber(Message message, String propertyName) {
         try {
             if (message.getStringProperty(propertyName) == null) {

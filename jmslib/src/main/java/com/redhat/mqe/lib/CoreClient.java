@@ -387,6 +387,10 @@ public abstract class CoreClient {
                 case "json":
                     messageData = jmsMessageFormatter.formatMessageAsInterop(message, hashContent);
                     break;
+                case "largeinterop":
+                case "largejson":
+                    messageData = jmsMessageFormatter.formatMessageAsLargeInterop(message, hashContent);
+                    break;
                 case "none":
                 default:
                     break;
