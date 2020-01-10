@@ -1,13 +1,16 @@
 sudo: false
 language: java
+# oraclejdk8 is not available on releases after trusty
+# https://travis-ci.community/t/install-of-oracle-jdk-8-failing/3038/8
+dist: trusty
 jdk:
-  - openjdk8
-  - oraclejdk8
-  - openjdk11
-  - oraclejdk11
+    - openjdk8
+    - oraclejdk8
+    - openjdk11
+    - oraclejdk11
 
 services:
-  - docker
+    - docker
 
 env:
   global:
