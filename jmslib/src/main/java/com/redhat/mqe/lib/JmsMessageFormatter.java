@@ -22,11 +22,25 @@ package com.redhat.mqe.lib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.*;
+import javax.jms.BytesMessage;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
+import javax.jms.MessageEOFException;
+import javax.jms.MessageFormatException;
+import javax.jms.ObjectMessage;
+import javax.jms.StreamMessage;
+import javax.jms.TextMessage;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * JmsMessageFormatter abstraction layer for all protocols.
@@ -109,7 +123,10 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
         result.put("type", msg.getJMSType()); // not everywhere, amqp does not have it
     }
 
-    private Object hash(Object o) {
+    private String hash(Object o) {
+        if (o == null) {
+            return null; // no point in hashing this value
+        }
         MessageDigest md;
         try {
             md = MessageDigest.getInstance("SHA-1");
