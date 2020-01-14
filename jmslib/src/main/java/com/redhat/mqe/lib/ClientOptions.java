@@ -217,6 +217,8 @@ public abstract class ClientOptions {
     public static final String MSG_GROUP_SEQ = "msg-group-seq";
     public static final String MSG_REPLY_TO_GROUP_ID = "msg-reply-to-group-id";
 
+    public static final String ON_RELEASE = "on-release";
+
     /**
      * CONNECTOR
      */
