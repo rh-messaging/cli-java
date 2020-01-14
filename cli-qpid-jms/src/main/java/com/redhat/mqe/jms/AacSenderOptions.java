@@ -74,7 +74,8 @@ public class AacSenderOptions extends AacClientOptions {
             new Option(TX_ENDLOOP_ACTION, "", "TXACTION", "None", "transactional action after sending all messages in loop (commit|rollback|recover|None)"),
             // TODO
             new Option(SYNC_MODE, "", "SYNCMODE", "action", "synchronization mode: none/session/action/persistent/transient"),
-            new Option(CAPACITY, "", "CAPACITY", "-1", "sender|receiver capacity (no effect in jms atm)")
+            new Option(CAPACITY, "", "CAPACITY", "-1", "sender|receiver capacity (no effect in jms atm)"),
+            new Option(ON_RELEASE, "", "ACTION", "fail", "fail|ignore|retry action to perform if message is released by receiver")
         ));
     }
 

@@ -103,7 +103,24 @@ public class SenderClient extends CoreClient {
                 }
 
                 // Send messages
-                msgProducer.send(message);
+                try {
+                    msgProducer.send(message);
+                } catch (Exception e) {
+                    switch (e.getCause().getClass().getName()) {
+                        case "org.apache.qpid.jms.provider.exceptions.ProviderDeliveryReleasedException":
+                            String onRelease = senderOptions.getOption(ClientOptions.ON_RELEASE).getValue();
+                            LOG.trace(String.format("Message released [action: %s]", onRelease));
+                            switch (onRelease) {
+                                case "fail":
+                                    throw e;
+                                case "retry":
+                                    continue;
+                            }
+                        default:
+                            // Preserve original behavior
+                            throw e;
+                    }
+                }
                 msgCounter++;
                 // Makes message body read only from write only mode
                 if (message instanceof StreamMessage) {
