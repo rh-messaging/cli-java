@@ -1,0 +1,5 @@
+You can put the jar file containing BrokerViewMBean here. It's ok to create a symlink.
+
+For example:
+
+ln -s /opt/messaging/jboss-6.2.0/system/org/apache/activemq/activemq-osgi/5.11.0.redhat-620103/activemq-osgi-5.11.0.redhat-620103.jar

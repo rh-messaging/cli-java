@@ -1,0 +1,35 @@
+#!/bin/sh
+
+localdir=`dirname $0`
+installdir=`dirname $localdir`
+
+if [ "$installdir" = "." ] ; then
+	installdir=".."
+fi
+
+mainclass=com.redhat.amqx.main.Main
+
+bin_libs=""
+for file in $(ls "$installdir"/bin/*.jar) ; do 
+	if [[ ! -z "$bin_libs" ]] ; then
+		bin_libs="$file:$bin_libs"
+	
+	else
+		bin_libs="$file"
+	fi
+
+done
+
+endorsed_libs=""
+for file in $(ls "$installdir"/lib/endorsed/*.jar 2> /dev/null) ; do
+	if [[ ! -z "$endorsed_libs" ]] ; then
+		endorsed_libs="$file:$endorsed_libs"
+
+	else
+		endorsed_libs="$file"
+	fi
+done
+
+cp_libs=$bin_libs:$endorsed_libs
+
+java -classpath $cp_libs "$mainclass" $@

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.redhat.cli-java</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.2.2-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>cli-activemq-jmx</artifactId>
+
+    <properties>
+        <jar.main.class>com.redhat.amqx.main.Main</jar.main.class>
+        <!--Upstream dependencies-->
+        <activemq.version>5.14.0</activemq.version>
+        <artemis.version>LATEST</artemis.version>
+
+        <!-- AMQ6/7 version (parameter -Dlibrary.version) -->
+        <library.version></library.version>
+
+        <!--AMQ 6/7 default versions-->
+        <jamq6.version>5.11.0.redhat-630187</jamq6.version>
+        <!--<jamq7.version>2.0.0.amq-700002-redhat-1</jamq7.version>-->
+        <jamq7.version>2.9.0.redhat-00005</jamq7.version>
+
+        <!--AMQ 7 file dependencies -->
+        <amq7.path>/opt/jboss-amq-7</amq7.path>
+        <jar.finalName>amqx</jar.finalName>
+
+        <!--libraries-->
+        <slf4j.version>1.6.6</slf4j.version>
+        <json.version>20160810</json.version>
+        <commons-cli.version>1.4</commons-cli.version>
+    </properties>
+
+
+    <repositories>
+        <repository>
+            <id>mrrc-ga</id>
+            <url>https://maven.repository.redhat.com/ga/</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>${json.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-cli</groupId>
+            <artifactId>commons-cli</artifactId>
+            <version>${commons-cli.version}</version>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>JAMQ6</id>
+
+            <properties>
+                <library.version>${jamq6.version}</library.version>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <!-- OSGi dependency should cover both 'activemq-broker' and 'activemq-runtime-config'
+                      this is installed into local repository! -->
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-osgi</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-core-client</artifactId>
+                    <version>${jamq7.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-commons</artifactId>
+                    <version>${jamq7.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>JAMQ7</id>
+
+            <properties>
+                <library.version>${jamq7.version}</library.version>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-jms-client</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-core-client</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-commons</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-broker</artifactId>
+                    <version>${activemq.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-runtime-config</artifactId>
+                    <version>${activemq.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>Upstream</id>
+
+            <properties>
+                <library.version>${artemis.version}</library.version>
+            </properties>
+
+            <!-- ActiveMQ and Artemis upstream dependencies -->
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-jms-client</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-core-client</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-commons</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-broker</artifactId>
+                    <version>${activemq.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-runtime-config</artifactId>
+                    <version>${activemq.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>local</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <properties>
+                <library.version>2.0.0-SNAPSHOT</library.version>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-jms-client</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-core-client</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>artemis-commons</artifactId>
+                    <version>${library.version}</version>
+                </dependency>
+
+                <!-- ActiveMQ 6 -->
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-broker</artifactId>
+                    <version>${activemq.version}</version>
+                </dependency>
+
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-runtime-config</artifactId>
+                    <version>${activemq.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <version>${plugin.install.version}</version>
+                        <executions>
+                            <execution>
+                                <id>install-external-artemis-jms-client</id>
+                                <phase>clean</phase>
+                                <configuration>
+                                    <file>${project.basedir}/libs/artemis-jms-client-2.0.0-SNAPSHOT.jar</file>
+                                    <repositoryLayout>default</repositoryLayout>
+                                    <groupId>org.apache.activemq</groupId>
+                                    <artifactId>artemis-jms-client</artifactId>
+                                    <version>${library.version}</version>
+                                    <packaging>jar</packaging>
+                                    <generatePom>true</generatePom>
+                                </configuration>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>install-external-artemis-core-client</id>
+                                <phase>clean</phase>
+                                <configuration>
+                                    <file>${project.basedir}/libs/artemis-core-client-2.0.0-SNAPSHOT.jar</file>
+                                    <repositoryLayout>default</repositoryLayout>
+                                    <groupId>org.apache.activemq</groupId>
+                                    <artifactId>artemis-core-client</artifactId>
+                                    <version>${library.version}</version>
+                                    <packaging>jar</packaging>
+                                    <generatePom>true</generatePom>
+                                </configuration>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>install-external-artemis-commons</id>
+                                <phase>clean</phase>
+                                <configuration>
+                                    <file>${project.basedir}/libs/artemis-commons-2.0.0-SNAPSHOT.jar</file>
+                                    <repositoryLayout>default</repositoryLayout>
+                                    <groupId>org.apache.activemq</groupId>
+                                    <artifactId>artemis-commons</artifactId>
+                                    <version>${library.version}</version>
+                                    <packaging>jar</packaging>
+                                    <generatePom>true</generatePom>
+                                </configuration>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+        <profile>
+            <!--Not used at all. Creates tarball on demand. -->
+            <id>Delivery</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/main/assembly/dist-assembly.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>true</appendAssemblyId>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>dist-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
