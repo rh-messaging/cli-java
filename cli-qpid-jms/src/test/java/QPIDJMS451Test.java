@@ -24,7 +24,7 @@ import org.apache.qpid.jms.JmsConnectionFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junitpioneer.jupiter.TempDirectory;
+import org.junit.jupiter.api.io.TempDir;
 import util.Broker;
 import util.BrokerFixture;
 
@@ -47,8 +47,7 @@ class QPIDJMS451Test {
 
     @Test
     @ExtendWith(BrokerFixture.class)
-    @ExtendWith(TempDirectory.class)
-    void testSessionRecoverWithDurableSub(@BrokerFixture.TempBroker Broker broker, @TempDirectory.TempDir Path tempDir) throws Exception {
+    void testSessionRecoverWithDurableSub(@BrokerFixture.TempBroker Broker broker, @TempDir Path tempDir) throws Exception {
         configureBroker(broker, tempDir);
         broker.startBroker();
 

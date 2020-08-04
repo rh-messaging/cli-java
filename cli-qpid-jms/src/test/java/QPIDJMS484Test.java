@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junitpioneer.jupiter.TempDirectory;
+import org.junit.jupiter.api.io.TempDir;
 import util.Broker;
 import util.BrokerFixture;
 
@@ -58,8 +58,7 @@ public class QPIDJMS484Test {
 
     @Test
     @ExtendWith(BrokerFixture.class)
-    @ExtendWith(TempDirectory.class)
-    void testSendDispositionsAfterRecoverForUnacknowledgedMessages(@BrokerFixture.TempBroker Broker broker, @TempDirectory.TempDir Path tempDir) throws Exception {
+    void testSendDispositionsAfterRecoverForUnacknowledgedMessages(@BrokerFixture.TempBroker Broker broker, @TempDir Path tempDir) throws Exception {
         configureBroker(broker, tempDir);
         String someQueue = "someQueue";
         broker.configuration.addQueueConfiguration(new CoreQueueConfiguration().setAddress(someQueue));

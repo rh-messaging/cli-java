@@ -26,7 +26,7 @@ import org.apache.log4j.spi.LoggingEvent
 import org.apache.qpid.jms.transports.TransportSupport
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.extension.ExtendWith
-import org.junitpioneer.jupiter.TempDirectory
+import org.junit.jupiter.api.io.TempDir
 import util.Broker
 import java.io.File
 import java.math.BigInteger
@@ -57,8 +57,7 @@ class QPIDJMS391Test {
     }
 
     @Test
-    @ExtendWith(TempDirectory::class)
-    fun `logging says that openssl is being used`(@TempDirectory.TempDir tempDir: Path) {
+    fun `logging says that openssl is being used`(@TempDir tempDir: Path) {
         val keystore = this.javaClass.getResourceAsStream("server-side-keystore.jks")
         val broker = Broker(tempDir)
         configureBroker(broker)
