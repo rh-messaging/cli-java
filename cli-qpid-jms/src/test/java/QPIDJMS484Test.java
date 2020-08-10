@@ -17,9 +17,9 @@
  * limitations under the License.
  */
 
-import org.apache.activemq.artemis.api.core.QueueConfiguration;
 import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.core.config.CoreQueueConfiguration;
 import org.apache.activemq.artemis.core.server.MessageReference;
 import org.apache.activemq.artemis.core.server.Queue;
 import org.apache.log4j.ConsoleAppender;
@@ -62,12 +62,11 @@ public class QPIDJMS484Test {
     void testSendDispositionsAfterRecoverForUnacknowledgedMessages(@BrokerFixture.TempBroker Broker broker, @TempDir Path tempDir) throws Exception {
         configureBroker(broker, tempDir);
         String someQueue = "someQueue";
-        broker.configuration.addQueueConfiguration(new QueueConfiguration(someQueue)
+        // see git history for the nondeprecated solution; this is more compatible
+        broker.configuration.addQueueConfiguration(new CoreQueueConfiguration()
             .setAddress(someQueue)
-            .setAutoCreated(false)
-            .setRoutingType(RoutingType.ANYCAST)
-            .setAutoDelete(false)
-            .setPurgeOnNoConsumers(false));
+            .setName(someQueue)
+            .setRoutingType(RoutingType.ANYCAST));
         broker.startBroker();
 
         String brokerUrl = "amqp://localhost:" + broker.addAMQPAcceptor();

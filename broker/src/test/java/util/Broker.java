@@ -71,6 +71,9 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
         } catch (Exception e) {
             throw new RuntimeException("Failed to start the embedded broker", e);
         }
+        if (!embeddedBroker.getActiveMQServer().isStarted()) {
+            throw new RuntimeException("Failed to start the embedded broker: it is not running");
+        }
     }
 
     @Override
