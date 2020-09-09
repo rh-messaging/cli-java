@@ -35,7 +35,7 @@
     <properties>
         <bundle.symbolic.name.suffix>amc</bundle.symbolic.name.suffix>
         <jar.main.class>com.redhat.mqe.amc.Main</jar.main.class>
-        <paho.version>1.2.2</paho.version>
+        <paho.version>1.2.5</paho.version>
         <library.version>${paho.version}</library.version>
     </properties>
 
