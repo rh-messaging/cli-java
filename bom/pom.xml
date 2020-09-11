@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <slfj.version>1.7.28</slfj.version>
+        <slfj.version>1.7.30</slfj.version>
         <jopt.version>5.0.4</jopt.version>
         <dagger.version>2.29.1</dagger.version>
         <jackson.version>2.11.2</jackson.version>
