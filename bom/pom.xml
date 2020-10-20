@@ -42,7 +42,7 @@
         <junit.jupiter.version>5.7.0</junit.jupiter.version>
         <junit.pioneer.version>1.0.0</junit.pioneer.version>
         <truth.version>1.0.1</truth.version>
-        <mockito.version>3.5.13</mockito.version>
+        <mockito.version>3.5.15</mockito.version>
         <awaitility.version>4.0.3</awaitility.version>
 
         <artemis.broker.version>2.15.0</artemis.broker.version>
