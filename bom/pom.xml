@@ -45,7 +45,7 @@
         <mockito.version>3.5.15</mockito.version>
         <awaitility.version>4.0.3</awaitility.version>
 
-        <artemis.broker.version>2.15.0</artemis.broker.version>
+        <artemis.broker.version>2.16.0</artemis.broker.version>
 
         <plugin.compiler.version>3.8.1</plugin.compiler.version>
         <plugin.assembly.version>3.1.0</plugin.assembly.version>
