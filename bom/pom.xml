@@ -35,7 +35,7 @@
     <properties>
         <slfj.version>1.7.30</slfj.version>
         <jopt.version>5.0.4</jopt.version>
-        <dagger.version>2.29.1</dagger.version>
+        <dagger.version>2.30</dagger.version>
         <jackson.version>2.11.3</jackson.version>
 
         <kotlin.version>1.4.10</kotlin.version>
