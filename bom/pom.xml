@@ -41,7 +41,7 @@
         <kotlin.version>1.4.21-2</kotlin.version>
         <junit.jupiter.version>5.7.0</junit.jupiter.version>
         <junit.pioneer.version>1.2.0</junit.pioneer.version>
-        <truth.version>1.1</truth.version>
+        <truth.version>1.1.1</truth.version>
         <mockito.version>3.7.7</mockito.version>
         <awaitility.version>4.0.3</awaitility.version>
 
