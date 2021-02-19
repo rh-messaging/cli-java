@@ -338,7 +338,8 @@ public abstract class CoreClient {
             session.close();
         } catch (JMSException e) {
             e.printStackTrace();
-            if (e.getClass().getName().toString().equals("org.apache.qpid.jms.JmsConnectionRemotelyClosedException")) {
+            if (getClientOptions().getOption(ClientOptions.CON_IGNORE_REMOTE_CLOSE).getValue().equals("true")
+                && e.getClass().getName().toString().equals("org.apache.qpid.jms.JmsConnectionRemotelyClosedException")) {
                 return;  // suppress error, explained at https://issues.redhat.com/browse/MSGQE-8155
             }
             System.exit(1);

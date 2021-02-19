@@ -426,6 +426,10 @@ public abstract class ClientOptionManager {
                 // will use jndi connection factory, nothing to do here
                 return;
             }
+            if (option.getName().equals(ClientOptions.CON_IGNORE_REMOTE_CLOSE)) {
+                // ignore remote connection close, nothing to do here
+                return;
+            }
             LOG.error("Connection option {} is not recognized! ", option.getName());
             System.exit(2);
         }

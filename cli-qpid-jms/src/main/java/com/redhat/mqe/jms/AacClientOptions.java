@@ -83,6 +83,7 @@ public abstract class AacClientOptions extends ClientOptions {
     static final String CON_CLIENTID_PREFIX = "conn-clientid-prefix";             // jms.clientIDPrefix
     static final String CON_CONNID_PREFIX = "conn-connid-prefix";                 // jms.connectionIDPrefix
     static final String CON_POPULATE_JMSXUSERID = "conn-populate-user-id";        // jms.populateJMSXUserID
+    static final String CON_IGNORE_REMOTE_CLOSE = "conn-ignore-remote-close";     // ignore remote connection close
 
     static final String CON_PREFETCH_QUEUE = "conn-prefetch-queue";               // jms.prefetchPolicy.queuePrefetch
     static final String CON_PREFETCH_TOPIC = "conn-prefetch-topic";               // jms.prefetchPolicy.topicPrefetch
@@ -238,6 +239,7 @@ public abstract class AacClientOptions extends ClientOptions {
             new Option(CON_ASYNC_ACKS, "", "ENABLED", "false", "causes all Message acknowledgments to be sent asynchronously"),
             new Option(CON_LOC_MSG_PRIO, "", "ENABLED", "false", "prefetched messages are reordered locally based on their given priority"),
             new Option(CON_VALID_PROP_NAMES, "", "ENABLED", "true", "message property names should be validated as valid Java identifiers"),
+            new Option(CON_IGNORE_REMOTE_CLOSE, "", "ENABLED", "false", "ignore remote connection close"),
 
             new Option(CON_RECV_LOCAL_ONLY, "", "ENABLED", "false", "if enabled receive calls with a timeout will only check a consumers local message buffer"),
             new Option(CON_RECV_NOWAIT_LOCAL, "", "ENABLED", "false", "if enabled receiveNoWait calls will only check a consumers local message buffer"),

@@ -85,6 +85,7 @@ public abstract class ClientOptions {
     public static final String CON_CONN_TIMEOUT = "conn-conn-timeout";                   // jms.connectTimeout
     public static final String CON_CLIENTID_PREFIX = "conn-clientid-prefix";             // jms.clientIDPrefix
     public static final String CON_CONNID_PREFIX = "conn-connid-prefix";                 // jms.connectionIDPrefix
+    public static final String CON_IGNORE_REMOTE_CLOSE = "conn-ignore-remote-close";     // ignore remote connection close
 
     public static final String CON_PREFETCH_QUEUE = "conn-prefetch-queue";               // jms.prefetchPolicy.queuePrefetch
     public static final String CON_PREFETCH_TOPIC = "conn-prefetch-topic";               // jms.prefetchPolicy.topicPrefetch
@@ -273,6 +274,7 @@ public abstract class ClientOptions {
             new Option(CON_CONN_TIMEOUT, "", "TIMEOUT", "15", "timeout value that controls how long the client waits on Connection establishment before returning with an error"),
             new Option(CON_CLIENTID_PREFIX, "", "PREFIX", "ID:", "client ID prefix for new connections"),
             new Option(CON_CONNID_PREFIX, "", "PREFIX", "ID:", "connection ID prefix used for a new connections. Usable for tracking connections in logs"),
+            new Option(CON_IGNORE_REMOTE_CLOSE, "", "ENABLED", "false", "ignore remote connection close"),
 
             new Option(CON_MAX_REDELIVERIES, "", "COUNT", "-1", "maximum number of allowed message redeliveries"),
             new Option(CON_PREFETCH_QUEUE, "", "COUNT", "1000", "number of messages which can be held in a prefetch buffer"),
