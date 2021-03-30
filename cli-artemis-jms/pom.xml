@@ -36,7 +36,7 @@
         <bundle.symbolic.name.suffix>acc</bundle.symbolic.name.suffix>
         <jar.main.class>com.redhat.mqe.acc.Main</jar.main.class>
         <snapshots.enabled>false</snapshots.enabled>
-        <artemis.jms.client.version>2.16.0</artemis.jms.client.version>
+        <artemis.jms.client.version>2.17.0</artemis.jms.client.version>
         <library.version>${artemis.jms.client.version}</library.version>
     </properties>
 
@@ -68,7 +68,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>30.1-android</version>
+            <version>30.1.1-android</version>
             <scope>provided</scope>
         </dependency>
 

@@ -35,14 +35,14 @@
     <properties>
         <slfj.version>1.7.30</slfj.version>
         <jopt.version>5.0.4</jopt.version>
-        <dagger.version>2.32</dagger.version>
-        <jackson.version>2.12.1</jackson.version>
+        <dagger.version>2.33</dagger.version>
+        <jackson.version>2.12.2</jackson.version>
 
-        <kotlin.version>1.4.30</kotlin.version>
+        <kotlin.version>1.4.32</kotlin.version>
         <junit.jupiter.version>5.7.1</junit.jupiter.version>
-        <junit.pioneer.version>1.2.0</junit.pioneer.version>
+        <junit.pioneer.version>1.3.8</junit.pioneer.version>
         <truth.version>1.1.2</truth.version>
-        <mockito.version>3.7.7</mockito.version>
+        <mockito.version>3.8.0</mockito.version>
         <awaitility.version>4.0.3</awaitility.version>
 
         <artemis.broker.version>2.17.0</artemis.broker.version>
@@ -57,7 +57,7 @@
         <plugin.versions.version>2.7</plugin.versions.version>
 
         <annotations.version>20.1.0</annotations.version>
-        <checker-qual.version>3.10.0</checker-qual.version>
+        <checker-qual.version>3.11.0</checker-qual.version>
     </properties>
     <dependencyManagement>
         <dependencies>
