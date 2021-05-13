@@ -213,6 +213,12 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
     @Option(names = {"--msg-property"})  // picocli Map options works for this, sounds like
     private List<String> msgProperties = new ArrayList<>();
 
+    @Option(names = {"--msg-content"})
+    private String msgContent;
+
+    @Option(names = {"--msg-correlation-id"})
+    private String msgCorrelationId;
+
     @Override
     public Integer call() throws Exception { // your business logic goes here...
 
@@ -244,7 +250,7 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
              Sender sender = connection.openSender(address, senderOptions)) {
 
             for (int i = 0; i < count; i++) {
-                final Message<String> message = Message.create("");
+                final Message<String> message = Message.create(msgContent);
                 for (String property : msgProperties) {
                     String[] fields = property.split("=", 2);
                     if (fields.length != 2) {
@@ -254,8 +260,11 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
                     String value = fields[1];  // more types
                     message.property(key, value);
                 }
-                logMessage(address, message);  // TODO log after send
+                if (msgCorrelationId != null) {
+                    message.correlationId(msgCorrelationId);
+                }
                 sender.send(message);  // TODO what's timeout for in a sender?
+                logMessage(address, message);
             }
         }
 
@@ -325,8 +334,13 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
              Receiver receiver = connection.openReceiver(address, receiverOptions)) {
 
             for (int i = 0; i < count; i++) {
+                final Delivery delivery;
+                if (timeout == 0) {
+                    delivery = receiver.receive();  // todo: can default it to -1
+                } else {
+                    delivery = receiver.receive(timeout, TimeUnit.SECONDS);
+                }
 
-                final Delivery delivery = receiver.receive(timeout, TimeUnit.SECONDS);
                 int messageFormat = delivery.messageFormat();
                 Message<String> message = delivery.message();
                 logMessage(address, message);

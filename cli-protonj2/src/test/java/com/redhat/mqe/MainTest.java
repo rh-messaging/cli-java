@@ -106,6 +106,13 @@ class MainTest {
         //Broker.configureLogging();
     }
 
+    void checkMainInvocation(String cmd) throws Throwable {
+        String[] args = cmd.split(" ");
+        NoExitSecurityManager.assertSystemExit(0, () -> {
+            Main.main(args);
+        });
+    }
+
     @Test
     @Timeout(value = 60, unit = TimeUnit.SECONDS)
     @ExtendWith(BrokerFixture.class)
@@ -134,5 +141,15 @@ class MainTest {
                 "receiver", "--timeout=2", "--log-msgs=dict", "--broker=" + brokerUrl, "--conn-auth-mechanisms=PLAIN", "--conn-username=admin", "--conn-password=admin", "--address=test_direct_transient_empty_message_with_string_property", "--count=10"
             );
         });
+
+        NoExitSecurityManager.assertSystemExit(0, () -> {
+            Main.main(
+                "sender", "--log-msgs=dict", "--broker=" + brokerUrl, "--conn-auth-mechanisms=PLAIN", "--conn-username=admin", "--conn-password=admin", "--address=test_direct_transient_text_message", "--count=1", "--msg-content=Simple Text Message", "--msg-correlation-id=corr-id-JWXoIk"
+            );
+        });
+
+        // test_direct_transient_text_message
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1 --msg-content SimpleTextMessage --msg-correlation-id corr-id-eqa9vp");
+        checkMainInvocation("receiver --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1");
     }
 }
