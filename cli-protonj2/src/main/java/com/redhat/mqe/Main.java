@@ -1,5 +1,6 @@
 package com.redhat.mqe;
 
+import org.apache.qpid.protonj2.client.ReceiverOptions;
 import org.apache.qpid.protonj2.client.SenderOptions;
 import org.apache.qpid.protonj2.client.exceptions.ClientException;
 import picocli.CommandLine;
@@ -18,10 +19,13 @@ import org.apache.qpid.protonj2.client.Sender;
 import java.io.File;
 import java.math.BigInteger;
 import java.net.URI;
-import java.net.URL;
 import java.nio.file.Files;
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 @Command(
     name = "cli-protonj2",
@@ -45,6 +49,81 @@ class Main implements Callable<Integer> {
     public static void main(String... args) {
         int exitCode = new CommandLine(new Main()).execute(args);
         System.exit(exitCode);
+    }
+}
+
+class CliProtonJ2SenderReceiver {
+    void logMessage(String address, Message<String> message) throws ClientException {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{");
+
+        addKeyValue(sb, "address", address);
+        addKeyValue(sb, "group-id", message.groupId());
+        addKeyValue(sb, "subject", message.subject());
+        addKeyValue(sb, "user-id", message.userId());
+        addKeyValue(sb, "correlation-id", message.correlationId());
+        addKeyValue(sb, "content-encoding", message.contentEncoding());
+        addKeyValue(sb, "priority", message.priority());
+        addKeyValue(sb, "type", "string");  // ???
+        addKeyValue(sb, "ttl", message.timeToLive());
+        addKeyValue(sb, "absolute-expiry-time", message.absoluteExpiryTime());
+        addKeyValue(sb, "content", message.body());
+        addKeyValue(sb, "redelivered", message.deliveryCount() > 1);
+        addKeyValue(sb, "reply-to-group-id", message.replyToGroupId());
+        addKeyValue(sb, "durable", message.durable());
+        addKeyValue(sb, "group-sequence", message.groupSequence());
+        addKeyValue(sb, "creation-time", message.creationTime());
+        addKeyValue(sb, "content-type", message.contentType());
+        addKeyValue(sb, "id", message.messageId());
+        addKeyValue(sb, "reply-to", message.replyTo());
+
+        // getPropertyNames? from JMS missing?
+        StringBuilder sbb = new StringBuilder();
+        sbb.append('{');
+//        AtomicBoolean first = new AtomicBoolean(true);
+        message.forEachProperty((s, o) -> {
+//            if (!first.get()) {
+//                sbb.append(", ");
+//                first.set(false);
+//            }
+            addKeyValue(sbb, s, o);
+        });
+        if (message.hasProperties()) {
+            sbb.delete(sbb.length() - 2, sbb.length());  // remove last ", "
+        }
+        sbb.append('}');
+        addKeyValue(sb, "properties", sbb); // ???
+
+        sb.delete(sb.length() - 2, sb.length());  // remove last ", "
+
+        sb.append("}");
+
+        System.out.println(sb);
+    }
+
+    void addKeyValue(StringBuilder sb, String key, Object value) {
+        sb.append("'");
+        sb.append(key);
+        sb.append("': ");
+        sb.append(formatPython(value));
+        sb.append(", ");
+    }
+
+    String formatPython(Object parameter) {
+        if (parameter == null) {
+            return "None";
+        }
+        if (parameter instanceof String) {
+            return "'" + parameter + "'";
+        }
+        if (parameter instanceof Boolean) {
+            return ((boolean)parameter) ? "True" : "False";
+        }
+        if (parameter instanceof StringBuilder) {
+            return parameter.toString();
+        }
+        return  "'" + parameter + "'";
     }
 }
 
@@ -95,13 +174,17 @@ class CliProtonJ2Connector implements Callable<Integer> {
     }
 }
 
+enum AuthMechanism {
+    PLAIN,
+}
+
 @Command(
     name = "sender",
     mixinStandardHelpOptions = true,
     version = "1.0.0",
     description = "Opens AMQP connections"
 )
-class CliProtonJ2Sender implements Callable<Integer> {
+class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<Integer> {
 
     @Option(names = {"--log-msgs"}, description = "MD5, SHA-1, SHA-256, ...")
     private String logMsgs = "MD5";
@@ -121,6 +204,97 @@ class CliProtonJ2Sender implements Callable<Integer> {
     @Option(names = {"--count"}, description = "MD5, SHA-1, SHA-256, ...")
     private int count = 1;
 
+    @Option(names = {"--timeout"}, description = "MD5, SHA-1, SHA-256, ...")
+    private int timeout;
+
+    @Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")  // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
+    private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
+
+    @Option(names = {"--msg-property"})  // picocli Map options works for this, sounds like
+    private List<String> msgProperties = new ArrayList<>();
+
+    @Override
+    public Integer call() throws Exception { // your business logic goes here...
+
+        String prefix = "";
+        if (!broker.startsWith("amqp://") || !broker.startsWith("amqps://")) {
+            prefix = "amqp://";
+        }
+        final URI url = new URI(prefix + broker);
+        final String serverHost = url.getHost();
+        int serverPort = url.getPort();
+        serverPort = (serverPort == -1) ? 5672 : serverPort;
+
+        final Client client = Client.create();
+
+        final ConnectionOptions options = new ConnectionOptions();
+        options.user(connUsername);
+        options.password(connPassword);
+        for (AuthMechanism mech : connAuthMechanisms) {
+            options.saslOptions().addAllowedMechanism(mech.name());
+        }
+
+        /*
+        TODO API usablility, hard to ask for queue when dealing with broker that likes to autocreate topics
+         */
+        SenderOptions senderOptions = new SenderOptions();
+        // is it target or source? target.
+        senderOptions.targetOptions().capabilities("queue");
+        try (Connection connection = client.connect(serverHost, serverPort, options);
+             Sender sender = connection.openSender(address, senderOptions)) {
+
+            for (int i = 0; i < count; i++) {
+                final Message<String> message = Message.create("");
+                for (String property : msgProperties) {
+                    String[] fields = property.split("=", 2);
+                    if (fields.length != 2) {
+                        throw new RuntimeException("Wrong format " + Arrays.toString(fields));  // TODO do this in args parsing
+                    }
+                    String key = fields[0];
+                    String value = fields[1];  // more types
+                    message.property(key, value);
+                }
+                logMessage(address, message);  // TODO log after send
+                sender.send(message);  // TODO what's timeout for in a sender?
+            }
+        }
+
+        return 0;
+    }
+}
+
+@Command(
+    name = "receiver",
+    mixinStandardHelpOptions = true,
+    version = "1.0.0",
+    description = "Opens AMQP connections"
+)
+class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<Integer> {
+
+    @Option(names = {"--log-msgs"}, description = "MD5, SHA-1, SHA-256, ...")
+    private String logMsgs = "MD5";
+
+    @Option(names = {"--broker"}, description = "MD5, SHA-1, SHA-256, ...")
+    private String broker = "MD5";
+
+    @Option(names = {"--conn-username"}, description = "MD5, SHA-1, SHA-256, ...")
+    private String connUsername = "MD5";
+
+    @Option(names = {"--conn-password"}, description = "MD5, SHA-1, SHA-256, ...")
+    private String connPassword = "MD5";
+
+    @Option(names = {"--address"}, description = "MD5, SHA-1, SHA-256, ...")
+    private String address = "MD5";
+
+    @Option(names = {"--count"}, description = "MD5, SHA-1, SHA-256, ...")
+    private int count = 1;
+
+    @Option(names = {"--timeout"}, description = "MD5, SHA-1, SHA-256, ...")
+    private int timeout;
+
+    @Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")  // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
+    private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
+
     @Override
     public Integer call() throws Exception { // your business logic goes here...
         String prefix = "";
@@ -137,123 +311,26 @@ class CliProtonJ2Sender implements Callable<Integer> {
         final ConnectionOptions options = new ConnectionOptions();
         options.user(connUsername);
         options.password(connPassword);
+        for (AuthMechanism mech : connAuthMechanisms) {
+            options.saslOptions().addAllowedMechanism(mech.name());
+        }
 
         /*
-        TODO API usablility, hard to ask for queue when delaing with broker that likes to autocreate topics
+        TODO API usablility, hard to ask for queue when dealing with broker that likes to autocreate topics
          */
-        SenderOptions senderOptions = new SenderOptions();
+        ReceiverOptions receiverOptions = new ReceiverOptions();
         // is it target or source? target.
-        senderOptions.targetOptions().capabilities("queue");
+        receiverOptions.sourceOptions().capabilities("queue");
         try (Connection connection = client.connect(serverHost, serverPort, options);
-             Sender sender = connection.openSender(address, senderOptions)) {
+             Receiver receiver = connection.openReceiver(address, receiverOptions)) {
 
             for (int i = 0; i < count; i++) {
-                final Message<String> message = Message.create("");
+
+                final Delivery delivery = receiver.receive(timeout, TimeUnit.SECONDS);
+                int messageFormat = delivery.messageFormat();
+                Message<String> message = delivery.message();
                 logMessage(address, message);
-                sender.send(message);
             }
-        }
-
-        return 0;
-    }
-
-    private void logMessage(String address, Message<String> message) throws ClientException {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("{");
-
-        addKeyValue(sb, "address", address);
-        addKeyValue(sb, "group-id", message.groupId());
-        addKeyValue(sb, "subject", message.subject());
-        addKeyValue(sb, "user-id", message.userId());
-        addKeyValue(sb, "correlation-id", message.correlationId());
-        addKeyValue(sb, "content-encoding", message.contentEncoding());
-        addKeyValue(sb, "priority", message.priority());
-        addKeyValue(sb, "type", "string");  // ???
-        addKeyValue(sb, "ttl", message.timeToLive());
-        addKeyValue(sb, "absolute-expiry-time", message.absoluteExpiryTime());
-        addKeyValue(sb, "content", message.body());
-        addKeyValue(sb, "redelivered", message.deliveryCount() > 1);  // ????
-        addKeyValue(sb, "reply-to-group-id", message.replyToGroupId());
-        addKeyValue(sb, "durable", message.durable());
-        addKeyValue(sb, "delivery-time", message);  // ???
-        addKeyValue(sb, "group-sequence", message.groupSequence());
-        addKeyValue(sb, "creation-time", message.creationTime());
-        addKeyValue(sb, "content-type", message.contentType());
-        addKeyValue(sb, "id", message.messageId());
-        addKeyValue(sb, "reply-to", message.replyTo());
-        addKeyValue(sb, "properties", message); // ???
-
-        sb.delete(sb.length() - 2, sb.length());  // remove last ", "
-
-        sb.append("}");
-
-        System.out.println(sb);
-    }
-
-    private void addKeyValue(StringBuilder sb, String key, Object value) {
-        sb.append("'");
-        sb.append(key);
-        sb.append("': ");
-        sb.append(formatPython(value));
-        sb.append(", ");
-    }
-
-    private String formatPython(Object parameter) {
-        if (parameter == null) {
-            return "None";
-        }
-        if (parameter instanceof String) {
-            return "'" + parameter + "'";
-        }
-        if (parameter instanceof Boolean) {
-            return ((boolean)parameter) ? "True" : "False";
-        }
-        return  "'" + parameter + "'";
-    }
-}
-
-@Command(
-    name = "receiver",
-    mixinStandardHelpOptions = true,
-    version = "1.0.0",
-    description = "Opens AMQP connections"
-)
-class CliProtonJ2Receiver implements Callable<Integer> {
-
-    @Parameters(index = "0", description = "The file whose checksum to calculate.")
-    private File file;
-
-    @Option(names = {"-a", "--algorithm"}, description = "MD5, SHA-1, SHA-256, ...")
-    private String algorithm = "MD5";
-
-    @Override
-    public Integer call() throws Exception { // your business logic goes here...
-        byte[] fileContents = Files.readAllBytes(file.toPath());
-        byte[] digest = MessageDigest.getInstance(algorithm).digest(fileContents);
-        System.out.printf("%0" + (digest.length * 2) + "x%n", new BigInteger(1, digest));
-
-        System.out.println("Hello World");
-
-        final String serverHost = System.getProperty("HOST", "localhost");
-        final int serverPort = Integer.getInteger("PORT", 5672);
-        final String address = System.getProperty("ADDRESS", "hello-world-example");
-
-        final Client client = Client.create();
-
-        final ConnectionOptions options = new ConnectionOptions();
-        options.user(System.getProperty("USER"));
-        options.password(System.getProperty("PASSWORD"));
-
-        try (Connection connection = client.connect(serverHost, serverPort, options);
-             Receiver receiver = connection.openReceiver(address);
-             Sender sender = connection.openSender(address)) {
-
-            sender.send(Message.create("Hello World"));
-
-            Delivery delivery = receiver.receive();
-            Message<String> received = delivery.message();
-            System.out.println("Received message with body: " + received.body());
         }
 
         return 0;
