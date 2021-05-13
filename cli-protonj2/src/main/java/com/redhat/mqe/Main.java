@@ -1,5 +1,7 @@
 package com.redhat.mqe;
 
+import com.redhat.mqe.lib.ClientOptions;
+import com.redhat.mqe.lib.ConnectionManager;
 import org.apache.qpid.protonj2.client.ReceiverOptions;
 import org.apache.qpid.protonj2.client.SenderOptions;
 import org.apache.qpid.protonj2.client.exceptions.ClientException;
@@ -26,6 +28,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+
+import static com.redhat.mqe.lib.ClientOptionManager.QUEUE_PREFIX;
+import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
 
 @Command(
     name = "cli-protonj2",
@@ -231,6 +236,15 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
         int serverPort = url.getPort();
         serverPort = (serverPort == -1) ? 5672 : serverPort;
 
+        String destinationCapability = "queue";
+        if (address.startsWith(TOPIC_PREFIX)) {
+            address = address.substring((TOPIC_PREFIX.length()));
+            destinationCapability = "topic";
+        }
+        if (address.startsWith(QUEUE_PREFIX)) {
+            address = address.substring((QUEUE_PREFIX.length()));
+        }
+
         final Client client = Client.create();
 
         final ConnectionOptions options = new ConnectionOptions();
@@ -245,7 +259,7 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
          */
         SenderOptions senderOptions = new SenderOptions();
         // is it target or source? target.
-        senderOptions.targetOptions().capabilities("queue");
+        senderOptions.targetOptions().capabilities(destinationCapability);
         try (Connection connection = client.connect(serverHost, serverPort, options);
              Sender sender = connection.openSender(address, senderOptions)) {
 
@@ -315,6 +329,15 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
         int serverPort = url.getPort();
         serverPort = (serverPort == -1) ? 5672 : serverPort;
 
+        String destinationCapability = "queue";
+        if (address.startsWith(TOPIC_PREFIX)) {
+            address = address.substring((TOPIC_PREFIX.length()));
+            destinationCapability = "topic";
+        }
+        if (address.startsWith(QUEUE_PREFIX)) {
+            address = address.substring((QUEUE_PREFIX.length()));
+        }
+
         final Client client = Client.create();
 
         final ConnectionOptions options = new ConnectionOptions();
@@ -329,7 +352,7 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
          */
         ReceiverOptions receiverOptions = new ReceiverOptions();
         // is it target or source? target.
-        receiverOptions.sourceOptions().capabilities("queue");
+        receiverOptions.sourceOptions().capabilities(destinationCapability);
         try (Connection connection = client.connect(serverHost, serverPort, options);
              Receiver receiver = connection.openReceiver(address, receiverOptions)) {
 

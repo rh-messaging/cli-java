@@ -151,5 +151,17 @@ class MainTest {
         // test_direct_transient_text_message
         checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1 --msg-content SimpleTextMessage --msg-correlation-id corr-id-eqa9vp");
         checkMainInvocation("receiver --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1");
+
+        // test_publish_subscribe_string
+        Thread t = new Thread(() -> {
+            try {
+                checkMainInvocation("receiver --timeout 100 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_publish_subscribe_string --count 3");
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+        Thread.sleep(100);  // do I really want to do things like this? need better check I have a subscriber on broker
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_publish_subscribe_string --count 3 --msg-content ABC --msg-correlation-id some-corr-id");
+        t.join();
     }
 }
