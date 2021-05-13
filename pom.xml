@@ -46,6 +46,7 @@
         <module>cli-activemq</module>
         <module>cli-artemis-jms</module>
         <module>cli-paho-java</module>
+        <module>cli-protonj2</module>
         <module>cli-qpid-jms</module>
         <module>broker</module>
     </modules>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2017 Red Hat, Inc.
+  ~
+  ~ Licensed to the Apache Software Foundation (ASF) under one or more
+  ~ contributor license agreements. See the NOTICE file distributed with
+  ~ this work for additional information regarding copyright ownership.
+  ~ The ASF licenses this file to You under the Apache License, Version 2.0
+  ~ (the "License"); you may not use this file except in compliance with
+  ~ the License. You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.redhat.cli-java</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.2.2-SNAPSHOT</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>cli-protonj2</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <bundle.symbolic.name.suffix>jms</bundle.symbolic.name.suffix>
+        <protonj2.version>1.0.0-M1</protonj2.version>
+        <jar.main.class>com.redhat.mqe.Main</jar.main.class>
+        <library.version>${protonj2.version}</library.version>
+        <tcnative.version>2.0.39.Final</tcnative.version>
+        <tcnative.classifier>linux-x86_64-fedora</tcnative.classifier>
+        <jaeger-client.version>1.6.0</jaeger-client.version>
+    </properties>
+
+    <repositories>
+        <repository>
+            <id>staging</id>
+            <url>https://repository.apache.org/content/repositories/orgapacheqpid-1218</url>
+        </repository>
+    </repositories>
+
+    <!--    <dependencyManagement>-->
+    <!--        <dependencies>-->
+    <!--            <dependency>-->
+    <!--                <groupId>org.apache.qpid</groupId>-->
+    <!--                <artifactId>qpid-jms-parent</artifactId>-->
+    <!--                <version>${qpid.jms.client.version}</version>-->
+    <!--                <type>pom</type>-->
+    <!--                <scope>import</scope>-->
+    <!--            </dependency>-->
+    <!--        </dependencies>-->
+    <!--    </dependencyManagement>-->
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit-pioneer</groupId>
+            <artifactId>junit-pioneer</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>jmslib</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.qpid</groupId>
+            <artifactId>protonj2-client</artifactId>
+            <version>${protonj2.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>4.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>tests</artifactId>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.truth</groupId>
+            <artifactId>truth</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-amqp-protocol</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>broker</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+        <build>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </build>
+
+    <!--    <profiles>-->
+    <!--        <profile>-->
+    <!--            <id>tcnative-boringssl-static</id>-->
+    <!--            <dependencies>-->
+    <!--                <dependency>-->
+    <!--                    <groupId>io.netty</groupId>-->
+    <!--                    <artifactId>netty-tcnative-boringssl-static</artifactId>-->
+    <!--                    <version>${tcnative.version}</version>-->
+    <!--                </dependency>-->
+    <!--            </dependencies>-->
+    <!--        </profile>-->
+    <!--        <profile>-->
+    <!--            <id>tcnative-openssl-dynamic</id>-->
+    <!--            <activation>-->
+    <!--                <property>-->
+    <!--                    <name>!disableTcnativeOpensslDynamic</name>-->
+    <!--                </property>-->
+    <!--            </activation>-->
+    <!--            <dependencies>-->
+    <!--                <dependency>-->
+    <!--                    <groupId>io.netty</groupId>-->
+    <!--                    <artifactId>netty-tcnative</artifactId>-->
+    <!--                    <version>${tcnative.version}</version>-->
+    <!--                    <classifier>${tcnative.classifier}</classifier>-->
+    <!--                </dependency>-->
+    <!--            </dependencies>-->
+    <!--        </profile>-->
+    <!--    </profiles>-->
+
+</project>
