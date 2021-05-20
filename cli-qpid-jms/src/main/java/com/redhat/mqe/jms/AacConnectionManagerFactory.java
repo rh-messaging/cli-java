@@ -35,7 +35,7 @@ public class AacConnectionManagerFactory extends ConnectionManagerFactory {
     }
 
     public AacConnectionManager make(ClientOptions clientOptions, String brokerUri) {
-        String serviceName = "aac1_" + (args.length > 0 ? args[0] : "null");
+        String serviceName = "aac1_" + (args != null && args.length > 0 ? args[0] : "null");
         return new AacConnectionManager(serviceName, clientOptions, brokerUri);
     }
 }

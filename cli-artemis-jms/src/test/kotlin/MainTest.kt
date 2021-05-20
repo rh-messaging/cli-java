@@ -144,6 +144,8 @@ class AccMainTest : AbstractMainTest() {
 """.split(" ", "\n").toTypedArray()
 
     override fun main_(listener: ClientListener, args: Array<String>) = Main.main(listener, args)
+    override val prefix: String
+        get() = "AccMainTest"
 
     /**
      * Large message streaming from/to java.io.{Input,Output}Stream is artemis-jms-client only

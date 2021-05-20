@@ -31,6 +31,8 @@ class AacMainTest : AbstractMainTest() {
 
     override val brokerUrl = "amqp://127.0.0.1:5672"
     override val sslBrokerUrl = "amqps://127.0.0.1:5673"
+    override val prefix: String
+        get() = "AacMainTest"
 
     override val senderAdditionalOptions = """
 --conn-tcp-sock-linger 1000
