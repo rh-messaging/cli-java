@@ -35,52 +35,14 @@ import java.security.MessageDigest
 import java.security.Permission
 import java.time.Duration
 import java.time.LocalTime
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.test.fail
 
-class SystemExitingWithStatus(val status: Int) : SecurityException()
-
-class NoExitSecurityManager(val parentManager: SecurityManager?) : SecurityManager() {
-    override fun checkExit(status: Int) = throw SystemExitingWithStatus(status)
-    override fun checkPermission(perm: Permission?) = Unit
-}
-
-fun assertSystemExit(status: Int, executable: Executable) {
-    val previousManager = System.getSecurityManager()
-    try {
-        val manager = NoExitSecurityManager(previousManager)
-        System.setSecurityManager(manager)
-
-        executable.execute()
-
-        fail("expected exception")
-    } catch (e: SystemExitingWithStatus) {
-        assertThat(e.status).isEqualTo(status)
-    } finally {
-        System.setSecurityManager(previousManager)
-    }
-}
-
-fun assertNoSystemExit(executable: () -> Unit) {
-    val previousManager = System.getSecurityManager()
-    try {
-        val manager = NoExitSecurityManager(previousManager)
-        System.setSecurityManager(manager)
-
-        executable()
-
-    } catch (e: SystemExitingWithStatus) {
-        fail("System.exit has been called")
-    } finally {
-        System.setSecurityManager(previousManager)
-    }
-}
-
 @Tag("external")
-abstract class AbstractMainTest {
+abstract class AbstractMainTest : AbstractTest() {
     abstract val brokerUrl: String
     abstract val sslBrokerUrl: String
+
     /**
      * Set all single-value options to some harmless nondefault value here.
      * Used in a test to increase code coverage and catch some unforeseen option interactions.
@@ -88,12 +50,8 @@ abstract class AbstractMainTest {
     abstract val senderAdditionalOptions: Array<String>
     abstract val connectorAdditionalOptions: Array<String>
 
-    val prefix: String = "lalaLand_"
-    lateinit var randomSuffix: String
-    val address: String
+    open val address: String
         get() = prefix + randomSuffix
-
-    val random = Random()
 
     abstract fun main_(listener: ClientListener, args: Array<String>)
     fun main(args: Array<String>): List<Map<String, Any>> {
@@ -116,9 +74,8 @@ abstract class AbstractMainTest {
 
     @BeforeEach
     fun setup() {
-        print("${LocalTime.now()} ")
-        // https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
-        randomSuffix = BigInteger(130, random).toString(32)
+        print(LocalTime.now())
+        randomSuffix = generateRandomSuffix()
     }
 
     @Tags(Tag("pairwise"), Tag("external"))

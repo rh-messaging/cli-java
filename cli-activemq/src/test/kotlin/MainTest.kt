@@ -119,4 +119,7 @@ class AocMainTest : AbstractMainTest() {
     @Disabled("Invalid connect parameters: {minLargeMessageSize=250000}")
     override fun sendLargeMessageChangingLimit() {
     }
+
+    override val prefix: String
+        get() = "AocMainTest"
 }

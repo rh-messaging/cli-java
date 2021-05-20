@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 public class AccConnectionManagerFactory extends ConnectionManagerFactory {
     @Inject
-    AccConnectionManagerFactory() {
+    public AccConnectionManagerFactory() {
     }
 
     public AccConnectionManager make(ClientOptions clientOptions, String brokerUri) {

@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 
-class AccClientOptionManager extends ClientOptionManager {
+public class AccClientOptionManager extends ClientOptionManager {
     private Map<String, String> CTL_SSL_OPTIONS = new HashMap<>();
 
     {
@@ -114,7 +114,7 @@ class AccClientOptionManager extends ClientOptionManager {
     }
 
     @Inject
-    AccClientOptionManager() {
+    public AccClientOptionManager() {
     }
 
     @Override

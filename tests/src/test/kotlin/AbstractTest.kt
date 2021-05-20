@@ -1,3 +1,6 @@
+import java.math.BigInteger
+import java.util.*
+
 /*
  * Copyright (c) 2017 Red Hat, Inc.
  *
@@ -17,25 +20,10 @@
  * limitations under the License.
  */
 
-package com.redhat.mqe.jms;
-
-import com.redhat.mqe.lib.Args;
-import com.redhat.mqe.lib.ClientOptions;
-import com.redhat.mqe.lib.ConnectionManagerFactory;
-
-import javax.inject.Inject;
-
-public class AacConnectionManagerFactory extends ConnectionManagerFactory {
-    @Inject
-    @Args
-    String[] args;
-
-    @Inject
-    public AacConnectionManagerFactory() {
-    }
-
-    public AacConnectionManager make(ClientOptions clientOptions, String brokerUri) {
-        String serviceName = "aac1_" + (args != null && args.length > 0 ? args[0] : "null");
-        return new AacConnectionManager(serviceName, clientOptions, brokerUri);
-    }
+abstract class AbstractTest {
+    abstract val prefix: String
+    lateinit var randomSuffix: String
+    val random = Random()
+    // https://stackoverflow.com/questions/41107/how-to-generate-a-random-alpha-numeric-string
+    fun generateRandomSuffix(): String = BigInteger(130, random).toString(32)
 }

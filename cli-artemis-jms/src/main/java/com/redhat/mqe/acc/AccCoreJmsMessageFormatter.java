@@ -28,7 +28,7 @@ import java.security.InvalidParameterException;
 
 public class AccCoreJmsMessageFormatter extends CoreJmsMessageFormatter {
     @Inject
-    AccCoreJmsMessageFormatter() {
+    public AccCoreJmsMessageFormatter() {
     }
 
     @Override

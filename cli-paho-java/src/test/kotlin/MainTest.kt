@@ -49,6 +49,9 @@ class AmcMainTest : AbstractMainTest() {
     override fun sendSingleMessageAllTrustingTls() {
     }
 
+    override val prefix: String
+        get() = "AmcMainTest"
+
     @Test
     fun `send and receive a message`() {
         val t = Thread({

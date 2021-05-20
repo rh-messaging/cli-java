@@ -91,7 +91,7 @@ public class AacClientOptionManager extends ClientOptionManager {
     }
 
     @Inject
-    AacClientOptionManager() {
+    public AacClientOptionManager() {
     }
 
     @Override
