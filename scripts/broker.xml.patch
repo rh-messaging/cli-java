@@ -1,25 +1,25 @@
 diff --git a/broker.xml b/broker.xml
-index 872a32d..a0f614d 100644
+index 2ef08a9..693b1d6 100644
 --- a/broker.xml
 +++ b/broker.xml
-@@ -102,7 +102,7 @@ under the License.
-
+@@ -116,7 +116,7 @@ under the License.
+ 
        <!-- once the disk hits this limit the system will block, or close the connection in certain protocols
             that won't support flow control. -->
 -      <max-disk-usage>90</max-disk-usage>
 +      <max-disk-usage>100</max-disk-usage>
-
+ 
        <!-- should the broker detect dead locks and other issues -->
        <critical-analyzer>true</critical-analyzer>
-@@ -131,9 +131,11 @@ under the License.
+@@ -158,12 +158,15 @@ under the License.
  
           <!-- Acceptor for every supported protocol -->
-          <acceptor name="artemis">tcp://0.0.0.0:61616?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=CORE,AMQP,STOMP,HORNETQ,MQTT,OPENWIRE;useEpoll=true;amqpCredits=1000;amqpLowCredits=300</acceptor>
-+         <acceptor name="artemiss">tcp://0.0.0.0:61617?protocols=CORE,OPENWIRE;sslEnabled=true;keyStorePath=server-side-keystore.jks;keyStorePassword=secureexample</acceptor>
+          <acceptor name="artemis">tcp://0.0.0.0:61616?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;amqpMinLargeMessageSize=102400;protocols=CORE,AMQP,STOMP,HORNETQ,MQTT,OPENWIRE;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpDuplicateDetection=true</acceptor>
++         <acceptor name="artemiss">tcp://0.0.0.0:61616?sslEnabled=true;keyStorePath=server-side-keystore.jks;keyStorePassword=secureexample;tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;amqpMinLargeMessageSize=102400;protocols=CORE,AMQP,STOMP,HORNETQ,MQTT,OPENWIRE;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpDuplicateDetection=true</acceptor>
  
           <!-- AMQP Acceptor.  Listens on default AMQP port for AMQP traffic.-->
-          <acceptor name="amqp">tcp://0.0.0.0:5672?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300</acceptor>
-+         <acceptor name="amqps">tcp://0.0.0.0:5673?sslEnabled=true;keyStorePath=server-side-keystore.jks;keyStorePassword=secureexample;tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300</acceptor>
+          <acceptor name="amqp">tcp://0.0.0.0:5672?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpMinLargeMessageSize=102400;amqpDuplicateDetection=true</acceptor>
++         <acceptor name="amqps">tcp://0.0.0.0:5672?sslEnabled=true;keyStorePath=server-side-keystore.jks;keyStorePassword=secureexample;tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpMinLargeMessageSize=102400;amqpDuplicateDetection=true</acceptor>
  
           <!-- STOMP Acceptor. -->
           <acceptor name="stomp">tcp://0.0.0.0:61613?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=STOMP;useEpoll=true</acceptor>
