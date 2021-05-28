@@ -1,5 +1,5 @@
 diff --git a/broker.xml b/broker.xml
-index 2ef08a9..693b1d6 100644
+index 2ef08a9..4e61d0b 100644
 --- a/broker.xml
 +++ b/broker.xml
 @@ -116,7 +116,7 @@ under the License.
@@ -11,7 +11,7 @@ index 2ef08a9..693b1d6 100644
  
        <!-- should the broker detect dead locks and other issues -->
        <critical-analyzer>true</critical-analyzer>
-@@ -158,12 +158,15 @@ under the License.
+@@ -158,9 +158,11 @@ under the License.
  
           <!-- Acceptor for every supported protocol -->
           <acceptor name="artemis">tcp://0.0.0.0:61616?tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;amqpMinLargeMessageSize=102400;protocols=CORE,AMQP,STOMP,HORNETQ,MQTT,OPENWIRE;useEpoll=true;amqpCredits=1000;amqpLowCredits=300;amqpDuplicateDetection=true</acceptor>
