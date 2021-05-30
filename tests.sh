@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+set -x
 
 #
 # Copyright (c) 2021 Red Hat, Inc.
