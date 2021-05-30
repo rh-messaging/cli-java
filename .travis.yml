@@ -23,21 +23,7 @@ script:
   - docker run --rm -v`pwd`/scripts:/mnt -p 1883:1883 -p 5672:5672 -p 61616:61616 -p 5673:5673 -p 61617:61617 --entrypoint bash quay.io/jdanek/docker-alpine-openjdk-artemis-snapshot:latest /mnt/entrypoint.sh amq7-server &
   - sleep 10
   - mvn clean package -Ptests,coverage
-
-  - java -jar cli-activemq/target/cli-activemq-1.2.2-SNAPSHOT-*.jar sender --address cli-activemq --log-msgs json --count 1
-  - java -jar cli-activemq/target/cli-activemq-1.2.2-SNAPSHOT-*.jar receiver --address cli-activemq --log-msgs json --count 1
-  - java -jar cli-activemq/target/cli-activemq-1.2.2-SNAPSHOT-*.jar sender --conn-username test --conn-ssl-verify-host false --conn-password test --msg-content msg no. %d --broker ssl://127.0.0.1:61617 --conn-auth-mechanisms PLAIN --timeout 30 --log-msgs json --log-lib trace --address message-basiccli_jms --count 10 --conn-ssl-trust-all true
-
-  - java -jar cli-artemis-jms/target/cli-artemis-jms-1.2.2-SNAPSHOT-*.jar sender --address cli-artemis-jms --log-msgs json --count 1
-  - java -jar cli-artemis-jms/target/cli-artemis-jms-1.2.2-SNAPSHOT-*.jar receiver --address cli-artemis-jms --log-msgs json --count 1
-  - java -jar cli-artemis-jms/target/cli-artemis-jms-1.2.2-SNAPSHOT-*.jar sender --conn-username test --conn-ssl-verify-host false --conn-password test --msg-content msg no. %d --broker tcp://127.0.0.1:61617 --conn-auth-mechanisms PLAIN --timeout 30 --log-msgs json --log-lib trace --address message-basiccli_jms --count 10 --conn-ssl-trust-all true
-
-  - cli_qpid_jms_jar=$(find cli-qpid-jms/target -name 'cli-qpid-jms-1.2.2-SNAPSHOT-*.jar' -not -name '*-tests.jar')
-  - java -jar ${cli_qpid_jms_jar} sender --address cli-qpid-jms --log-msgs json --count 1
-  - java -jar ${cli_qpid_jms_jar} receiver --address cli-qpid-jms --log-msgs json --count 1
-  - java -jar ${cli_qpid_jms_jar} sender --conn-username test --conn-ssl-verify-host false --conn-password test --msg-content msg no. %d --broker amqps://127.0.0.1:5673 --conn-auth-mechanisms PLAIN --timeout 30 --log-msgs json --log-lib trace --address message-basiccli_jms --count 10 --conn-ssl-trust-all true
-
-  - java -jar cli-paho-java/target/cli-paho-java-1.2.2-SNAPSHOT-*.jar sender --address cli-paho-java --log-msgs json --count 1
+  - bash ./tests.sh
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

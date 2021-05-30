@@ -33,6 +33,11 @@
             <artifactId>cli-qpid-jms</artifactId>
             <version>1.2.2-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>cli-protonj2</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>com.redhat.cli-java</groupId>
