@@ -1,5 +1,7 @@
 package com.redhat.mqe;
 
+import com.redhat.mqe.lib.JmsMessagingException;
+import org.apache.qpid.protonj2.client.ClientOptions;
 import org.apache.qpid.protonj2.client.DistributionMode;
 import org.apache.qpid.protonj2.client.ReceiverOptions;
 import org.apache.qpid.protonj2.client.SenderOptions;
@@ -21,7 +23,9 @@ import java.io.File;
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,7 +64,7 @@ class Main implements Callable<Integer> {
 }
 
 class CliProtonJ2SenderReceiver {
-    void logMessage(String address, Message message) throws ClientException {
+    void logMessage(String address, Message message, boolean msgContentHashed) throws ClientException {
         StringBuilder sb = new StringBuilder();
 
         sb.append("{");
@@ -75,7 +79,18 @@ class CliProtonJ2SenderReceiver {
         addKeyValue(sb, "type", "string");  // ???
         addKeyValue(sb, "ttl", message.timeToLive());
         addKeyValue(sb, "absolute-expiry-time", message.absoluteExpiryTime());
-        addKeyValue(sb, "content", message.body());
+        if (msgContentHashed) {
+            // this is inlined addKeyValue, TODO do it nicer
+            sb.append("'");
+            sb.append("content");
+            sb.append("': ");
+            sb.append("'"); // extra quotes to format
+            sb.append(hash(formatPython(message.body())));
+            sb.append("'");
+            sb.append(", ");
+        } else {
+            addKeyValue(sb, "content", message.body());
+        }
         addKeyValue(sb, "redelivered", message.deliveryCount() > 1);
         addKeyValue(sb, "reply-to-group-id", message.replyToGroupId());
         addKeyValue(sb, "durable", message.durable());
@@ -131,14 +146,28 @@ class CliProtonJ2SenderReceiver {
             return parameter.toString();
         }
         if (parameter instanceof List) {
-            return "[" + ((List<Object>)parameter).stream().map(this::formatPython).collect(Collectors.joining(", "))  + "]";
+            return "[" + ((List<Object>) parameter).stream().map(this::formatPython).collect(Collectors.joining(", ")) + "]";
         }
-        return  "'" + parameter + "'";
+        return "'" + parameter + "'";
     }
 
     protected boolean stringToBool(String string) {
         boolean bool = string.equalsIgnoreCase("true") || string.equalsIgnoreCase("yes");
         return bool;
+    }
+
+    private String hash(Object o) {
+        if (o == null) {
+            return null; // no point in hashing this value
+        }
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new JmsMessagingException("Unable to hash message", e);
+        }
+        String content = o.toString();
+        return new BigInteger(1, md.digest(content.getBytes())).toString(16);
     }
 }
 
@@ -204,6 +233,9 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
     @Option(names = {"--log-msgs"}, description = "MD5, SHA-1, SHA-256, ...")
     private String logMsgs = "MD5";
 
+    @Option(names = {"--msg-content-hashed"})
+    private String msgContentHashedString = "false";
+
     @Option(names = {"--broker"}, description = "MD5, SHA-1, SHA-256, ...")
     private String broker = "MD5";
 
@@ -234,6 +266,9 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
 
     @Option(names = {"--msg-content"})
     private String msgContent;
+
+    @Option(names = {"--msg-content-from-file"})
+    private String msgContentFromFile;
 
     @Option(names = {"--content-type"})
     private ContentType contentType;
@@ -300,12 +335,12 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
 
             for (int i = 0; i < count; i++) {
                 Message message;
-                if (msgContentListItem != null && !msgContentListItem.isEmpty()) {
+                if (msgContentListItem != null && !msgContentListItem.isEmpty()) {  // TODO check only one of these is specified
                     // TODO have to cast strings to objects of correct types
                     message = Message.create(msgContentListItem);
                 } else if (msgContentMapItems != null) {
                     Map<String, String> map = new HashMap<>();
-                    for(String item : msgContentMapItems) {
+                    for (String item : msgContentMapItems) {
                         String[] fields = item.split("[=~]", 2);
                         if (fields.length != 2) {
                             throw new RuntimeException("Wrong format " + Arrays.toString(fields));  // TODO do this in args parsing?
@@ -313,6 +348,8 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
                         map.put(fields[0], fields[1]); // todo retype value
                     }
                     message = Message.create(map);
+                } else if (msgContentFromFile != null) {
+                    message = Message.create(Files.readString(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
                 } else {
                     message = Message.create(msgContent);
                 }
@@ -344,7 +381,7 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
                     message.contentType(contentType.toString()); // TODO: maybe should do more with it? don't bother with enum?
                 }
                 sender.send(message);  // TODO what's timeout for in a sender?
-                logMessage(address, message);
+                logMessage(address, message, stringToBool(msgContentHashedString));
             }
         }
 
@@ -363,6 +400,9 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
     @Option(names = {"--log-msgs"}, description = "MD5, SHA-1, SHA-256, ...")
     private String logMsgs = "MD5";
 
+    @Option(names = {"--msg-content-hashed"})
+    private String msgContentHashedString = "false";
+
     @Option(names = {"--broker"}, description = "MD5, SHA-1, SHA-256, ...")
     private String broker = "MD5";
 
@@ -371,6 +411,19 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
 
     @Option(names = {"--conn-password"}, description = "MD5, SHA-1, SHA-256, ...")
     private String connPassword = "MD5";
+
+    @Option(names = {"--conn-clientid"})
+    private String connClientId;
+
+    @Option(names = {"--durable-subscriber"})
+    private String durableSubscriberString = "false";
+
+    @Option(names = {"--durable-subscriber-name"})
+    private String durableSubscriberName;
+
+    // TODO not implemented
+    @Option(names = {"--subscriber-unsubscribe"})
+    private String subscriberUnsubscribeString;
 
     @Option(names = {"--address"}, description = "MD5, SHA-1, SHA-256, ...")
     private String address = "MD5";
@@ -411,7 +464,22 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
             address = address.substring((QUEUE_PREFIX.length()));
         }
 
-        final Client client = Client.create();
+        ClientOptions clientOptions = new ClientOptions();
+        // TODO api usability I had to hunt for this a bit; the idea is to have durable subscription: need specify connection id and subscriber name
+        if (connClientId != null) {
+            clientOptions.id(connClientId);
+        }
+
+        // TODO api usability; If I use the w/ clientOptions variant of Client.create, then .id defaults to null, and I get exception;
+        //  ok, that just cannot be true ^^^; but it looks to be true; what!?!
+        // aha, right; constructor does not check, factory method does check for null
+        // proposed solution> allow null there, and let it mean autoassign; or tell us method to generate ID ourselves if we don't care
+        Client client;
+        if (clientOptions.id() != null) {
+            client = Client.create(clientOptions);
+        } else {
+            client = Client.create();
+        }
 
         final ConnectionOptions options = new ConnectionOptions();
         options.user(connUsername);
@@ -421,7 +489,7 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
         }
 
         /*
-        TODO API usablility, hard to ask for queue when dealing with broker that likes to autocreate topics
+        TODO API usability, hard to ask for queue when dealing with broker that likes to autocreate topics
          */
         ReceiverOptions receiverOptions = new ReceiverOptions();
         // is it target or source? target.
@@ -432,8 +500,15 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
             receiverOptions.sourceOptions().distributionMode(DistributionMode.COPY);
         }
 
-        try (Connection connection = client.connect(serverHost, serverPort, options);
-             Receiver receiver = connection.openReceiver(address, receiverOptions)) {
+//        receiverOptions.
+
+        try (Connection connection = client.connect(serverHost, serverPort, options)) {
+            Receiver receiver;
+            if (stringToBool(durableSubscriberString)) {
+                receiver = connection.openDurableReceiver(address, durableSubscriberName, receiverOptions);
+            } else {
+                receiver = connection.openReceiver(address, receiverOptions);
+            }
 
             for (int i = 0; i < count; i++) {
                 final Delivery delivery;
@@ -458,8 +533,12 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
 
                 int messageFormat = delivery.messageFormat();
                 Message<String> message = delivery.message();
-                logMessage(address, message);
+                logMessage(address, message, stringToBool(msgContentHashedString));
             }
+
+            // TODO API usability, how do I do durable subscription with detach, resume, etc; no mention of unsubscribe in the client anywhere
+            receiver.close(); // TODO want to do autoclosable, need helper func, that's all
+//            receiver.detach();
         }
 
         return 0;

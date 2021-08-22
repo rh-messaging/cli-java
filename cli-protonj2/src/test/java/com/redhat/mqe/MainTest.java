@@ -205,6 +205,23 @@ class MainTest {
         // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_reply_to_address
         checkMainInvocation("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_reply_to_address --count 1 --process-reply-to");
 
+        // tests.JAMQNode000Tests.JAMQNodeTests.test_address_full_policy_block
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address JAMQNode111Tests_test_address_full_policy_block --count 1 --msg-content-from-file /etc/passwd");
+
+        // tests.JAMQNode000Tests.JAMQNodeTests.test_direct_transient_large_string_message_size_1mb
+        // ditto for receiver
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_large_string_message_size_1mb --count 1 --msg-content-from-file /etc/passwd --msg-content-hashed True");
+
+        // tests.JAMQNode000Tests.JAMQNodeTests.test_max_consumers_queue
+        // TODO: client is not started at all in the test; some issues with params mapping?
+
+        // tests.JAMQNode000Tests.JAMQNodeTests.test_node_durable_topic_subscriber
+        // topic: prefix, --conn-clientid --durable-subscriber --durable-subscriber-name
+        checkMainInvocation("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_node_durable_topic_subscriber --count 0 --durable-subscriber True --durable-subscriber-name ds0");
+        // --subscriber-unsubscribe True
+        checkMainInvocation("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_node_durable_topic_subscriber --count 0 --subscriber-unsubscribe True --durable-subscriber-name ds0");
+
+
         //checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1 --msg-content SimpleTextMessage --msg-correlation-id corr-id-eqa9vp");
     }
 
