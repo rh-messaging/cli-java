@@ -186,6 +186,24 @@ class MainTest {
         // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_dead_letter_queue_with_expired_messages
         checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_dead_letter_queue_with_expired_messages --count 3 --msg-content ABC --msg-durable yes --msg-ttl 1000");
 
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_message_group_simple
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_message_group_simple --count 1 --msg-content B-0 --msg-group-id B");
+
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_reply_to_address
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_reply_to_address --count 1 --msg-reply-to test_reply_to_address-replyQ --msg-content-map-item text=replyQ_SLjFkenkBi");
+
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_publish_subscribe_int
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_publish_subscribe_int --count 3 --msg-content 12345 --content-type int --msg-correlation-id some-corr-id");
+
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_publish_subscribe_map_list
+        // --msg-content-map-item "key3~[123, 3.14]"
+
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_message_group_consumer_disconnect
+        // TODO msgcontent %d feature
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_message_group_consumer_disconnect --count 40 --msg-content A-%d --duration 20 --msg-group-id A");
+
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_reply_to_address
+        checkMainInvocation("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_reply_to_address --count 1 --process-reply-to");
 
         //checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1 --msg-content SimpleTextMessage --msg-correlation-id corr-id-eqa9vp");
     }

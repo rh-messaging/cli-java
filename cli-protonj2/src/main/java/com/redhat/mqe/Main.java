@@ -1,7 +1,5 @@
 package com.redhat.mqe;
 
-import com.redhat.mqe.lib.ClientOptions;
-import com.redhat.mqe.lib.ConnectionManager;
 import org.apache.qpid.protonj2.client.DistributionMode;
 import org.apache.qpid.protonj2.client.ReceiverOptions;
 import org.apache.qpid.protonj2.client.SenderOptions;
@@ -224,7 +222,11 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
     @Option(names = {"--timeout"}, description = "MD5, SHA-1, SHA-256, ...")
     private int timeout;
 
-    @Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")  // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
+    @Option(names = {"--duration"})
+    private int duration;  // TODO do something with it
+
+    @Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
+    // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
     private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
 
     @Option(names = {"--msg-property"})  // picocli Map options works for this, sounds like
@@ -232,6 +234,9 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
 
     @Option(names = {"--msg-content"})
     private String msgContent;
+
+    @Option(names = {"--content-type"})
+    private ContentType contentType;
 
     @Option(names = {"--msg-durable"})
     private String msgDurableString = "false";
@@ -247,6 +252,12 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
 
     @Option(names = {"--msg-correlation-id"})
     private String msgCorrelationId;
+
+    @Option(names = {"--msg-group-id"})
+    private String msgGroupId;
+
+    @Option(names = {"--msg-reply-to"})
+    private String msgReplyTo;
 
     @Override
     public Integer call() throws Exception { // your business logic goes here...
@@ -323,6 +334,15 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
                 if (stringToBool(msgDurableString)) {
                     message.durable(true);
                 }
+                if (msgGroupId != null) {
+                    message.groupId(msgGroupId);
+                }
+                if (msgReplyTo != null) {
+                    message.replyTo(msgReplyTo);
+                }
+                if (contentType != null) {
+                    message.contentType(contentType.toString()); // TODO: maybe should do more with it? don't bother with enum?
+                }
                 sender.send(message);  // TODO what's timeout for in a sender?
                 logMessage(address, message);
             }
@@ -367,6 +387,9 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
     @Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
     // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
     private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
+
+    @Option(names = {"--process-reply-to"})
+    private boolean processReplyTo = false;
 
     @Override
     public Integer call() throws Exception { // your business logic goes here...
@@ -422,6 +445,15 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
 
                 if (delivery == null) {
                     break;
+                }
+
+                if (processReplyTo && delivery.message().replyTo() != null) {
+                    String replyTo = delivery.message().replyTo();
+                    Message<Object> message = delivery.message();
+                    message.replyTo(null);
+                    try (Sender sender = connection.openSender(replyTo)) {
+                        sender.send(message);
+                    }
                 }
 
                 int messageFormat = delivery.messageFormat();
