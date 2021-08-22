@@ -26,7 +26,9 @@ import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -60,7 +62,7 @@ class Main implements Callable<Integer> {
 }
 
 class CliProtonJ2SenderReceiver {
-    void logMessage(String address, Message<String> message) throws ClientException {
+    void logMessage(String address, Message message) throws ClientException {
         StringBuilder sb = new StringBuilder();
 
         sb.append("{");
@@ -94,7 +96,7 @@ class CliProtonJ2SenderReceiver {
 //                sbb.append(", ");
 //                first.set(false);
 //            }
-            addKeyValue(sbb, s, o);
+            addKeyValue(sbb, (String) s, o);  // this wanted to cast to string when I removed message generic type; what??? TODO
         });
         if (message.hasProperties()) {
             sbb.delete(sbb.length() - 2, sbb.length());  // remove last ", "
@@ -134,6 +136,11 @@ class CliProtonJ2SenderReceiver {
             return "[" + ((List<Object>)parameter).stream().map(this::formatPython).collect(Collectors.joining(", "))  + "]";
         }
         return  "'" + parameter + "'";
+    }
+
+    protected boolean stringToBool(String string) {
+        boolean bool = string.equalsIgnoreCase("true") || string.equalsIgnoreCase("yes");
+        return bool;
     }
 }
 
@@ -226,8 +233,17 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
     @Option(names = {"--msg-content"})
     private String msgContent;
 
+    @Option(names = {"--msg-durable"})
+    private String msgDurableString = "false";
+
+    @Option(names = {"--msg-ttl"})
+    private Long msgTtl;
+
     @Option(names = {"--msg-content-list-item"})
     private List<String> msgContentListItem;
+
+    @Option(names = {"--msg-content-map-item"})
+    private List<String> msgContentMapItems;
 
     @Option(names = {"--msg-correlation-id"})
     private String msgCorrelationId;
@@ -276,6 +292,16 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
                 if (msgContentListItem != null && !msgContentListItem.isEmpty()) {
                     // TODO have to cast strings to objects of correct types
                     message = Message.create(msgContentListItem);
+                } else if (msgContentMapItems != null) {
+                    Map<String, String> map = new HashMap<>();
+                    for(String item : msgContentMapItems) {
+                        String[] fields = item.split("[=~]", 2);
+                        if (fields.length != 2) {
+                            throw new RuntimeException("Wrong format " + Arrays.toString(fields));  // TODO do this in args parsing?
+                        }
+                        map.put(fields[0], fields[1]); // todo retype value
+                    }
+                    message = Message.create(map);
                 } else {
                     message = Message.create(msgContent);
                 }
@@ -290,6 +316,12 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
                 }
                 if (msgCorrelationId != null) {
                     message.correlationId(msgCorrelationId);
+                }
+                if (msgTtl != null) {
+                    message.timeToLive(msgTtl);
+                }
+                if (stringToBool(msgDurableString)) {
+                    message.durable(true);
                 }
                 sender.send(message);  // TODO what's timeout for in a sender?
                 logMessage(address, message);
@@ -401,8 +433,4 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
         return 0;
     }
 
-    private boolean stringToBool(String string) {
-        boolean bool = string.equalsIgnoreCase("true") || string.equalsIgnoreCase("yes");
-        return bool;
-    }
 }

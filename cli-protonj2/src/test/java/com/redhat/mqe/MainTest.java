@@ -177,11 +177,20 @@ class MainTest {
 
         checkMainInvocation("receiver --timeout 2 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address JAMQMsgPatterns111Tests_test_browse_messages --recv-browse true --count 20");
 
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_direct_transient_list_message
         checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_list_message --count 1 --msg-content-list-item  --msg-content-list-item String --msg-content-list-item ~1 --msg-content-list-item ~1.0 --msg-content-list-item 1 --msg-content-list-item 1.0 --msg-content-list-item ~-1 --msg-content-list-item ~-1.3 --msg-content-list-item -1 --msg-content-list-item ~~1 --msg-correlation-id corr-id-Mee2YQ");
+
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_direct_transient_map_message
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_map_message --count 1 --msg-content-map-item empty_string= --msg-content-map-item string=String --msg-content-map-item int~1 --msg-content-map-item float~1.0 --msg-content-map-item string_int=1 --msg-content-map-item string_float=1.0 --msg-content-map-item negative_int~-1 --msg-content-map-item negative_float~-1.3 --msg-content-map-item string_negative_int=-1 --msg-content-map-item string_retype_operator=~1 --msg-correlation-id corr-id-JQt4JM");
+
+        // tests.JAMQMsgPatterns000Tests.JAMQMsgPatternsTests.test_dead_letter_queue_with_expired_messages
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_dead_letter_queue_with_expired_messages --count 3 --msg-content ABC --msg-durable yes --msg-ttl 1000");
+
+
         //checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1 --msg-content SimpleTextMessage --msg-correlation-id corr-id-eqa9vp");
     }
 
-    void testMessageContentListItem() {
+//    void testMessageContentListItem() {
 //        '--msg-content-list-item', '', '--msg-content-list-item', 'String', '--msg-content-list-item', '~1', '--msg-content-list-item', '~1.0', '--msg-content-list-item', '1', '--msg-content-list-item', '1.0', '--msg-content-list-item', '~-1', '--msg-content-list-item', '~-1.3', '--msg-content-list-item', '-1', '--msg-content-list-item', '~~1'
-    }
+//    }
 }
