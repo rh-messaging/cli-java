@@ -22,9 +22,7 @@ package com.redhat.mqe;
 import com.google.common.truth.Truth;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.internal.Intrinsics;
-import kotlin.test.AssertionsKt;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -163,5 +161,27 @@ class MainTest {
         Thread.sleep(100);  // do I really want to do things like this? need better check I have a subscriber on broker
         checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_publish_subscribe_string --count 3 --msg-content ABC --msg-correlation-id some-corr-id");
         t.join();
+    }
+
+    @Test
+    @Timeout(value = 60, unit = TimeUnit.SECONDS)
+    @ExtendWith(BrokerFixture.class)
+    void test2(@BrokerFixture.TempBroker Broker broker) throws Throwable {
+        broker.configuration.setSecurityEnabled(false);
+        broker.configuration.setPersistenceEnabled(false); // this, or tmpdir, otherwise test runs interact
+        broker.startBroker();
+
+        // todo: have to handle amqp:// prefix
+        String brokerUrl = "localhost:" + broker.addAMQPAcceptor();
+
+
+        checkMainInvocation("receiver --timeout 2 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address JAMQMsgPatterns111Tests_test_browse_messages --recv-browse true --count 20");
+
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_list_message --count 1 --msg-content-list-item  --msg-content-list-item String --msg-content-list-item ~1 --msg-content-list-item ~1.0 --msg-content-list-item 1 --msg-content-list-item 1.0 --msg-content-list-item ~-1 --msg-content-list-item ~-1.3 --msg-content-list-item -1 --msg-content-list-item ~~1 --msg-correlation-id corr-id-Mee2YQ");
+        //checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1 --msg-content SimpleTextMessage --msg-correlation-id corr-id-eqa9vp");
+    }
+
+    void testMessageContentListItem() {
+//        '--msg-content-list-item', '', '--msg-content-list-item', 'String', '--msg-content-list-item', '~1', '--msg-content-list-item', '~1.0', '--msg-content-list-item', '1', '--msg-content-list-item', '1.0', '--msg-content-list-item', '~-1', '--msg-content-list-item', '~-1.3', '--msg-content-list-item', '-1', '--msg-content-list-item', '~~1'
     }
 }

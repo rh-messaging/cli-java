@@ -2,6 +2,7 @@ package com.redhat.mqe;
 
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.ConnectionManager;
+import org.apache.qpid.protonj2.client.DistributionMode;
 import org.apache.qpid.protonj2.client.ReceiverOptions;
 import org.apache.qpid.protonj2.client.SenderOptions;
 import org.apache.qpid.protonj2.client.exceptions.ClientException;
@@ -28,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.redhat.mqe.lib.ClientOptionManager.QUEUE_PREFIX;
 import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
@@ -128,6 +130,9 @@ class CliProtonJ2SenderReceiver {
         if (parameter instanceof StringBuilder) {
             return parameter.toString();
         }
+        if (parameter instanceof List) {
+            return "[" + ((List<Object>)parameter).stream().map(this::formatPython).collect(Collectors.joining(", "))  + "]";
+        }
         return  "'" + parameter + "'";
     }
 }
@@ -221,6 +226,9 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
     @Option(names = {"--msg-content"})
     private String msgContent;
 
+    @Option(names = {"--msg-content-list-item"})
+    private List<String> msgContentListItem;
+
     @Option(names = {"--msg-correlation-id"})
     private String msgCorrelationId;
 
@@ -264,7 +272,13 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
              Sender sender = connection.openSender(address, senderOptions)) {
 
             for (int i = 0; i < count; i++) {
-                final Message<String> message = Message.create(msgContent);
+                Message message;
+                if (msgContentListItem != null && !msgContentListItem.isEmpty()) {
+                    // TODO have to cast strings to objects of correct types
+                    message = Message.create(msgContentListItem);
+                } else {
+                    message = Message.create(msgContent);
+                }
                 for (String property : msgProperties) {
                     String[] fields = property.split("=", 2);
                     if (fields.length != 2) {
@@ -309,13 +323,17 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
     @Option(names = {"--address"}, description = "MD5, SHA-1, SHA-256, ...")
     private String address = "MD5";
 
+    @Option(names = {"--recv-browse"}, description = "browse queued messages instead of receiving them")
+    private String recvBrowseString = "false";
+
     @Option(names = {"--count"}, description = "MD5, SHA-1, SHA-256, ...")
     private int count = 1;
 
     @Option(names = {"--timeout"}, description = "MD5, SHA-1, SHA-256, ...")
     private int timeout;
 
-    @Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")  // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
+    @Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
+    // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
     private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
 
     @Override
@@ -353,6 +371,12 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
         ReceiverOptions receiverOptions = new ReceiverOptions();
         // is it target or source? target.
         receiverOptions.sourceOptions().capabilities(destinationCapability);
+
+        // todo: another usability, little hard to figure out this is analogue of jms to browse queues
+        if (stringToBool(recvBrowseString)) {
+            receiverOptions.sourceOptions().distributionMode(DistributionMode.COPY);
+        }
+
         try (Connection connection = client.connect(serverHost, serverPort, options);
              Receiver receiver = connection.openReceiver(address, receiverOptions)) {
 
@@ -364,6 +388,10 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
                     delivery = receiver.receive(timeout, TimeUnit.SECONDS);
                 }
 
+                if (delivery == null) {
+                    break;
+                }
+
                 int messageFormat = delivery.messageFormat();
                 Message<String> message = delivery.message();
                 logMessage(address, message);
@@ -371,5 +399,10 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
         }
 
         return 0;
+    }
+
+    private boolean stringToBool(String string) {
+        boolean bool = string.equalsIgnoreCase("true") || string.equalsIgnoreCase("yes");
+        return bool;
     }
 }
