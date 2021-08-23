@@ -169,6 +169,43 @@ class CliProtonJ2SenderReceiver {
         String content = o.toString();
         return new BigInteger(1, md.digest(content.getBytes())).toString(16);
     }
+
+    // can't call these as implemented in Utils, undefined JmsException; somehow fix this; break dep on jms api
+
+    /**
+     * @return number of seconds (including milisecs) since EPOCH.
+     */
+    public static double getTime() {
+        return System.currentTimeMillis();
+    }
+
+
+    /**
+     * Sleeps until next timed for/while loop iteration.
+     * This method takes into account the length of the action it preceded.
+     *
+     * @param initialTimestamp initial timestamp (in get_time() double form) is passed from a connection started
+     * @param msgCount         number of iterations
+     * @param duration         total time of all iterations
+     * @param nextCountIndex   next iteration index
+     */
+
+    public static void sleepUntilNextIteration(double initialTimestamp, int msgCount, double duration, int nextCountIndex) {
+        if ((duration > 0) && (msgCount > 0)) {
+            // initial overall duration approximation of whole loop (sender/receiver)
+            double cummulative_dur = (1.0 * nextCountIndex * duration) / msgCount;
+            while (true) {
+                if (getTime() - initialTimestamp - cummulative_dur > -0.05)
+                    break;
+                try {
+//                    LOG.trace("sleeping");
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
 
 @Command(
@@ -291,8 +328,34 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
     @Option(names = {"--msg-group-id"})
     private String msgGroupId;
 
+    @Option(names = {"--msg-id"})
+    private String msgId;  // todo, not just string is an option
+
     @Option(names = {"--msg-reply-to"})
     private String msgReplyTo;
+
+    @Option(names = {"--msg-subject"})
+    private String msgSubject;
+
+    @Option(names = {"--msg-user-id"})
+    private String msgUserId;
+
+    @Option(names = {"--msg-priority"})
+    private Byte msgPriority;
+
+    // jms.populateJMSXUserID opt in qpid-jms
+    // TODO: does not seem to have equivalent; what is the threat model for "prevent spoofing" in JMS docs?
+    @Option(names = {"--conn-populate-user-id"})
+    private String connPopulateUserIdString = "false";
+
+    @Option(names = {"--msg-group-seq"})
+    private Integer msgGroupSeq;
+
+    @Option(names = {"--msg-reply-to-group-id"})
+    private String msgReplyToGroupId;
+
+    @Option(names = {"--ssn-ack-mode"})
+    private SsnAckMode ssnAckMode;
 
     @Override
     public Integer call() throws Exception { // your business logic goes here...
@@ -354,13 +417,16 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
                     message = Message.create(msgContent);
                 }
                 for (String property : msgProperties) {
-                    String[] fields = property.split("=", 2);
+                    String[] fields = property.split("[=~]", 2);  // todo do something with ~
                     if (fields.length != 2) {
                         throw new RuntimeException("Wrong format " + Arrays.toString(fields));  // TODO do this in args parsing
                     }
                     String key = fields[0];
                     String value = fields[1];  // more types
                     message.property(key, value);
+                }
+                if (msgId != null) {
+                    message.messageId(msgId);
                 }
                 if (msgCorrelationId != null) {
                     message.correlationId(msgCorrelationId);
@@ -374,11 +440,27 @@ class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<In
                 if (msgGroupId != null) {
                     message.groupId(msgGroupId);
                 }
+                if (msgGroupSeq != null) {
+                    message.groupSequence(msgGroupSeq);
+                }
                 if (msgReplyTo != null) {
                     message.replyTo(msgReplyTo);
                 }
+                if (msgReplyToGroupId != null) {
+                    message.replyToGroupId(msgReplyToGroupId);
+                }
                 if (contentType != null) {
                     message.contentType(contentType.toString()); // TODO: maybe should do more with it? don't bother with enum?
+                }
+                // todo, not sure what to do here; should I use authenticated userid instead?
+                if (stringToBool(connPopulateUserIdString)) {
+                    message.userId(msgUserId.getBytes());
+                }
+                if (msgSubject != null) {
+                    message.subject(msgSubject);
+                }
+                if (msgPriority != null) {
+                    message.priority(msgPriority);
                 }
                 sender.send(message);  // TODO what's timeout for in a sender?
                 logMessage(address, message, stringToBool(msgContentHashedString));
@@ -444,6 +526,15 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
     @Option(names = {"--process-reply-to"})
     private boolean processReplyTo = false;
 
+    @Option(names = {"--duration"})  // todo
+    private Integer duration;
+
+    @Option(names = {"--duration-mode"}) // todo
+    private DurationMode durationMode;
+
+    @Option(names = {"--ssn-ack-mode"})
+    private SsnAckMode ssnAckMode;
+
     @Override
     public Integer call() throws Exception { // your business logic goes here...
         String prefix = "";
@@ -473,7 +564,7 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
         // TODO api usability; If I use the w/ clientOptions variant of Client.create, then .id defaults to null, and I get exception;
         //  ok, that just cannot be true ^^^; but it looks to be true; what!?!
         // aha, right; constructor does not check, factory method does check for null
-        // proposed solution> allow null there, and let it mean autoassign; or tell us method to generate ID ourselves if we don't care
+        // proposed solution: allow null there, and let it mean autoassign; or tell us method to generate ID ourselves if we don't care
         Client client;
         if (clientOptions.id() != null) {
             client = Client.create(clientOptions);
@@ -500,7 +591,13 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
             receiverOptions.sourceOptions().distributionMode(DistributionMode.COPY);
         }
 
-//        receiverOptions.
+        // TODO: API question: what is difference between autoSettle and autoAccept? why I want one but not the other?
+        if(ssnAckMode != null) {
+            if (ssnAckMode == SsnAckMode.client) {
+                receiverOptions.autoAccept(false);
+                receiverOptions.autoSettle(false);
+            }
+        }
 
         try (Connection connection = client.connect(serverHost, serverPort, options)) {
             Receiver receiver;
@@ -510,7 +607,14 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
                 receiver = connection.openReceiver(address, receiverOptions);
             }
 
+            double initialTimestamp = getTime();
             for (int i = 0; i < count; i++) {
+
+//                if (durationMode == DurationMode.sleepBeforeReceive) {
+//                    LOG.trace("Sleeping before receive");
+//                    Utils.sleepUntilNextIteration(initialTimestamp, msgCount, duration, i + 1);
+//                }
+
                 final Delivery delivery;
                 if (timeout == 0) {
                     delivery = receiver.receive();  // todo: can default it to -1
@@ -520,6 +624,11 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
 
                 if (delivery == null) {
                     break;
+                }
+
+                if (durationMode == DurationMode.afterReceive) {
+//                    LOG.trace("Sleeping after receive");
+                    sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
                 }
 
                 if (processReplyTo && delivery.message().replyTo() != null) {
@@ -533,6 +642,12 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
 
                 int messageFormat = delivery.messageFormat();
                 Message<String> message = delivery.message();
+
+                // todo, is this what we mean?
+                if (ssnAckMode != null && ssnAckMode == SsnAckMode.client) {
+                    delivery.accept();
+                }
+
                 logMessage(address, message, stringToBool(msgContentHashedString));
             }
 

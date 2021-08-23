@@ -221,6 +221,22 @@ class MainTest {
         // --subscriber-unsubscribe True
         checkMainInvocation("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_node_durable_topic_subscriber --count 0 --subscriber-unsubscribe True --durable-subscriber-name ds0");
 
+        // tests.JAMQMessage000Tests.JAMQMessageTests.test_amqp_bare_message_consistency
+        // Unknown options: '--msg-subject', 'amqp_bare_message_test', '--msg-user-id', 'admin', '--msg-priority', '7', '--conn-populate-user-id', 'True', '--msg-group-seq', '1', '--msg-reply-to-group-id', 'group-a'
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_amqp_bare_message_consistency --count 1 --msg-subject amqp_bare_message_test --msg-reply-to ExpiryQueue --msg-property PI=~3.141592 --msg-property color=red --msg-property mapKey=mapValue --msg-content amqp_bare_msg-CBJJIY --msg-durable True --msg-ttl 300000 --msg-correlation-id amqp_bare_msg-CBJJIY --msg-user-id admin --msg-priority 7 --conn-populate-user-id True --msg-group-id group-a --msg-group-seq 1 --msg-reply-to-group-id group-a");
+
+        // tests.JAMQMessage000Tests.JAMQMessageTests.test_populate_validated_user_option
+        // FAIL     dtestlib.Test:levels.py:61 Checking properties keys for validated user with expected '_AMQ_VALIDATED_USER' or 'JMSXUserID': dict_keys([]) # result:False (exp. True), dur.:-1.00 err_cnt:1
+
+        // tests.JAMQMessage000Tests.JAMQMessageTests.test_scheduled_message_zero_timestamp
+        // Unknown options: '--msg-id'
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address JAMQMessage111Tests_test_scheduled_message_zero_timestamp --count 2 --msg-id ReferenceMessage_JAMQMessage111Tests_test_scheduled_message_zero_timestamp --msg-property _AMQ_SCHED_DELIVERY~0");
+
+        // tests.JAMQMessage000Tests.JAMQMessageTests.test_client_acknowledge_inactivity_exception
+        // --ssn-ack-mode
+        // --duration --duration-mode --ssn-ack-mode
+        checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_client_acknowledge_inactivity_exception --count 20 --msg-durable True --ssn-ack-mode client");
+        checkMainInvocation("receiver --timeout 10 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_client_acknowledge_inactivity_exception --count 20 --duration 100 --duration-mode after-receive --ssn-ack-mode client");
 
         //checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_direct_transient_text_message --count 1 --msg-content SimpleTextMessage --msg-correlation-id corr-id-eqa9vp");
     }
