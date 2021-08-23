@@ -1,6 +1,7 @@
 package com.redhat.mqe;
 
-import com.redhat.mqe.lib.JmsMessagingException;
+import com.redhat.mqe.lib.MessageFormatter;
+import com.redhat.mqe.lib.Utils;
 import org.apache.qpid.protonj2.client.ClientOptions;
 import org.apache.qpid.protonj2.client.DistributionMode;
 import org.apache.qpid.protonj2.client.ReceiverOptions;
@@ -25,7 +26,6 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -85,7 +85,7 @@ class CliProtonJ2SenderReceiver {
             sb.append("content");
             sb.append("': ");
             sb.append("'"); // extra quotes to format
-            sb.append(hash(formatPython(message.body())));
+            sb.append(MessageFormatter.hash(formatPython(message.body())));
             sb.append("'");
             sb.append(", ");
         } else {
@@ -154,57 +154,6 @@ class CliProtonJ2SenderReceiver {
     protected boolean stringToBool(String string) {
         boolean bool = string.equalsIgnoreCase("true") || string.equalsIgnoreCase("yes");
         return bool;
-    }
-
-    private String hash(Object o) {
-        if (o == null) {
-            return null; // no point in hashing this value
-        }
-        MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            throw new JmsMessagingException("Unable to hash message", e);
-        }
-        String content = o.toString();
-        return new BigInteger(1, md.digest(content.getBytes())).toString(16);
-    }
-
-    // can't call these as implemented in Utils, undefined JmsException; somehow fix this; break dep on jms api
-
-    /**
-     * @return number of seconds (including milisecs) since EPOCH.
-     */
-    public static double getTime() {
-        return System.currentTimeMillis();
-    }
-
-
-    /**
-     * Sleeps until next timed for/while loop iteration.
-     * This method takes into account the length of the action it preceded.
-     *
-     * @param initialTimestamp initial timestamp (in get_time() double form) is passed from a connection started
-     * @param msgCount         number of iterations
-     * @param duration         total time of all iterations
-     * @param nextCountIndex   next iteration index
-     */
-
-    public static void sleepUntilNextIteration(double initialTimestamp, int msgCount, double duration, int nextCountIndex) {
-        if ((duration > 0) && (msgCount > 0)) {
-            // initial overall duration approximation of whole loop (sender/receiver)
-            double cummulative_dur = (1.0 * nextCountIndex * duration) / msgCount;
-            while (true) {
-                if (getTime() - initialTimestamp - cummulative_dur > -0.05)
-                    break;
-                try {
-//                    LOG.trace("sleeping");
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 }
 
@@ -607,7 +556,7 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
                 receiver = connection.openReceiver(address, receiverOptions);
             }
 
-            double initialTimestamp = getTime();
+            double initialTimestamp = Utils.getTime();
             for (int i = 0; i < count; i++) {
 
 //                if (durationMode == DurationMode.sleepBeforeReceive) {
@@ -628,7 +577,7 @@ class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<
 
                 if (durationMode == DurationMode.afterReceive) {
 //                    LOG.trace("Sleeping after receive");
-                    sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
+                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1); // todo possibly it is i, different loop here
                 }
 
                 if (processReplyTo && delivery.message().replyTo() != null) {

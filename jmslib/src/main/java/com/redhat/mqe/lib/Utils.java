@@ -24,8 +24,6 @@ import org.apache.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.*;
-import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -75,35 +73,6 @@ public class Utils {
                 System.exit(2);
             }
         }
-    }
-
-    /**
-     * Calculate TTL of given message from message
-     * expiration time and message timestamp.
-     * <p/>
-     * Returns the time the message expires, which is the sum of the time-to-live value
-     * specified by the client and the GMT at the time of the send
-     * EXP_TIME = CLIENT_SEND+TTL (CLIENT_SEND??)
-     * CLIENT_SEND time is approximately getJMSTimestamp() (time value between send()/publish() and return)
-     * TODO - check for correctness
-     *
-     * @param message calculate TTL for this message
-     * @return positive long number if TTL was calculated. Long.MIN_VALUE if error.
-     */
-    public static long getTtl(Message message) {
-        long ttl = 0;
-        try {
-            long expiration = message.getJMSExpiration();
-            long timestamp = message.getJMSTimestamp();
-            if (expiration != 0 && timestamp != 0) {
-                ttl = expiration - timestamp;
-            }
-        } catch (JMSException jmse) {
-            LOG.error("Error while calculating TTL value.\n" + jmse.getMessage());
-            jmse.printStackTrace();
-            System.exit(1);
-        }
-        return ttl;
     }
 
     /**
@@ -197,7 +166,7 @@ public class Utils {
      * @return Class type of given value
      */
 
-    public static Class<?> getClassType(String preferredStringType, String value, boolean allowExplicitRetype) throws JmsMessagingException {
+    public static Class<?> getClassType(String preferredStringType, String value, boolean allowExplicitRetype) throws MessagingException {
         LOG.trace("getClassType for " + value + ":" + preferredStringType);
         if (preferredStringType == null) {
             // set manually the contentType to (autotypecasting)
@@ -326,75 +295,4 @@ public class Utils {
         return myObj;
     }
 
-    public static void streamMessageContentToFile(String filePath, Message message, int msgCounter) {
-        try {
-            File outputFile = getFilePath(filePath, msgCounter);
-            try (FileOutputStream fileOutputStream = new FileOutputStream(outputFile);
-                 BufferedOutputStream bufferedOutput = new BufferedOutputStream(fileOutputStream)) {
-//                final String saveStream = "JMS_AMQ_SaveStream";
-                final String saveStream = "JMS_AMQ_OutputStream";
-                message.setObjectProperty(saveStream, bufferedOutput);
-            }
-        } catch (IOException e) {
-            LOG.error("Error while writing to file '" + filePath + "'.");
-            e.printStackTrace();
-        } catch (JMSException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Write message body (text or binary) to provided file or default one in temp directory.
-     *
-     * @param filePath file to write data to
-     * @param message  to be read and written to provided file
-     */
-    public static void writeMessageContentToFile(String filePath, Message message, int msgCounter) {
-        byte[] readByteArray;
-        try {
-            File file;
-            file = getFilePath(filePath, msgCounter);
-
-            LOG.debug("Write message content to file '" + file.getPath() + "'.");
-            if (message instanceof BytesMessage) {
-                LOG.debug("Writing BytesMessage to file");
-                BytesMessage bm = (BytesMessage) message;
-                readByteArray = new byte[(int) bm.getBodyLength()];
-                bm.reset(); // added to be able to read message content
-                bm.readBytes(readByteArray);
-                try (FileOutputStream fos = new FileOutputStream(file)) {
-                    fos.write(readByteArray);
-                }
-            } else if (message instanceof StreamMessage) {
-                LOG.debug("Writing StreamMessage to file");
-                StreamMessage sm = (StreamMessage) message;
-//        sm.reset(); TODO haven't tested this one
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(baos);
-                oos.writeObject(sm.readObject());
-                oos.close();
-            } else if (message instanceof TextMessage) {
-                LOG.debug("Writing TextMessage to file");
-                try (FileWriter fileWriter = new FileWriter(file)) {
-                    TextMessage tm = (TextMessage) message;
-                    fileWriter.write(tm.getText());
-                }
-            }
-        } catch (JMSException e) {
-            e.printStackTrace();
-        } catch (IOException e1) {
-            LOG.error("Error while writing to file '" + filePath + "'.");
-            e1.printStackTrace();
-        }
-    }
-
-    private static File getFilePath(String filePath, int msgCounter) throws IOException {
-        File file;
-        if (filePath == null || filePath.equals("")) {
-            file = File.createTempFile("recv_msg_", Long.toString(System.currentTimeMillis()));
-        } else {
-            file = new File(filePath + "_" + msgCounter);
-        }
-        return file;
-    }
 }
