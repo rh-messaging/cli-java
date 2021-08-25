@@ -60,7 +60,7 @@ public class MessageBrowser extends CoreClient {
         try {
             this.browseMessages();
         } catch (Exception e) {
-            throw new JmsMessagingException("unable to browse messages", e);
+            throw new MessagingException("unable to browse messages", e);
         }
     }
 

@@ -96,7 +96,7 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
         // Header
         result.put("durable", msg.getJMSDeliveryMode() == DeliveryMode.PERSISTENT);
         result.put("priority", msg.getJMSPriority());
-        result.put("ttl", Utils.getTtl(msg));
+        result.put("ttl", JmsUtils.getTtl(msg));
 
         // Delivery Annotations
 
@@ -121,20 +121,6 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
         // Application Data
         result.put("content", hashContent ? hash(formatContent(msg)) : formatContent(msg));
         result.put("type", msg.getJMSType()); // not everywhere, amqp does not have it
-    }
-
-    private String hash(Object o) {
-        if (o == null) {
-            return null; // no point in hashing this value
-        }
-        MessageDigest md;
-        try {
-            md = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            throw new JmsMessagingException("Unable to hash message", e);
-        }
-        String content = o.toString();
-        return new BigInteger(1, md.digest(content.getBytes())).toString(16);
     }
 
     public void addFormatJMS20(Message msg, Map<String, Object> result) throws JMSException {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Red Hat, Inc.
+ * Copyright (c) 2021 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -23,19 +23,19 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 
 @SuppressWarnings("serial")
-public class JmsMessagingException extends RuntimeException {
+public class MessagingException extends RuntimeException {
 
     private void writeObject(ObjectOutputStream out)
         throws IOException {
     }
 
-    public JmsMessagingException(String message) {
+    public MessagingException(String message) {
         super(message);
     }
 
     ;
 
-    public JmsMessagingException(String message, Throwable cause) {
+    public MessagingException(String message, Throwable cause) {
         super(message, cause);
     }
 

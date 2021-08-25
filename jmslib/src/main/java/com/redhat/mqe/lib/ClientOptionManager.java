@@ -150,7 +150,7 @@ public abstract class ClientOptionManager {
                         // Set parsed option for the client option
                         try {
                             setClientOptions(clientOptions.getOption(getOptionName(spec.options())), options, clientOptions);
-                        } catch (JmsMessagingException me) {
+                        } catch (MessagingException me) {
                             LOG.error(me.toString(), me.getMessage());
                             me.printStackTrace();
                             System.exit(2);
@@ -218,9 +218,9 @@ public abstract class ClientOptionManager {
      *
      * @param clientOption Option of the client
      * @param options      parsed option from command line
-     * @throws JmsMessagingException
+     * @throws MessagingException
      */
-    private void setClientOptions(Option clientOption, OptionSet options, ClientOptions clientOptions) throws JmsMessagingException {
+    private void setClientOptions(Option clientOption, OptionSet options, ClientOptions clientOptions) throws MessagingException {
         // Check for multiple argument input values
         if (options.valuesOf(clientOption.getName()).size() == 1
             && !ClientOptions.argsAcceptingMultipleValues.contains(clientOption.getName())) {
@@ -262,7 +262,7 @@ public abstract class ClientOptionManager {
                 clientOption.setParsedValue(options.valuesOf(clientOption.getName()));
             } else {
                 // if (option not in allowedMultiArgsList):
-                throw new JmsMessagingException("Option " + clientOption.getName()
+                throw new MessagingException("Option " + clientOption.getName()
                     + " has wrong argument(s): " + options.valueOf(clientOption.getName()));
             }
         }

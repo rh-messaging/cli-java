@@ -87,7 +87,7 @@ public class Content {
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
                 e.printStackTrace();
             }
-        } catch (JmsMessagingException e) {
+        } catch (MessagingException e) {
             e.printStackTrace();
         }
     }

@@ -77,7 +77,7 @@ public class ConnectorClient extends CoreClient {
                     connectionsOpened++;
                 }
             } catch (JMSException e) {
-                exceptions.add(new JmsMessagingException("Failed to start a connection.\n" + e.getMessage(), e.getCause()));
+                exceptions.add(new MessagingException("Failed to start a connection.\n" + e.getMessage(), e.getCause()));
             }
         }
         closeConnObjects(this,
@@ -155,7 +155,7 @@ public class ConnectorClient extends CoreClient {
                 LOG.trace("\tC={}\tE={}\tS={}\tR={}\tQ={}", conns, sesss, sends, reces, queues);
             }
         } catch (JMSException e) {
-            exceptions.add(new JmsMessagingException("Failed to create 'obj-ctrl.\n" + e.getMessage(), e.getCause()));
+            exceptions.add(new MessagingException("Failed to create 'obj-ctrl.\n" + e.getMessage(), e.getCause()));
         }
     }
 

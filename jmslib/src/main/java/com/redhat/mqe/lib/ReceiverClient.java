@@ -232,9 +232,9 @@ public class ReceiverClient extends CoreClient {
                     }
                     if (file != null) {
                         if (Boolean.valueOf(rcvrOpts.getOption(ClientOptions.MSG_CONTENT_STREAM).getValue())) {
-                            Utils.streamMessageContentToFile(file, msg, i);
+                            JmsUtils.streamMessageContentToFile(file, msg, i);
                         } else {
-                            Utils.writeMessageContentToFile(file, msg, i);
+                            JmsUtils.writeMessageContentToFile(file, msg, i);
                         }
                     }
                     i++;

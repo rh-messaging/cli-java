@@ -25,6 +25,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -237,5 +240,19 @@ public abstract class MessageFormatter {
 
     public void printConnectorStatistics(int connectionsOpened, int connectionsFailed, int connectionsTotal) {
         System.out.println(connectionsOpened + " " + connectionsFailed + " " + connectionsTotal);
+    }
+
+    public static String hash(Object o) {
+        if (o == null) {
+            return null; // no point in hashing this value
+        }
+        MessageDigest md;
+        try {
+            md = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new MessagingException("Unable to hash message", e);
+        }
+        String content = o.toString();
+        return new BigInteger(1, md.digest(content.getBytes())).toString(16);
     }
 }

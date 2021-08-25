@@ -21,7 +21,7 @@ package com.redhat.mqe.lib.message;
 
 import com.redhat.mqe.lib.ClientOptions;
 import com.redhat.mqe.lib.Content;
-import com.redhat.mqe.lib.JmsMessagingException;
+import com.redhat.mqe.lib.MessagingException;
 import com.redhat.mqe.lib.Utils;
 
 import javax.jms.JMSException;
@@ -100,7 +100,7 @@ public class MapMessageProvider extends MessageProvider {
                 mapMessage.setObject(c.getKey(), c.getValue());
 
             } else {
-                throw new JmsMessagingException("Unknown data type in message Content. Do not know how to send it. Type=" + c.getType());
+                throw new MessagingException("Unknown data type in message Content. Do not know how to send it. Type=" + c.getType());
             }
         }
     }
