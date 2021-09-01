@@ -162,7 +162,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     public Integer call() throws Exception { // your business logic goes here...
 
         String prefix = "";
-        if (!broker.startsWith("amqp://") && !broker.startsWith("amqps://")) {
+        if (!broker.startsWith("amqp://") || !broker.startsWith("amqps://")) {
             prefix = "amqp://";
         }
         final URI url = new URI(prefix + broker);
