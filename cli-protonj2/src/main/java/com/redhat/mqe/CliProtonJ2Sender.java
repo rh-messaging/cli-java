@@ -49,13 +49,15 @@ import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
 )
 public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<Integer> {
 
+    private final ProtonJ2MessageFormatter messageFormatter;
+
     @CommandLine.Option(names = {"--log-msgs"}, description = "message reporting style")
     private LogMsgs logMsgs = LogMsgs.dict;
 
     @CommandLine.Option(names = {"--msg-content-hashed"})
     private String msgContentHashedString = "false";
 
-    @CommandLine.Option(names = {"--broker"}, description = "MD5, SHA-1, SHA-256, ...")
+    @CommandLine.Option(names = {"-b", "--broker"}, description = "MD5, SHA-1, SHA-256, ...")
     private String broker = "MD5";
 
     @CommandLine.Option(names = {"--conn-username"}, description = "MD5, SHA-1, SHA-256, ...")
@@ -64,7 +66,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--conn-password"}, description = "MD5, SHA-1, SHA-256, ...")
     private String connPassword = "MD5";
 
-    @CommandLine.Option(names = {"--address"}, description = "MD5, SHA-1, SHA-256, ...")
+    @CommandLine.Option(names = {"-a", "--address"}, description = "MD5, SHA-1, SHA-256, ...")
     private String address = "MD5";
 
     @CommandLine.Option(names = {"--count"}, description = "MD5, SHA-1, SHA-256, ...")
@@ -142,11 +144,19 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--ssn-ack-mode"})
     private SsnAckMode ssnAckMode;
 
+    public CliProtonJ2Sender() {
+        this.messageFormatter = new ProtonJ2MessageFormatter();
+    }
+
+    public CliProtonJ2Sender(ProtonJ2MessageFormatter messageFormatter) {
+        this.messageFormatter = messageFormatter;
+    }
+
     @Override
     public Integer call() throws Exception { // your business logic goes here...
 
         String prefix = "";
-        if (!broker.startsWith("amqp://") || !broker.startsWith("amqps://")) {
+        if (!broker.startsWith("amqp://") && !broker.startsWith("amqps://")) {
             prefix = "amqp://";
         }
         final URI url = new URI(prefix + broker);
@@ -182,21 +192,21 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
              Sender sender = connection.openSender(address, senderOptions)) {
 
             for (int i = 0; i < count; i++) {
-                Message message;
+                Message<Object> message;
                 if (msgContentListItem != null && !msgContentListItem.isEmpty()) {  // TODO check only one of these is specified
                     List<Object> list = new ArrayList<>();
                     for (String item : msgContentListItem) {
                         Content content = new Content(contentType.toString(), item, false);  // TODO do this in args parsing?
                         list.add(content.getValue());
                     }
-                    message = Message.create(msgContentListItem);
+                    message = Message.create((Object) list);
                 } else if (msgContentMapItems != null) {
                     Map<String, Object> map = new HashMap<>();
                     for (String item : msgContentMapItems) {
                         Content content = new Content(contentType.toString(), item, true);  // TODO do this in args parsing?
                         map.put(content.getKey(), content.getValue());
                     }
-                    message = Message.create(map);
+                    message = Message.create((Object) map);
                 } else if (msgContentFromFile != null) {
                     message = Message.create(Files.readString(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
                 } else {
@@ -245,7 +255,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                     message.priority(msgPriority);
                 }
                 sender.send(message);  // TODO what's timeout for in a sender?
-                logMessage(address, message, stringToBool(msgContentHashedString));
+
+                Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
+                messageFormatter.printMessageAsPython(messageDict);
             }
         }
 

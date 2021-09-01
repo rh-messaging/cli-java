@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Red Hat, Inc.
+ * Copyright (c) 2017 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -17,19 +17,23 @@
  * limitations under the License.
  */
 
-package com.redhat.mqe;
+import com.google.common.truth.Truth
+import com.redhat.mqe.ProtonJ2MessageFormatter
+import picocli.CommandLine
 
-public enum ContentType {
-    INT("int"), STRING("string");
+class ProtonJ2ClientFormatterSpy : ProtonJ2MessageFormatter(), IClientFormatterSpy {
+    lateinit var args: Array<String>
+    lateinit var client: CommandLine
 
-    private final String value;
+    override val messages: MutableList<Map<String, Any>> = ArrayList()
 
-    ContentType(String s) {
-        this.value = s;
+    override fun printMessageAsPython(format: MutableMap<String, Any>?) {
+        messages.add(format!!.toMap())
+        super.printMessageAsPython(format)
     }
 
-    @Override
-    public String toString() {
-        return value;
+    override fun run() {
+        val exitCode = client.execute(*args)
+        Truth.assertThat(exitCode).isEqualTo(0)
     }
 }

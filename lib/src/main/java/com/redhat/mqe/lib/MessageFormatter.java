@@ -117,6 +117,9 @@ public abstract class MessageFormatter {
         return int_res;
     }
 
+    /**
+    Formats object as Python
+     */
     @SuppressWarnings("unchecked")
     protected StringBuilder formatObject(Object in_data) {
         StringBuilder int_res = new StringBuilder();
