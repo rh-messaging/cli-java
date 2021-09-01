@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Red Hat, Inc.
+ * Copyright (c) 2021 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -36,7 +36,7 @@ public class Content {
     private String key;
     private Object value;
     private Class<?> type;
-    private boolean isMap;
+    private final boolean isMap;
 
     /**
      * Create content from defined rules.
@@ -65,7 +65,7 @@ public class Content {
                         splitValue = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
                     }
                 } else if (parsedValue.contains("=")) {
-                    // last argument 'allowExplicityRetype' can be omitted as parsedValue will not by autotypecasted - no '~'
+                    // last argument 'allowExplicitlyRetype' can be omitted as parsedValue will not by autotypecasted - no '~'
                     splitValue = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
                 } else {
                     splitter = "~";
@@ -93,6 +93,9 @@ public class Content {
     }
 
     public String getKey() {
+        if (!isMap) {
+            throw new IllegalStateException("Only maps have keys");
+        }
         return key;
     }
 

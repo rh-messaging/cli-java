@@ -17,6 +17,9 @@
  * limitations under the License.
  */
 
+import com.redhat.mqe.CliProtonJ2Receiver
+import com.redhat.mqe.CliProtonJ2Sender
+import com.redhat.mqe.ProtonJ2MessageFormatter
 import com.redhat.mqe.acc.AccClientOptionManager
 import com.redhat.mqe.acc.AccConnectionManagerFactory
 import com.redhat.mqe.acc.AccCoreJmsMessageFormatter
@@ -27,11 +30,19 @@ import com.redhat.mqe.jms.AacConnectionManagerFactory
 import com.redhat.mqe.jms.AacReceiverOptions
 import com.redhat.mqe.jms.AacSenderOptions
 import com.redhat.mqe.lib.*
+import picocli.CommandLine
 import javax.jms.Message
 
-class ClientFormatterSpy(private val formatter: JmsMessageFormatter) : JmsMessageFormatter() {
+interface IClientFormatterSpy {
+    val messages: MutableList<Map<String, Any>>
+    fun printMessageAsPython(format: MutableMap<String, Any>?)
+    fun run()
+}
+
+class ClientFormatterSpy(private val formatter: JmsMessageFormatter) : JmsMessageFormatter(), IClientFormatterSpy {
     lateinit var client: CoreClient
-    val messages: MutableList<Map<String, Any>> = ArrayList()
+
+    override val messages: MutableList<Map<String, Any>> = ArrayList()
 
     override fun formatMessage(msg: Message?, hashContent: Boolean): MutableMap<String, Any> =
         formatter.formatMessage(msg, hashContent)
@@ -41,11 +52,13 @@ class ClientFormatterSpy(private val formatter: JmsMessageFormatter) : JmsMessag
         super.printMessageAsPython(format)
     }
 
-    fun run() {
+    override fun run() {
         client.startClient()
     }
 
     companion object {
+        //region Qpid Jms
+
         fun makeAacSenderClient(args: Array<String>): ClientFormatterSpy {
             val connectionManagerFactory = AacConnectionManagerFactory()
             val messageFormatter: JmsMessageFormatter = AMQPJmsMessageFormatter()
@@ -82,7 +95,9 @@ class ClientFormatterSpy(private val formatter: JmsMessageFormatter) : JmsMessag
             spy.client = MessageBrowser(options, connectionManagerFactory, spy)
             return spy
         }
+        //endregion
 
+        //region Artemis Core
 
         fun makeAccSenderClient(args: Array<String>): ClientFormatterSpy {
             val connectionManagerFactory = AccConnectionManagerFactory()
@@ -120,7 +135,9 @@ class ClientFormatterSpy(private val formatter: JmsMessageFormatter) : JmsMessag
             spy.client = MessageBrowser(options, connectionManagerFactory, spy)
             return spy
         }
+        //endregion
 
+        //region ActiveMQ
 
         fun makeAocSenderClient(args: Array<String>): ClientFormatterSpy {
             val connectionManagerFactory = AocConnectionManagerFactory()
@@ -158,5 +175,33 @@ class ClientFormatterSpy(private val formatter: JmsMessageFormatter) : JmsMessag
             spy.client = MessageBrowser(options, connectionManagerFactory, spy)
             return spy
         }
+        //endregion
+
+        //region ProtonJ2
+
+        fun makeProtonj2SenderClient(args: Array<String>): ProtonJ2ClientFormatterSpy {
+            val messageFormatter = ProtonJ2MessageFormatter()
+            val messageFormatterSpy = ProtonJ2ClientFormatterSpy()
+
+            messageFormatterSpy.client = CommandLine(CliProtonJ2Sender(messageFormatterSpy))
+            messageFormatterSpy.args = args
+
+            return messageFormatterSpy;
+        }
+
+        fun makeProtonj2ReceiverClient(args: Array<String>): ProtonJ2ClientFormatterSpy {
+            val messageFormatter = ProtonJ2MessageFormatter()
+            val messageFormatterSpy = ProtonJ2ClientFormatterSpy()
+
+            messageFormatterSpy.client = CommandLine(CliProtonJ2Receiver(messageFormatterSpy))
+            messageFormatterSpy.args = args
+
+            return messageFormatterSpy
+        }
+
+        fun makeProtonj2BrowserClient(args: Array<String>): ProtonJ2ClientFormatterSpy {
+            return makeProtonj2ReceiverClient(args + "--recv-browse" + "true")
+        }
+        //endregion
     }
 }

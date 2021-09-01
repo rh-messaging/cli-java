@@ -19,13 +19,13 @@
 
 package com.redhat.mqe;
 
-public enum ContentType {
-    INT("int"), STRING("string");
+public enum PropertyType {
+    String("string");
 
     private final String value;
 
-    ContentType(String s) {
-        this.value = s;
+    PropertyType(String value) {
+        this.value = value;
     }
 
     @Override

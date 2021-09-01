@@ -19,17 +19,6 @@
 
 package com.redhat.mqe;
 
-public enum ContentType {
-    INT("int"), STRING("string");
-
-    private final String value;
-
-    ContentType(String s) {
-        this.value = s;
-    }
-
-    @Override
-    public String toString() {
-        return value;
-    }
+public enum LogMsgs {
+    dict, interop
 }

@@ -148,7 +148,7 @@ class InteropTest : AbstractTest() {
     companion object {
         @JvmStatic
         fun clientCombinationsProvider(): Stream<Arguments> {
-            val clients = listOf("aac", "acc", "aoc")
+            val clients = listOf("aac", "acc", "aoc", "protonj2")
             return clients.flatMap { s -> clients.map { r -> Arguments.of(s, r) } }.stream()
         }
     }

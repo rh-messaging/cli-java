@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Hashtable;
@@ -116,6 +117,9 @@ public abstract class MessageFormatter {
         return int_res;
     }
 
+    /**
+    Formats object as Python
+     */
     @SuppressWarnings("unchecked")
     protected StringBuilder formatObject(Object in_data) {
         StringBuilder int_res = new StringBuilder();
@@ -138,14 +142,8 @@ public abstract class MessageFormatter {
         } else if (in_data instanceof UUID) {
             int_res.append(formatString(in_data.toString()));
         } else if (in_data instanceof byte[]) {
-            try {
-                String value = new String((byte[]) in_data, "UTF-8");
-                int_res.append(formatString(value));
-            } catch (UnsupportedEncodingException uee) {
-                LOG.error("Error while getting message properties!", uee.getMessage());
-                uee.printStackTrace();
-                System.exit(1);
-            }
+            String value = new String((byte[]) in_data, StandardCharsets.UTF_8);
+            int_res.append(formatString(value));
         } else {
             handleUnsupportedObjectMessagePayloadType(int_res, in_data);
         }
