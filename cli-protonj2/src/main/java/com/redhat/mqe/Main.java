@@ -128,3 +128,72 @@ enum AuthMechanism {
 // does it support opening listening sockets? listening websocket?
 // does support all JMS 2.0 capabilities? (in some way, assuming broker cooperates?)
 
+        // TODO: API question: what is difference between autoSettle and autoAccept? why I want one but not the other?
+        if(ssnAckMode != null) {
+            if (ssnAckMode == SsnAckMode.client) {
+                receiverOptions.autoAccept(false);
+                receiverOptions.autoSettle(false);
+            }
+        }
+
+        try (Connection connection = client.connect(serverHost, serverPort, options)) {
+            Receiver receiver;
+            if (stringToBool(durableSubscriberString)) {
+                receiver = connection.openDurableReceiver(address, durableSubscriberName, receiverOptions);
+            } else {
+                receiver = connection.openReceiver(address, receiverOptions);
+            }
+
+            double initialTimestamp = Utils.getTime();
+            for (int i = 0; i < count; i++) {
+
+//                if (durationMode == DurationMode.sleepBeforeReceive) {
+//                    LOG.trace("Sleeping before receive");
+//                    Utils.sleepUntilNextIteration(initialTimestamp, msgCount, duration, i + 1);
+//                }
+
+                final Delivery delivery;
+                if (timeout == 0) {
+                    delivery = receiver.receive();  // todo: can default it to -1
+                } else {
+                    delivery = receiver.receive(timeout, TimeUnit.SECONDS);
+                }
+
+                if (delivery == null) {
+                    break;
+                }
+
+                if (durationMode == DurationMode.afterReceive) {
+//                    LOG.trace("Sleeping after receive");
+                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1); // todo possibly it is i, different loop here
+                }
+
+                if (processReplyTo && delivery.message().replyTo() != null) {
+                    String replyTo = delivery.message().replyTo();
+                    Message<Object> message = delivery.message();
+                    message.replyTo(null);
+                    try (Sender sender = connection.openSender(replyTo)) {
+                        sender.send(message);
+                    }
+                }
+
+                int messageFormat = delivery.messageFormat();
+                Message<String> message = delivery.message();
+
+                // todo, is this what we mean?
+                if (ssnAckMode != null && ssnAckMode == SsnAckMode.client) {
+                    delivery.accept();
+                }
+
+                logMessage(address, message, stringToBool(msgContentHashedString));
+            }
+
+            // TODO API usability, how do I do durable subscription with detach, resume, etc; no mention of unsubscribe in the client anywhere
+            receiver.close(); // TODO want to do autoclosable, need helper func, that's all
+//            receiver.detach();
+        }
+
+        return 0;
+    }
+
+}
