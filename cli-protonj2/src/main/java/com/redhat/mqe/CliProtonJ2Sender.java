@@ -76,7 +76,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private int timeout;
 
     @CommandLine.Option(names = {"--duration"})
-    private int duration;  // TODO do something with it
+    private Float duration;  // TODO do something with it
 
     @CommandLine.Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
     // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
@@ -92,10 +92,10 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private String msgContentFromFile;
 
     @CommandLine.Option(names = {"--content-type"})
-    private ContentType contentType;
+    private ContentType contentType = ContentType.STRING;
 
     @CommandLine.Option(names = {"--property-type"})
-    private PropertyType propertyType;
+    private PropertyType propertyType = PropertyType.String;
 
     @CommandLine.Option(names = {"--msg-durable"})
     private String msgDurableString = "false";
@@ -108,6 +108,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
 
     @CommandLine.Option(names = {"--msg-content-map-item"})
     private List<String> msgContentMapItems;
+
+    @CommandLine.Option(names = {"--msg-content-binary"})
+    private String msgContentBinaryString = "false";
 
     @CommandLine.Option(names = {"--msg-correlation-id"})
     private String msgCorrelationId;
@@ -192,7 +195,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
              Sender sender = connection.openSender(address, senderOptions)) {
 
             for (int i = 0; i < count; i++) {
-                Message<Object> message;
+                Message<?> message;
                 if (msgContentListItem != null && !msgContentListItem.isEmpty()) {  // TODO check only one of these is specified
                     List<Object> list = new ArrayList<>();
                     for (String item : msgContentListItem) {
@@ -208,7 +211,11 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                     }
                     message = Message.create((Object) map);
                 } else if (msgContentFromFile != null) {
-                    message = Message.create(Files.readString(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
+                    if (stringToBool(msgContentBinaryString)) {
+                        message = Message.create(Files.readAllBytes(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
+                    } else {
+                        message = Message.create(Files.readString(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
+                    }
                 } else {
                     message = Message.create(msgContent);
                 }
@@ -256,11 +263,17 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                 }
                 sender.send(message);  // TODO what's timeout for in a sender?
 
-                Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
-                messageFormatter.printMessageAsPython(messageDict);
+                Map<String, Object> messageDict = messageFormatter.formatMessage(address, (Message<Object>) message, stringToBool(msgContentHashedString));
+                switch (logMsgs) {
+                    case dict:
+                        messageFormatter.printMessageAsPython(messageDict);
+                        break;
+                    case interop:
+                        messageFormatter.printMessageAsJson(messageDict);
+                        break;
+                }
             }
         }
-
         return 0;
     }
 }

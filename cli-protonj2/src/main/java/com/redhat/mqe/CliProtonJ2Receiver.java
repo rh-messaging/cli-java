@@ -53,7 +53,7 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     private final ProtonJ2MessageFormatter messageFormatter;
 
     @CommandLine.Option(names = {"--log-msgs"}, description = "MD5, SHA-1, SHA-256, ...")
-    private String logMsgs = "MD5";
+    private LogMsgs logMsgs = LogMsgs.dict;
 
     @CommandLine.Option(names = {"--msg-content-hashed"})
     private String msgContentHashedString = "false";
@@ -230,7 +230,14 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 }
 
                 Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
-                messageFormatter.printMessageAsPython(messageDict);
+                switch (logMsgs) {
+                    case dict:
+                        messageFormatter.printMessageAsPython(messageDict);
+                        break;
+                    case interop:
+                        messageFormatter.printMessageAsJson(messageDict);
+                        break;
+                }
             }
 
             // TODO API usability, how do I do durable subscription with detach, resume, etc; no mention of unsubscribe in the client anywhere
