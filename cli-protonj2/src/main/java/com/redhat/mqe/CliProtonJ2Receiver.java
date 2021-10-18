@@ -33,6 +33,10 @@ import org.apache.qpid.protonj2.client.Sender;
 import picocli.CommandLine;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +59,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--log-msgs"}, description = "MD5, SHA-1, SHA-256, ...")
     private LogMsgs logMsgs = LogMsgs.dict;
 
+    @CommandLine.Option(names = {"--out"}, description = "MD5, SHA-1, SHA-256, ...")
+    private Out out = Out.python;
+
     @CommandLine.Option(names = {"--msg-content-hashed"})
     private String msgContentHashedString = "false";
 
@@ -76,9 +83,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--durable-subscriber-name"})
     private String durableSubscriberName;
 
-    // TODO not implemented
     @CommandLine.Option(names = {"--subscriber-unsubscribe"})
-    private String subscriberUnsubscribeString;
+    private String subscriberUnsubscribeString = "false";
 
     @CommandLine.Option(names = {"-a", "--address"}, description = "MD5, SHA-1, SHA-256, ...")
     private String address = "MD5";
@@ -107,6 +113,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
 
     @CommandLine.Option(names = {"--ssn-ack-mode"})
     private SsnAckMode ssnAckMode;
+
+    @CommandLine.Option(names = {"--msg-content-to-file"})
+    private String msgContentToFile;
 
     public CliProtonJ2Receiver() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
@@ -188,6 +197,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 receiver = connection.openReceiver(address, receiverOptions);
             }
 
+            if (stringToBool(subscriberUnsubscribeString)) {
+                receiver.close();
+                return 0;
+            }
+
             double initialTimestamp = Utils.getTime();
             for (int i = 0; i < count; i++) {
 
@@ -230,19 +244,40 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 }
 
                 Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
-                switch (logMsgs) {
-                    case dict:
-                        messageFormatter.printMessageAsPython(messageDict);
+                if (msgContentToFile != null) {
+                    // todo?
+                    Path file = Paths.get(msgContentToFile + "_" + i);
+                    Files.write(file, message.body().toString().getBytes(StandardCharsets.UTF_8));
+                }
+                switch(out) {
+                    case python:
+                        switch (logMsgs) {
+                            case dict:
+                                messageFormatter.printMessageAsPython(messageDict);
+                                break;
+                            case interop:
+                                messageFormatter.printMessageAsPython(messageDict);
+                                break;
+                        }
                         break;
-                    case interop:
-                        messageFormatter.printMessageAsJson(messageDict);
+                    case json:
+                        switch (logMsgs) {
+                            case dict:
+                                messageFormatter.printMessageAsJson(messageDict);
+                                break;
+                            case interop:
+                                messageFormatter.printMessageAsJson(messageDict);
+                                break;
+                        }
                         break;
                 }
             }
 
-            // TODO API usability, how do I do durable subscription with detach, resume, etc; no mention of unsubscribe in the client anywhere
-            receiver.close(); // TODO want to do autoclosable, need helper func, that's all
-//            receiver.detach();
+            if (stringToBool(durableSubscriberString)) {
+                receiver.detach();
+            } else {
+                receiver.close(); // TODO want to do autoclosable, need helper func, that's all
+            }
         }
 
         return 0;

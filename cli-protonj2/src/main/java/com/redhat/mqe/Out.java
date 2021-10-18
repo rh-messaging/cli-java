@@ -19,18 +19,6 @@
 
 package com.redhat.mqe;
 
-public enum DurationMode {
-    afterReceive("after-receive"),
-    afterSendTxAction("after-send-tx-action");
-
-    private final String value;
-
-    @Override
-    public String toString() {
-        return value;
-    }
-
-    DurationMode(String s) {
-        this.value = s;
-    }
+public enum Out {
+    python, json
 }

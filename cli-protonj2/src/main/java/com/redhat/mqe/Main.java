@@ -121,7 +121,7 @@ class CliProtonJ2Connector implements Callable<Integer> {
 }
 
 enum AuthMechanism {
-    PLAIN,
+    PLAIN, anonymous
 }
 
 // todo list of features in general; supports kerberos, io-uring, epoll, websockets,

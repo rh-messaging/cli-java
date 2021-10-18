@@ -54,6 +54,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--log-msgs"}, description = "message reporting style")
     private LogMsgs logMsgs = LogMsgs.dict;
 
+    @CommandLine.Option(names = {"--out"}, description = "MD5, SHA-1, SHA-256, ...")
+    private Out out = Out.python;
+
     @CommandLine.Option(names = {"--msg-content-hashed"})
     private String msgContentHashedString = "false";
 
@@ -131,7 +134,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private String msgUserId;
 
     @CommandLine.Option(names = {"--msg-priority"})
-    private Byte msgPriority;
+    private Short msgPriority;  // TODO unsigned byte, actually
 
     // jms.populateJMSXUserID opt in qpid-jms
     // TODO: does not seem to have equivalent; what is the threat model for "prevent spoofing" in JMS docs?
@@ -259,17 +262,31 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                     message.subject(msgSubject);
                 }
                 if (msgPriority != null) {
-                    message.priority(msgPriority);
+                    message.priority((byte) (int) msgPriority);
                 }
                 sender.send(message);  // TODO what's timeout for in a sender?
 
                 Map<String, Object> messageDict = messageFormatter.formatMessage(address, (Message<Object>) message, stringToBool(msgContentHashedString));
-                switch (logMsgs) {
-                    case dict:
-                        messageFormatter.printMessageAsPython(messageDict);
+                switch(out) {
+                    case python:
+                        switch (logMsgs) {
+                            case dict:
+                                messageFormatter.printMessageAsPython(messageDict);
+                                break;
+                            case interop:
+                                messageFormatter.printMessageAsPython(messageDict);
+                                break;
+                        }
                         break;
-                    case interop:
-                        messageFormatter.printMessageAsJson(messageDict);
+                    case json:
+                        switch (logMsgs) {
+                            case dict:
+                                messageFormatter.printMessageAsJson(messageDict);
+                                break;
+                            case interop:
+                                messageFormatter.printMessageAsJson(messageDict);
+                                break;
+                        }
                         break;
                 }
             }
