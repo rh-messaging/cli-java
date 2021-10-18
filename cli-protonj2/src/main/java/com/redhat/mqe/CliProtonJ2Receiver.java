@@ -83,7 +83,6 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--durable-subscriber-name"})
     private String durableSubscriberName;
 
-    // TODO not implemented
     @CommandLine.Option(names = {"--subscriber-unsubscribe"})
     private String subscriberUnsubscribeString;
 
@@ -198,6 +197,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 receiver = connection.openReceiver(address, receiverOptions);
             }
 
+            if (stringToBool(subscriberUnsubscribeString)) {
+                receiver.close();
+                return 0;
+            }
+
             double initialTimestamp = Utils.getTime();
             for (int i = 0; i < count; i++) {
 
@@ -269,9 +273,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 }
             }
 
-            // TODO API usability, how do I do durable subscription with detach, resume, etc; no mention of unsubscribe in the client anywhere
-            receiver.close(); // TODO want to do autoclosable, need helper func, that's all
-//            receiver.detach();
+            if (stringToBool(durableSubscriberString)) {
+                receiver.detach();
+            } else {
+                receiver.close(); // TODO want to do autoclosable, need helper func, that's all
+            }
         }
 
         return 0;
