@@ -84,7 +84,7 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     private String durableSubscriberName;
 
     @CommandLine.Option(names = {"--subscriber-unsubscribe"})
-    private String subscriberUnsubscribeString;
+    private String subscriberUnsubscribeString = "false";
 
     @CommandLine.Option(names = {"-a", "--address"}, description = "MD5, SHA-1, SHA-256, ...")
     private String address = "MD5";
