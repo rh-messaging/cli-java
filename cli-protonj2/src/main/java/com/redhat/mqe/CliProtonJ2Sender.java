@@ -134,7 +134,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private String msgUserId;
 
     @CommandLine.Option(names = {"--msg-priority"})
-    private Byte msgPriority;
+    private Short msgPriority;  // TODO unsigned byte, actually
 
     // jms.populateJMSXUserID opt in qpid-jms
     // TODO: does not seem to have equivalent; what is the threat model for "prevent spoofing" in JMS docs?
@@ -262,7 +262,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                     message.subject(msgSubject);
                 }
                 if (msgPriority != null) {
-                    message.priority(msgPriority);
+                    message.priority((byte) (int) msgPriority);
                 }
                 sender.send(message);  // TODO what's timeout for in a sender?
 
