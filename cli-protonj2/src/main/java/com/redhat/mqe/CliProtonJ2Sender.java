@@ -150,6 +150,21 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--ssn-ack-mode"})
     private SsnAckMode ssnAckMode;
 
+    @CommandLine.Option(names = {"--tx-endloop-action"})
+    private TxEndloopAction txEndloopAction;
+
+    @CommandLine.Option(names = {"--tx-action"})
+    private TxAction txAction;
+
+    @CommandLine.Option(names = {"--sync-mode"})
+    private SyncMode syncMode;
+
+    @CommandLine.Option(names = {"--log-lib"})
+    private LogLib logLib;
+
+    @CommandLine.Option(names = {"--duration-mode"})
+    private DurationMode durationMode;
+
     public CliProtonJ2Sender() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
     }
