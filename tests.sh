@@ -31,8 +31,6 @@ java -jar cli-artemis-jms/target/cli-artemis-jms-1.2.2-SNAPSHOT-*.jar sender --c
 
 java -jar cli-paho-java/target/cli-paho-java-1.2.2-SNAPSHOT-*.jar sender --address cli-paho-java --log-msgs json --count 1
 
-if [[ $TRAVIS_JDK_VERSION == "openjdk8" ]] || [[ $TRAVIS_JDK_VERSION == "oraclejdk8" ]]; then exit 0; fi
-
 cli_qpid_jms_jar=$(find cli-qpid-jms/target -name 'cli-qpid-jms-1.2.2-SNAPSHOT-*.jar' -not -name '*-tests.jar')
 java -jar ${cli_qpid_jms_jar} sender --address cli-qpid-jms --log-msgs json --count 1
 java -jar ${cli_qpid_jms_jar} receiver --address cli-qpid-jms --log-msgs json --count 1
