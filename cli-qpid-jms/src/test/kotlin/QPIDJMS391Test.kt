@@ -58,7 +58,7 @@ class QPIDJMS391Test {
 
     @Test
     fun `logging says that openssl is being used`(@TempDir tempDir: Path) {
-        val keystore = this.javaClass.getResourceAsStream("server-side-keystore.jks")
+        val keystore = this.javaClass.getResourceAsStream("server-side-keystore.p12")
         val broker = Broker(tempDir)
         configureBroker(broker)
         val amqpPort = broker.startBroker()

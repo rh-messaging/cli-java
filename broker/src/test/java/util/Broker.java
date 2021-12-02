@@ -150,7 +150,7 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
             try {
                 int port = findRandomAvailablePortOnAllLocalInterfaces();
                 Acceptor acceptor = embeddedBroker.getActiveMQServer().getRemotingService().createAcceptor("amqps",
-                    "tcp://0.0.0.0:" + port + "?sslEnabled=true;keyStorePath=" + keyStorePath + ";keyStorePassword=secureexample;tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300");
+                    "tcp://0.0.0.0:" + port + "?sslEnabled=true;keyStoreProvider=SunPKCS11-NSS-FIPS;keyStoreType=PKCS11;keyStorePath=" + keyStorePath + ";keyStorePassword=secureexample;tcpSendBufferSize=1048576;tcpReceiveBufferSize=1048576;protocols=AMQP;useEpoll=true;amqpCredits=1000;amqpMinCredits=300");
                 acceptor.start();  // this will throw if the port is not available
                 return port;
             } catch (Exception e) {
