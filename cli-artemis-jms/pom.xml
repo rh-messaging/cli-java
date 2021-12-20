@@ -36,7 +36,7 @@
         <bundle.symbolic.name.suffix>acc</bundle.symbolic.name.suffix>
         <jar.main.class>com.redhat.mqe.acc.Main</jar.main.class>
         <snapshots.enabled>false</snapshots.enabled>
-        <artemis.jms.client.version>2.19.0</artemis.jms.client.version>
+        <artemis.jms.client.version>2.20.0</artemis.jms.client.version>
         <library.version>${artemis.jms.client.version}</library.version>
     </properties>
 
