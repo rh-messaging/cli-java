@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Red Hat, Inc.
+ * Copyright (c) 2018 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -17,11 +17,23 @@
  * limitations under the License.
  */
 
-import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
-import org.apache.qpid.jms.message.JmsBytesMessage
-import org.apache.qpid.jms.provider.amqp.message.AmqpJmsBytesMessageFacade
-import jakarta.jms.BytesMessage
+package com.redhat.mqe.lib;
 
-class AacJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
-    override fun getBytesMessage(): BytesMessage = JmsBytesMessage(AmqpJmsBytesMessageFacade())
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+
+/**
+ * MessagingExceptionListener is created for each connection made.
+ */
+public class MessagingExceptionListener implements ExceptionListener {
+    private Logger LOG = LoggerFactory.getLogger(ConnectionManager.class.getName());
+
+    @Override
+    public void onException(JMSException e) {
+        LOG.error("ExceptionListener error detected! \n{}\n{}", e.getMessage(), e.getCause());
+        e.printStackTrace();
+    }
 }

@@ -17,11 +17,26 @@
  * limitations under the License.
  */
 
-import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
-import org.apache.qpid.jms.message.JmsBytesMessage
-import org.apache.qpid.jms.provider.amqp.message.AmqpJmsBytesMessageFacade
-import jakarta.jms.BytesMessage
+package com.redhat.mqe.lib;
 
-class AacJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
-    override fun getBytesMessage(): BytesMessage = JmsBytesMessage(AmqpJmsBytesMessageFacade())
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Message output formatter to python dict,
+ * map, or any other object printable format.
+ * Reusable from old client
+ */
+public class OpenwireJmsMessageFormatter extends JmsMessageFormatter {
+    /**
+     * Openwire -> AMQP mapping http://activemq.apache.org/amqp.html
+     */
+    @Override
+    public Map<String, Object> formatMessage(Message msg, boolean hashContent) throws JMSException {
+        Map<String, Object> result = new HashMap<>();
+        addFormatJMS11(msg, result, hashContent);
+        return result;
+    }
 }

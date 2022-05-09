@@ -17,11 +17,12 @@
  * limitations under the License.
  */
 
-import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
-import org.apache.qpid.jms.message.JmsBytesMessage
-import org.apache.qpid.jms.provider.amqp.message.AmqpJmsBytesMessageFacade
-import jakarta.jms.BytesMessage
+package com.redhat.mqe.lib;
 
-class AacJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
-    override fun getBytesMessage(): BytesMessage = JmsBytesMessage(AmqpJmsBytesMessageFacade())
+public abstract class ConnectionManagerFactory {
+    protected abstract ConnectionManager make(ClientOptions clientOptions, String brokerUri);
+
+    protected ConnectionManager makeJndi(ClientOptions clientOptions, String brokerUri) {
+        return new JndiConnectionManager(clientOptions, brokerUri);
+    }
 }

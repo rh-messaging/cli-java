@@ -23,8 +23,8 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.function.Executable
-import javax.jms.BytesMessage
-import javax.jms.Message
+import jakarta.jms.BytesMessage
+import jakarta.jms.Message
 
 class JmsFormatter : JmsMessageFormatter() {
     override fun formatMessage(msg: Message, hashContent: Boolean): MutableMap<String, Any>? {
@@ -40,8 +40,8 @@ abstract class AbstractJmsMessageFormatterTest {
     @Test
     fun `format content of empty bytes message`() {
         val bytesMessage = getBytesMessage()
-        bytesMessage.reset()
-        assertThat(formatter.formatContent(bytesMessage)).isNull()
+         bytesMessage.reset()
+        assertThat(formatter.formatContent(bytesMessage as Message?)).isNull()
     }
 
     @Test

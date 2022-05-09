@@ -28,10 +28,10 @@ import org.apache.qpid.jms.JmsTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
-import javax.jms.Queue;
-import javax.jms.Topic;
+import jakarta.jms.Connection;
+import jakarta.jms.JMSException;
+import jakarta.jms.Queue;
+import jakarta.jms.Topic;
 
 public class AacConnectionManager extends ConnectionManager {
     static final String QUEUE_OBJECT = "javax.jms.Queue";

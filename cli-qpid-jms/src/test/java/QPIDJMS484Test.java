@@ -35,11 +35,11 @@ import org.junit.jupiter.api.io.TempDir;
 import util.Broker;
 import util.BrokerFixture;
 
-import javax.jms.Connection;
-import javax.jms.Destination;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.Session;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Iterator;

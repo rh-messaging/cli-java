@@ -27,11 +27,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import util.Broker;
 import util.BrokerFixture;
 
-import javax.jms.Connection;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 import java.util.concurrent.TimeUnit;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -63,7 +63,7 @@ class ENTMQCL1860 {
 
         try {
             Session session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            javax.jms.Queue queue = session.createQueue(getQueueName());
+            jakarta.jms.Queue queue = session.createQueue(getQueueName());
             MessageProducer producer = session.createProducer(queue);
             producer.send(session.createMessage());
             connection.close();

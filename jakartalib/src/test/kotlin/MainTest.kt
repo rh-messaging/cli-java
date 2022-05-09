@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Red Hat, Inc.
+ * Copyright (c) 2022 Red Hat, Inc.
  *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements. See the NOTICE file distributed with
@@ -17,11 +17,22 @@
  * limitations under the License.
  */
 
-import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
-import org.apache.qpid.jms.message.JmsBytesMessage
-import org.apache.qpid.jms.provider.amqp.message.AmqpJmsBytesMessageFacade
-import jakarta.jms.BytesMessage
+import org.junit.jupiter.api.Test
 
-class AacJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
-    override fun getBytesMessage(): BytesMessage = JmsBytesMessage(AmqpJmsBytesMessageFacade())
+class MainTest {
+    @Test
+    fun notEnoughArguments_0() {
+//        exit.expectSystemExitWithStatus(1)
+//        Main.main(emptyArray<String>(), null, null)
+    }
+
+    @Test
+    fun notEnoughArguments_1() {
+//        Main.main(arrayOf("sender"), null, null) // should somehow break, NPE probably
+    }
+
+    @Test
+    fun wrongArgument() {
+//        Main.main(arrayOf("aString"), null, null) // should exit(1)
+    }
 }

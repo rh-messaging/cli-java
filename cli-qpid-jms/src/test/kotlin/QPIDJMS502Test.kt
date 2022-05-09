@@ -32,9 +32,9 @@ import util.Broker
 import java.math.BigInteger
 import java.nio.file.Path
 import java.util.*
-import javax.jms.Connection
-import javax.jms.ConnectionFactory
-import javax.jms.Session
+import jakarta.jms.Connection
+import jakarta.jms.ConnectionFactory
+import jakarta.jms.Session
 
 @Tag("issue")
 class QPIDJMS502Test {

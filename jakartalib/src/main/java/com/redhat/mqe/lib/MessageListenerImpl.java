@@ -17,11 +17,21 @@
  * limitations under the License.
  */
 
-import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
-import org.apache.qpid.jms.message.JmsBytesMessage
-import org.apache.qpid.jms.provider.amqp.message.AmqpJmsBytesMessageFacade
-import jakarta.jms.BytesMessage
+package com.redhat.mqe.lib;
 
-class AacJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
-    override fun getBytesMessage(): BytesMessage = JmsBytesMessage(AmqpJmsBytesMessageFacade())
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+
+public class MessageListenerImpl implements MessageListener {
+
+    private ReceiverClient rcvrClient;
+
+    MessageListenerImpl(ReceiverClient rcvrClient) {
+        this.rcvrClient = rcvrClient;
+    }
+
+    @Override
+    public synchronized void onMessage(Message msg) {
+        rcvrClient.printMessage(rcvrClient.getClientOptions(), msg);
+    }
 }

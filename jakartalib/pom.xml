@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2017 Red Hat, Inc.
+  ~ Copyright (c) 2022 Red Hat, Inc.
   ~
   ~ Licensed to the Apache Software Foundation (ASF) under one or more
   ~ contributor license agreements. See the NOTICE file distributed with
@@ -30,40 +30,36 @@
         <relativePath>../parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>cli-activemq</artifactId>
-
-    <properties>
-        <bundle.symbolic.name.suffix>aoc</bundle.symbolic.name.suffix>
-        <jar.main.class>com.redhat.mqe.aoc.Main</jar.main.class>
-        <activemq.client.version>5.17.1</activemq.client.version>
-        <library.version>${activemq.client.version}</library.version>
-    </properties>
+    <artifactId>jakartalib</artifactId>
 
     <dependencies>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-client</artifactId>
-            <version>${activemq.client.version}</version>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>com.redhat.cli-java</groupId>
-            <artifactId>jmslib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
         </dependency>
 
         <dependency>
             <groupId>com.redhat.cli-java</groupId>
-            <artifactId>tests</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+            <artifactId>lib</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
         </dependency>
+
+        <!--scope provided means that it is a compileOnly dependency-->
         <dependency>
-            <groupId>com.redhat.cli-java</groupId>
-            <artifactId>jmslib</artifactId>
-            <type>test-jar</type>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -76,8 +72,16 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
+                <!-- https://stackoverflow.com/questions/174560/sharing-test-code-in-maven#174670 -->
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${plugin.jar.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
