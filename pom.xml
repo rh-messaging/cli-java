@@ -41,6 +41,7 @@
 
         <module>lib</module>
         <module>jmslib</module>
+        <module>jakartalib</module>
 
         <module>cli</module>
         <module>cli-activemq</module>

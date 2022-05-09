@@ -87,7 +87,13 @@
                 <version>${annotations.version}</version>
             </dependency>
 
-            <!--JMS dependencies-->
+            <!--modern JMS dependencies-->
+            <dependency>
+                <groupId>jakarta.jms</groupId>
+                <artifactId>jakarta.jms-api</artifactId>
+                <version>3.0.0</version>
+            </dependency>
+            <!--legacy JMS dependencies-->
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
                 <artifactId>geronimo-jms_1.1_spec</artifactId>
@@ -112,12 +118,31 @@
             </dependency>
             <dependency>
                 <groupId>com.redhat.cli-java</groupId>
+                <artifactId>jakartalib</artifactId>
+                <version>1.2.2-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.redhat.cli-java</groupId>
                 <artifactId>lib</artifactId>
                 <version>1.2.2-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.redhat.cli-java</groupId>
                 <artifactId>tests</artifactId>
+                <version>1.2.2-SNAPSHOT</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.redhat.cli-java</groupId>
+                <artifactId>jmslib</artifactId>
+                <version>1.2.2-SNAPSHOT</version>
+                <type>test-jar</type>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.redhat.cli-java</groupId>
+                <artifactId>jakartalib</artifactId>
                 <version>1.2.2-SNAPSHOT</version>
                 <type>test-jar</type>
                 <scope>test</scope>
