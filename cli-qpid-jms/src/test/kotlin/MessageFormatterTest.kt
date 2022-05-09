@@ -20,7 +20,7 @@
 import com.redhat.mqe.lib.AbstractJmsMessageFormatterTest
 import org.apache.qpid.jms.message.JmsBytesMessage
 import org.apache.qpid.jms.provider.amqp.message.AmqpJmsBytesMessageFacade
-import javax.jms.BytesMessage
+import jakarta.jms.BytesMessage
 
 class AacJmsMessageFormatterTest : AbstractJmsMessageFormatterTest() {
     override fun getBytesMessage(): BytesMessage = JmsBytesMessage(AmqpJmsBytesMessageFacade())
