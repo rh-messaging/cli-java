@@ -34,7 +34,7 @@
 
     <properties>
         <bundle.symbolic.name.suffix>jms</bundle.symbolic.name.suffix>
-        <protonj2.version>1.0.0-M6</protonj2.version>
+        <protonj2.version>1.0.0-M8</protonj2.version>
         <jar.main.class>com.redhat.mqe.Main</jar.main.class>
         <library.version>${protonj2.version}</library.version>
         <tcnative.version>2.0.39.Final</tcnative.version>
@@ -45,7 +45,7 @@
     <repositories>
         <repository>
             <id>staging</id>
-            <url>https://repository.apache.org/content/repositories/orgapacheqpid-1218</url>
+            <url>https://repository.apache.org/content/repositories/orgapacheqpid-1242</url>
         </repository>
     </repositories>
 
