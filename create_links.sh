@@ -24,10 +24,10 @@ set -x
 cd /main; for i in *.jar; do
 for j in sender receiver connector; do
     filename="/usr/local/bin/${i%.jar}-${j}"
-    cat > "${filename}" <<'EOF'
+    cat > "${filename}" << EOF
 #!/bin/sh
 
-java ${JAVA_OPTS} ${CLI_QPID_JMS_OPTS} -jar /main/cli-paho.jar sender $@
+java \${JAVA_OPTS} \${CLI_QPID_JMS_OPTS} -jar /main/${i} ${j} \$@
 EOF
     chmod +x "$filename"
   done
