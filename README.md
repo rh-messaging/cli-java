@@ -33,6 +33,22 @@ When using IntelliJ IDEA Ultimate Edition, select "Open" (not "Import Project") 
 
     mvn versions:set -DgenerateBackupPoms=false -DnewVersion=2017.07
 
+## Build docker
+
+Uses `podman`. Needs `sudo` to hook qemu.
+
+```shell
+mvn clean
+bash build_java.sh
+bash build_docker.sh
+```
+
+Date-based versioning of image tags, use
+
+```shell
+bash build_docker.sh $(date '+%Y-%m-%d')
+```
+
 ## List of Java clis
 
 * qpid-jms (AMQP 1.0)
