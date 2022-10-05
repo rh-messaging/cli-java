@@ -4,9 +4,6 @@ import org.apache.qpid.jms.JmsConnectionFactory;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-import javax.jms.Connection;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -42,16 +39,16 @@ class InteropTestJava {
     void testSendRhealikeMessage() throws Exception {
         sendRhealikeMessageToQueue();
         ActiveMQConnectionFactory owcf = new ActiveMQConnectionFactory();
-        Connection owc = owcf.createConnection();
-        Session ows = owc.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-        MessageConsumer owr = ows.createConsumer(ows.createQueue("myq"));
+        javax.jms.Connection owc = owcf.createConnection();
+        javax.jms.Session ows = owc.createSession(false, javax.jms.Session.CLIENT_ACKNOWLEDGE);
+        javax.jms.MessageConsumer owr = ows.createConsumer(ows.createQueue("myq"));
         if (owr.receive(1000) == null) {
             System.out.println("failed to receive a message using openwire, trying amqp now");
 
             JmsConnectionFactory acf = new JmsConnectionFactory();
-            Connection ac = acf.createConnection();
-            Session as = ac.createSession(false, Session.CLIENT_ACKNOWLEDGE);
-            MessageConsumer ar = as.createConsumer(as.createQueue("myq"));
+            jakarta.jms.Connection ac = acf.createConnection();
+            jakarta.jms.Session as = ac.createSession(false, jakarta.jms.Session.CLIENT_ACKNOWLEDGE);
+            jakarta.jms.MessageConsumer ar = as.createConsumer(as.createQueue("myq"));
             System.out.println("qpid-jms says " + ar.receive(1000));
 
             fail("OpenWire did not receive the message");
