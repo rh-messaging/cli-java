@@ -20,5 +20,7 @@
 package com.redhat.mqe;
 
 public enum TxAction {
-    recover
+    commit,
+    rollback,
+    // recover,  // TODO: how do I do JMS Recover here?
 }

@@ -128,8 +128,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
         this.messageFormatter = messageFormatter;
     }
 
+    /**
+     * This is the main function of the client, as called by the cli options handling library.
+     */
     @Override
-    public Integer call() throws Exception { // your business logic goes here...
+    public Integer call() throws Exception {
         String prefix = "";
         if (!broker.startsWith("amqp://") && !broker.startsWith("amqps://")) {
             prefix = "amqp://";
