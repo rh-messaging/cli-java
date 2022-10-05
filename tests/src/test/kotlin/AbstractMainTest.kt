@@ -138,9 +138,13 @@ abstract class AbstractMainTest : AbstractTest() {
     @Test
     fun sendAndReceiveSingleMessageUsingCredentials() {
         val senderParameters =
-            "sender --log-msgs dict --broker $brokerUrl --address $address --conn-username admin --conn-password admin --count 1".split(" ").toTypedArray()
+            "sender --log-msgs dict --broker $brokerUrl --address $address --conn-username admin --conn-password admin --count 1".split(
+                " "
+            ).toTypedArray()
         val receiverParameters =
-            "receiver --log-msgs dict --broker $brokerUrl --address $address --conn-username admin --conn-password admin --count 1".split(" ").toTypedArray()
+            "receiver --log-msgs dict --broker $brokerUrl --address $address --conn-username admin --conn-password admin --count 1".split(
+                " "
+            ).toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(10)) {
             print("Sending: ")
             main(senderParameters)
@@ -151,11 +155,27 @@ abstract class AbstractMainTest : AbstractTest() {
 
     @Tag("external")
     @Test
+    fun test_simple_transaction_sender_batch_size_leftovers() {
+        print("Sending:\n ")
+        val sent = main(
+            "sender --log-msgs interop --broker $brokerUrl --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address $address --count 11 --tx-size 3 --tx-action commit".split(" ").toTypedArray()
+        )
+        print("Receiving:\n ")
+        val received = main(
+            "receiver --timeout 10 --log-msgs interop --broker $brokerUrl --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address $address --count 0".split(" ").toTypedArray()
+        )
+        assertThat(sent).hasSize(11)
+        assertThat(received).hasSize(9)
+    }
+
+    @Tag("external")
+    @Test
     fun sendBrowseAndReceiveSingleMessageWithEmptySelector() {
         val senderParameters =
             "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
         val receiverParameters =
-            "receiver --log-msgs dict --broker $brokerUrl --address $address --msg-selector '' --count 1".split(" ").toTypedArray()
+            "receiver --log-msgs dict --broker $brokerUrl --address $address --msg-selector '' --count 1".split(" ")
+                .toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(10)) {
             print("Sending: ")
             main(senderParameters)
@@ -197,9 +217,11 @@ abstract class AbstractMainTest : AbstractTest() {
     @Test
     fun sendAndReceiveSingleMessageLogJson() {
         val senderParameters =
-            "sender --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+            "sender --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ")
+                .toTypedArray()
         val receiverParameters =
-            "receiver --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+            "receiver --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ")
+                .toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(10)) {
             print("Sending: ")
             main(senderParameters)
@@ -212,9 +234,12 @@ abstract class AbstractMainTest : AbstractTest() {
     @Test
     fun sendAndReceiveSingleMessageLogJsonFloatType() {
         val senderParameters =
-            "sender --log-msgs dict --out json --broker $brokerUrl --address $address --msg-property baf~42.2 --count 1".split(" ").toTypedArray()
+            "sender --log-msgs dict --out json --broker $brokerUrl --address $address --msg-property baf~42.2 --count 1".split(
+                " "
+            ).toTypedArray()
         val receiverParameters =
-            "receiver --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+            "receiver --log-msgs dict --out json --broker $brokerUrl --address $address --count 1".split(" ")
+                .toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(10)) {
             print("Sending: ")
             main(senderParameters)
@@ -277,7 +302,9 @@ abstract class AbstractMainTest : AbstractTest() {
     @Test
     fun sendAndReceiveListMessage() {
         val senderParameters =
-            """sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-list-item --msg-content-list-item "String" --msg-content-list-item "~1" --msg-content-list-item "~1.0" --msg-content-list-item "1" --msg-content-list-item "1.0" --msg-content-list-item "~-1" --msg-content-list-item "~-1.3" --msg-content-list-item "-1" --msg-content-list-item "~~1"""".split(" ").toTypedArray()
+            """sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-list-item --msg-content-list-item "String" --msg-content-list-item "~1" --msg-content-list-item "~1.0" --msg-content-list-item "1" --msg-content-list-item "1.0" --msg-content-list-item "~-1" --msg-content-list-item "~-1.3" --msg-content-list-item "-1" --msg-content-list-item "~~1"""".split(
+                " "
+            ).toTypedArray()
         val receiverParameters =
             "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
 
@@ -292,7 +319,9 @@ abstract class AbstractMainTest : AbstractTest() {
     fun sendAndReceiveAnInt() {
         assertNoSystemExit {
             val senderParameters =
-                """sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --content-type int --msg-content 1234""".split(" ").toTypedArray()
+                """sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --content-type int --msg-content 1234""".split(
+                    " "
+                ).toTypedArray()
             val receiverParameters =
                 "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
 
@@ -310,7 +339,9 @@ abstract class AbstractMainTest : AbstractTest() {
         try {
             file.writeText("aContent")
             val senderParameters =
-                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(" ").toTypedArray()
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(
+                    " "
+                ).toTypedArray()
             val receiverParameters =
                 "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
 
@@ -330,7 +361,9 @@ abstract class AbstractMainTest : AbstractTest() {
         try {
             file.writeText("aContent")
             val senderParameters =
-                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true".split(" ").toTypedArray()
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true".split(
+                    " "
+                ).toTypedArray()
             val receiverParameters =
                 "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
 
@@ -349,7 +382,9 @@ abstract class AbstractMainTest : AbstractTest() {
         assertSystemExit(2, Executable {
             val file = "noSuchFile"
             val senderParameters =
-                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(" ").toTypedArray()
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(
+                    " "
+                ).toTypedArray()
             main(senderParameters)
         })
     }
@@ -360,7 +395,9 @@ abstract class AbstractMainTest : AbstractTest() {
         assertSystemExit(2, Executable {
             val file = "noSuchFile"
             val senderParameters =
-                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true".split(" ").toTypedArray()
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file --msg-content-binary true".split(
+                    " "
+                ).toTypedArray()
             main(senderParameters)
         })
     }
@@ -375,9 +412,13 @@ abstract class AbstractMainTest : AbstractTest() {
         try {
             file.writeText("aContent")
             val senderParameters =
-                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(" ").toTypedArray()
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-from-file $file".split(
+                    " "
+                ).toTypedArray()
             val receiverParameters =
-                "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-to-file $output".split(" ").toTypedArray()
+                "receiver --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-content-to-file $output".split(
+                    " "
+                ).toTypedArray()
 
             print("Sending: ")
             main(senderParameters)
@@ -397,7 +438,8 @@ abstract class AbstractMainTest : AbstractTest() {
         val senderParameters =
             "sender --log-msgs dict --broker $brokerUrl --address topic://$address --count 1".split(" ").toTypedArray()
         val receiverParameters =
-            "receiver --log-msgs dict --broker $brokerUrl --address topic://$address --count 1".split(" ").toTypedArray()
+            "receiver --log-msgs dict --broker $brokerUrl --address topic://$address --count 1".split(" ")
+                .toTypedArray()
 
         val t = Thread {
             print("Receiving: ")
@@ -416,7 +458,9 @@ abstract class AbstractMainTest : AbstractTest() {
         assertNoSystemExit {
             //        "sender --log-msgs dict --broker tcp://127.0.0.1:61617 --address lalaLand --count 1 --conn-ssl-truststore-location  --conn-ssl-truststore-password secureexample --conn-ssl-keystore-location /home/jdanek/Downloads/AMQ7/amq7cr1i0/ikeysiold/client-side-keystore.jks --conn-ssl-keystore-password secureexample".split(" ").toTypedArray()
             val senderParameters =
-                "sender --log-msgs dict --broker $sslBrokerUrl --address $address --conn-ssl-verify-host false --conn-ssl-trust-all true --count 1".split(" ").toTypedArray()
+                "sender --log-msgs dict --broker $sslBrokerUrl --address $address --conn-ssl-verify-host false --conn-ssl-trust-all true --count 1".split(
+                    " "
+                ).toTypedArray()
             print("Sending: ")
             main(senderParameters)
         }
@@ -443,10 +487,36 @@ abstract class AbstractMainTest : AbstractTest() {
         val expected = BigInteger(1, md.digest(content.toByteArray())).toString(16)
         print(expected)
         assertNoSystemExit {
-            val sent = main(arrayOf(
-                "sender", "--log-msgs", "dict", "--broker", brokerUrl, "--address", address, "--count", "1", "--msg-content", content, "--msg-content-hashed"))
-            val received = main(arrayOf(
-                "receiver", "--log-msgs", "dict", "--broker", brokerUrl, "--address", address, "--count", "1", "--msg-content-hashed"))
+            val sent = main(
+                arrayOf(
+                    "sender",
+                    "--log-msgs",
+                    "dict",
+                    "--broker",
+                    brokerUrl,
+                    "--address",
+                    address,
+                    "--count",
+                    "1",
+                    "--msg-content",
+                    content,
+                    "--msg-content-hashed"
+                )
+            )
+            val received = main(
+                arrayOf(
+                    "receiver",
+                    "--log-msgs",
+                    "dict",
+                    "--broker",
+                    brokerUrl,
+                    "--address",
+                    address,
+                    "--count",
+                    "1",
+                    "--msg-content-hashed"
+                )
+            )
 
             assertThat(sent.map { it["content"] as String }).containsExactlyElementsIn(listOf(expected))
             assertThat(received.map { it["content"] as String }).containsExactlyElementsIn(listOf(expected))
