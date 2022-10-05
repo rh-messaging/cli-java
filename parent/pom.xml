@@ -141,7 +141,7 @@
                                     <goal>test-compile</goal>
                                 </goals>
                                 <configuration>
-                                    <jvmTarget>1.8</jvmTarget>
+                                    <jvmTarget>11</jvmTarget>
                                     <sourceDirs>
                                         <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
                                         <sourceDir>${project.basedir}/src/test/java</sourceDir>
@@ -239,8 +239,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${plugin.compiler.version}</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>11</source>
+                    <target>11</target>
                     <compilerArgument>-Xlint:all</compilerArgument>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>true</showDeprecation>
