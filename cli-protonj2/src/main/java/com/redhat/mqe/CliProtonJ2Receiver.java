@@ -202,8 +202,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 return 0;
             }
 
+            int i = 0;
             double initialTimestamp = Utils.getTime();
-            for (int i = 0; i < count; i++) {
+            while (true) {
 
 //                if (durationMode == DurationMode.sleepBeforeReceive) {
 //                    LOG.trace("Sleeping before receive");
@@ -249,7 +250,7 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                     Path file = Paths.get(msgContentToFile + "_" + i);
                     Files.write(file, message.body().toString().getBytes(StandardCharsets.UTF_8));
                 }
-                switch(out) {
+                switch (out) {
                     case python:
                         switch (logMsgs) {
                             case dict:
@@ -270,6 +271,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                                 break;
                         }
                         break;
+                }
+
+                i++;
+                if (i == count) { // not i > count; --count=0 needs to disable the break
+                    break;
                 }
             }
 
