@@ -21,14 +21,13 @@ package com.redhat.mqe;
 
 import com.redhat.mqe.lib.Content;
 import com.redhat.mqe.lib.Utils;
-import org.apache.qpid.protonj2.client.Client;
-import org.apache.qpid.protonj2.client.Connection;
-import org.apache.qpid.protonj2.client.ConnectionOptions;
-import org.apache.qpid.protonj2.client.Message;
-import org.apache.qpid.protonj2.client.Sender;
-import org.apache.qpid.protonj2.client.SenderOptions;
+import org.apache.qpid.protonj2.client.*;
+import org.apache.qpid.protonj2.client.exceptions.ClientException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -150,8 +149,11 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--ssn-ack-mode"})
     private SsnAckMode ssnAckMode;
 
+    @CommandLine.Option(names = {"--tx-size"})
+    private Integer txSize;
+
     @CommandLine.Option(names = {"--tx-endloop-action"})
-    private TxEndloopAction txEndloopAction;
+    private TxAction txEndloopAction;
 
     @CommandLine.Option(names = {"--tx-action"})
     private TxAction txAction;
@@ -176,9 +178,11 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
         this.messageFormatter = messageFormatter;
     }
 
+    /**
+     * This is the main function of the client, as called by the cli options handling library.
+     */
     @Override
     public Integer call() throws Exception { // your business logic goes here...
-
         String prefix = "";
         if (!broker.startsWith("amqp://") && !broker.startsWith("amqps://")) {
             prefix = "amqp://";
@@ -215,115 +219,191 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
         TODO API usablility, hard to ask for queue when dealing with broker that likes to autocreate topics
          */
         SenderOptions senderOptions = new SenderOptions();
-        // is it target or source? target.
+        // is it target or source? target.  // TODO API explain which is which
         senderOptions.targetOptions().capabilities(destinationCapability);
-        try (Connection connection = client.connect(serverHost, serverPort, options);
-             Sender sender = connection.openSender(address, senderOptions)) {
 
-            double initialTimestamp = Utils.getTime();
-            for (int i = 0; i < count; i++) {
+        boolean transacted = txSize != null || txAction != null || txEndloopAction != null;
 
-                if (durationMode == DurationModeSender.beforeSend) {
-                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
-                }
-
-                Message<?> message;
-                if (msgContentListItem != null && !msgContentListItem.isEmpty()) {  // TODO check only one of these is specified
-                    List<Object> list = new ArrayList<>();
-                    for (String item : msgContentListItem) {
-                        Content content = new Content(contentType.toString(), item, false);  // TODO do this in args parsing?
-                        list.add(content.getValue());
-                    }
-                    message = Message.create((Object) list);
-                } else if (msgContentMapItems != null) {
-                    Map<String, Object> map = new HashMap<>();
-                    for (String item : msgContentMapItems) {
-                        Content content = new Content(contentType.toString(), item, true);  // TODO do this in args parsing?
-                        map.put(content.getKey(), content.getValue());
-                    }
-                    message = Message.create((Object) map);
-                } else if (msgContentFromFile != null) {
-                    if (stringToBool(msgContentBinaryString)) {
-                        message = Message.create(Files.readAllBytes(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
-                    } else {
-                        message = Message.create(Files.readString(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
-                    }
-                } else {
-                    message = Message.create(msgContent);
-                }
-                if (msgProperties != null) {
-                    for (String item : msgProperties) {
-                        Content content = new Content(propertyType.toString(), item, true);  // TODO do this in args parsing?
-                        message.property(content.getKey(), content.getValue());
-                    }
-                }
-                if (msgId != null) {
-                    message.messageId(msgId);
-                }
-                if (msgCorrelationId != null) {
-                    message.correlationId(msgCorrelationId);
-                }
-                if (msgTtl != null) {
-                    message.timeToLive(msgTtl);
-                }
-                if (stringToBool(msgDurableString)) {
-                    message.durable(true);
-                }
-                if (msgGroupId != null) {
-                    message.groupId(msgGroupId);
-                }
-                if (msgGroupSeq != null) {
-                    message.groupSequence(msgGroupSeq);
-                }
-                if (msgReplyTo != null) {
-                    message.replyTo(msgReplyTo);
-                }
-                if (msgReplyToGroupId != null) {
-                    message.replyToGroupId(msgReplyToGroupId);
-                }
-                if (contentType != null) {
-                    message.contentType(contentType.toString()); // TODO: maybe should do more with it? don't bother with enum?
-                }
-                if (stringToBool(connPopulateUserIdString)) {
-                    message.userId(msgUserId.getBytes());
-                }
-                if (msgSubject != null) {
-                    message.subject(msgSubject);
-                }
-                if (msgPriority != null) {
-                    message.priority((byte) (int) msgPriority);
-                }
-                sender.send(message);  // TODO what's timeout for in a sender?
-
-                Map<String, Object> messageDict = messageFormatter.formatMessage(address, (Message<Object>) message, stringToBool(msgContentHashedString));
-                switch (out) {
-                    case python:
-                        switch (logMsgs) {
-                            case dict:
-                                messageFormatter.printMessageAsPython(messageDict);
-                                break;
-                            case interop:
-                                messageFormatter.printMessageAsPython(messageDict);
-                                break;
-                        }
-                        break;
-                    case json:
-                        switch (logMsgs) {
-                            case dict:
-                                messageFormatter.printMessageAsJson(messageDict);
-                                break;
-                            case interop:
-                                messageFormatter.printMessageAsJson(messageDict);
-                                break;
-                        }
-                        break;
-                }
-
-                if (durationMode == DurationModeSender.afterSend) {
-                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
-                }
+        // do simple and also complex (with session) loop, depending on if we have transactions
+        if (transacted) {
+            // TODO API, when I use session and when not? Add note to session that it is optional. and that it provides transactions?
+            //  "Session object used to create Sender and Receiver instances."
+            try (Connection connection = client.connect(serverHost, serverPort, options);
+                 Session session = connection.openSession();
+                 Sender sender = session.openSender(address, senderOptions)) {
+                performMessageSending(transacted, sender, session);
+            }
+        } else {
+            try (Connection connection = client.connect(serverHost, serverPort, options);
+                 Sender sender = connection.openSender(address, senderOptions)) {
+                performMessageSending(transacted, sender, null);
             }
         }
         return 0;
+    }
+
+    private void performMessageSending(boolean transacted, @NotNull Sender sender, @Nullable Session session) throws IOException, ClientException {
+        // ensure we have a transaction; JMS begins a transaction automatically
+        if (transacted) {
+            assert session != null;
+            // TODO: Typo in javadoc: transaction they user must commit
+            //  also, thought beginning transaction twice is noop, but got
+            //  ClientIllegalStateException("A transaction is already active in this Session");
+            session.beginTransaction();
+        }
+
+        int i = 0;
+        double initialTimestamp = Utils.getTime();
+        while (true) {
+            if (durationMode == DurationModeSender.beforeSend) {
+                Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
+            }
+
+            Message<?> message = createNewMessage();
+            sender.send(message);  // TODO what's timeout for in a sender?
+
+            printMessage((Message<Object>) message);
+            i++; // TODO: looks like all have the sleeps wrong, then (the + 1 in the calls)
+
+            if (durationMode == DurationModeSender.afterSend) {
+                Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
+            }
+
+            if (txSize != null && txSize != 0) {
+                if (i % txSize == 0) {
+                    // Do transaction action
+                    if (txAction != null) {
+                        assert transacted && session != null;
+                        switch (txAction) {
+                            case commit:
+                                session.commitTransaction();
+                                break;
+                            case rollback:
+                                session.rollbackTransaction();
+                                break;
+                        }
+
+                        session.beginTransaction();
+
+                        if (durationMode == DurationModeSender.afterSendTxAction) {
+                            Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
+                        }
+                    }
+                }
+            }
+            if (count == 0) continue;
+            if (i == count) break;
+        }
+
+        if (txEndloopAction != null) {
+            assert transacted && session != null;
+            switch (txEndloopAction) {
+                case commit:
+                    session.commitTransaction();
+                    break;
+                case rollback:
+                    session.rollbackTransaction();
+                    break;
+            }
+        } else if (transacted) {
+            session.rollbackTransaction();
+        }
+    }
+
+    private void printMessage(Message<Object> message) throws ClientException {
+        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
+        switch (out) {
+            case python:
+                switch (logMsgs) {
+                    case dict:
+                        messageFormatter.printMessageAsPython(messageDict);
+                        break;
+                    case interop:
+                        messageFormatter.printMessageAsPython(messageDict);
+                        break;
+                }
+                break;
+            case json:
+                switch (logMsgs) {
+                    case dict:
+                        messageFormatter.printMessageAsJson(messageDict);
+                        break;
+                    case interop:
+                        messageFormatter.printMessageAsJson(messageDict);
+                        break;
+                }
+                break;
+        }
+    }
+
+    @NotNull
+    private Message<?> createNewMessage() throws IOException, ClientException {
+        Message<?> message;
+        if (msgContentListItem != null && !msgContentListItem.isEmpty()) {  // TODO check only one of these is specified
+            List<Object> list = new ArrayList<>();
+            for (String item : msgContentListItem) {
+                Content content = new Content(contentType.toString(), item, false);  // TODO do this in args parsing?
+                list.add(content.getValue());
+            }
+            message = Message.create((Object) list);
+        } else if (msgContentMapItems != null) {
+            Map<String, Object> map = new HashMap<>();
+            for (String item : msgContentMapItems) {
+                Content content = new Content(contentType.toString(), item, true);  // TODO do this in args parsing?
+                map.put(content.getKey(), content.getValue());
+            }
+            message = Message.create((Object) map);
+        } else if (msgContentFromFile != null) {
+            if (stringToBool(msgContentBinaryString)) {
+                message = Message.create(Files.readAllBytes(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
+            } else {
+                message = Message.create(Files.readString(Paths.get(msgContentFromFile)));  // todo maybe param type as Path? check exists
+            }
+        } else {
+            message = Message.create(msgContent);
+        }
+        if (msgProperties != null) {
+            for (String item : msgProperties) {
+                Content content = new Content(propertyType.toString(), item, true);  // TODO do this in args parsing?
+                message.property(content.getKey(), content.getValue());
+            }
+        }
+        if (msgId != null) {
+            message.messageId(msgId);
+        }
+        if (msgCorrelationId != null) {
+            message.correlationId(msgCorrelationId);
+        }
+        if (msgTtl != null) {
+            message.timeToLive(msgTtl);
+        }
+        if (stringToBool(msgDurableString)) {
+            message.durable(true);
+        }
+        if (msgGroupId != null) {
+            message.groupId(msgGroupId);
+        }
+        if (msgGroupSeq != null) {
+            message.groupSequence(msgGroupSeq);
+        }
+        if (msgReplyTo != null) {
+            message.replyTo(msgReplyTo);
+        }
+        if (msgReplyToGroupId != null) {
+            message.replyToGroupId(msgReplyToGroupId);
+        }
+        if (contentType != null) {
+            message.contentType(contentType.toString()); // TODO: maybe should do more with it? don't bother with enum?
+        }
+        if (stringToBool(connPopulateUserIdString)) {
+            message.userId(msgUserId.getBytes());
+        }
+        if (msgSubject != null) {
+            message.subject(msgSubject);
+        }
+        if (msgPriority != null) {
+            message.priority((byte) (int) msgPriority);
+        }
+        return message;
     }
 }
