@@ -20,7 +20,7 @@
 package com.redhat.mqe;
 
 import com.redhat.mqe.lib.Content;
-import com.redhat.mqe.lib.MessageFormatter;
+import com.redhat.mqe.lib.Utils;
 import org.apache.qpid.protonj2.client.Client;
 import org.apache.qpid.protonj2.client.Connection;
 import org.apache.qpid.protonj2.client.ConnectionOptions;
@@ -163,7 +163,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private LogLib logLib;
 
     @CommandLine.Option(names = {"--duration-mode"})
-    private DurationMode durationMode;
+    private DurationModeSender durationMode;
 
     public CliProtonJ2Sender() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
@@ -212,7 +212,13 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
         try (Connection connection = client.connect(serverHost, serverPort, options);
              Sender sender = connection.openSender(address, senderOptions)) {
 
+            double initialTimestamp = Utils.getTime();
             for (int i = 0; i < count; i++) {
+
+                if (durationMode == DurationModeSender.beforeSend) {
+                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
+                }
+
                 Message<?> message;
                 if (msgContentListItem != null && !msgContentListItem.isEmpty()) {  // TODO check only one of these is specified
                     List<Object> list = new ArrayList<>();
@@ -303,6 +309,10 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                                 break;
                         }
                         break;
+                }
+
+                if (durationMode == DurationModeSender.afterSend) {
+                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
                 }
             }
         }

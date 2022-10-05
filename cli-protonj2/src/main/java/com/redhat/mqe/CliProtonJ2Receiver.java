@@ -109,7 +109,7 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     private Integer duration;
 
     @CommandLine.Option(names = {"--duration-mode"}) // todo
-    private DurationMode durationMode;
+    private DurationModeReceiver durationMode;
 
     @CommandLine.Option(names = {"--ssn-ack-mode"})
     private SsnAckMode ssnAckMode;
@@ -206,10 +206,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
             double initialTimestamp = Utils.getTime();
             while (true) {
 
-//                if (durationMode == DurationMode.sleepBeforeReceive) {
-//                    LOG.trace("Sleeping before receive");
-//                    Utils.sleepUntilNextIteration(initialTimestamp, msgCount, duration, i + 1);
-//                }
+                if (durationMode == DurationModeReceiver.beforeReceive) {
+                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
+                }
 
                 final Delivery delivery;
                 if (timeout == 0) {
@@ -222,9 +221,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                     break;
                 }
 
-                if (durationMode == DurationMode.afterReceive) {
-//                    LOG.trace("Sleeping after receive");
-                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1); // todo possibly it is i, different loop here
+                if (durationMode == DurationModeReceiver.afterReceive) {
+                    Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
                 }
 
                 if (processReplyTo && delivery.message().replyTo() != null) {

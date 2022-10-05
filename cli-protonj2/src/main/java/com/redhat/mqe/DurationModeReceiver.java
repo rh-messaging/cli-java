@@ -19,9 +19,10 @@
 
 package com.redhat.mqe;
 
-public enum DurationMode {
+public enum DurationModeReceiver {
+    beforeReceive("before-receive"),
     afterReceive("after-receive"),
-    afterSendTxAction("after-send-tx-action");
+    afterSendTxAction("after-receive-action-tx-action");
 
     private final String value;
 
@@ -30,7 +31,7 @@ public enum DurationMode {
         return value;
     }
 
-    DurationMode(String s) {
+    DurationModeReceiver(String s) {
         this.value = s;
     }
 }
