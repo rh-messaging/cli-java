@@ -22,7 +22,7 @@ package com.redhat.mqe;
 public enum DurationModeReceiver {
     beforeReceive("before-receive"),
     afterReceive("after-receive"),
-    afterSendTxAction("after-receive-action-tx-action");
+    afterReceiveTxAction("after-receive-action-tx-action");
 
     private final String value;
 

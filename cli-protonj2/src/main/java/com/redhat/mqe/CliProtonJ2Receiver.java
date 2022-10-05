@@ -30,8 +30,11 @@ import org.apache.qpid.protonj2.client.Message;
 import org.apache.qpid.protonj2.client.Receiver;
 import org.apache.qpid.protonj2.client.ReceiverOptions;
 import org.apache.qpid.protonj2.client.Sender;
+import org.apache.qpid.protonj2.client.Session;
+import org.apache.qpid.protonj2.client.exceptions.ClientException;
 import picocli.CommandLine;
 
+import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -113,6 +116,15 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
 
     @CommandLine.Option(names = {"--ssn-ack-mode"})
     private SsnAckMode ssnAckMode;
+
+    @CommandLine.Option(names = {"--tx-size"})
+    private Integer txSize;
+
+    @CommandLine.Option(names = {"--tx-endloop-action"})
+    private TxAction txEndloopAction;
+
+    @CommandLine.Option(names = {"--tx-action"})
+    private TxAction txAction;
 
     @CommandLine.Option(names = {"--msg-content-to-file"})
     private String msgContentToFile;
@@ -198,17 +210,24 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
             }
         }
 
-        try (Connection connection = client.connect(serverHost, serverPort, options)) {
+        boolean transacted = txSize != null || txAction != null || txEndloopAction != null;
+
+        try (Connection connection = client.connect(serverHost, serverPort, options);
+             Session session = connection.openSession()) {
             Receiver receiver;
             if (stringToBool(durableSubscriberString)) {
-                receiver = connection.openDurableReceiver(address, durableSubscriberName, receiverOptions);
+                receiver = session.openDurableReceiver(address, durableSubscriberName, receiverOptions);
             } else {
-                receiver = connection.openReceiver(address, receiverOptions);
+                receiver = session.openReceiver(address, receiverOptions);
             }
 
             if (stringToBool(subscriberUnsubscribeString)) {
                 receiver.close();
                 return 0;
+            }
+
+            if (transacted) {
+                session.beginTransaction();
             }
 
             int i = 0;
@@ -243,47 +262,51 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                     }
                 }
 
-                int messageFormat = delivery.messageFormat();
-                Message<Object> message = delivery.message();
-
                 // todo, is this what we mean?
                 if (ssnAckMode != null && ssnAckMode == SsnAckMode.client) {
                     delivery.accept();
                 }
 
-                Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
-                if (msgContentToFile != null) {
-                    // todo?
-                    Path file = Paths.get(msgContentToFile + "_" + i);
-                    Files.write(file, message.body().toString().getBytes(StandardCharsets.UTF_8));
-                }
-                switch (out) {
-                    case python:
-                        switch (logMsgs) {
-                            case dict:
-                                messageFormatter.printMessageAsPython(messageDict);
-                                break;
-                            case interop:
-                                messageFormatter.printMessageAsPython(messageDict);
-                                break;
+                outputReceivedMessage(i, delivery);
+                i++;
+
+                if (txSize != null && txSize != 0) {
+                    if (i % txSize == 0) {
+                        if (txAction != null) {
+                            switch (txAction) {
+                                case commit:
+                                    session.commitTransaction();
+                                    break;
+                                case rollback:
+                                    session.rollbackTransaction();
+                                    break;
+                            }
+
+                            session.beginTransaction();
+
+                            if (durationMode == DurationModeReceiver.afterReceiveTxAction) {
+                                Utils.sleepUntilNextIteration(initialTimestamp, i, duration, i + 1);
+                            }
                         }
-                        break;
-                    case json:
-                        switch (logMsgs) {
-                            case dict:
-                                messageFormatter.printMessageAsJson(messageDict);
-                                break;
-                            case interop:
-                                messageFormatter.printMessageAsJson(messageDict);
-                                break;
-                        }
-                        break;
+                    }
                 }
 
-                i++;
                 if (i == count) { // not i > count; --count=0 needs to disable the break
                     break;
                 }
+            }
+
+            if (txEndloopAction != null) {
+                switch (txEndloopAction) {
+                    case commit:
+                        session.commitTransaction();
+                        break;
+                    case rollback:
+                        session.rollbackTransaction();
+                        break;
+                }
+            } else if (transacted) {
+                session.rollbackTransaction();
             }
 
             if (stringToBool(durableSubscriberString)) {
@@ -296,4 +319,36 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
         return 0;
     }
 
+    private void outputReceivedMessage(int i, Delivery delivery) throws ClientException, IOException {
+        Message<Object> message = delivery.message();
+        int messageFormat = delivery.messageFormat();
+        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
+        if (msgContentToFile != null) {
+            // todo?
+            Path file = Paths.get(msgContentToFile + "_" + i);
+            Files.write(file, message.body().toString().getBytes(StandardCharsets.UTF_8));
+        }
+        switch (out) {
+            case python:
+                switch (logMsgs) {
+                    case dict:
+                        messageFormatter.printMessageAsPython(messageDict);
+                        break;
+                    case interop:
+                        messageFormatter.printMessageAsPython(messageDict);
+                        break;
+                }
+                break;
+            case json:
+                switch (logMsgs) {
+                    case dict:
+                        messageFormatter.printMessageAsJson(messageDict);
+                        break;
+                    case interop:
+                        messageFormatter.printMessageAsJson(messageDict);
+                        break;
+                }
+                break;
+        }
+    }
 }
