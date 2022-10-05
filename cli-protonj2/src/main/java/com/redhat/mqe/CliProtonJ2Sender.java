@@ -166,7 +166,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private DurationModeSender durationMode;
 
     @CommandLine.Option(names = {"--conn-reconnect"})
-    private boolean reconnect = false;
+    private String reconnectString = "false";
 
     public CliProtonJ2Sender() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
@@ -202,7 +202,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
         final ConnectionOptions options = new ConnectionOptions();
         // TODO typo in javadoc: This option enables or disables reconnection to a remote remote peer after IO errors. To control
         // TODO API: unclear if reconnect is on or off by default (public static final boolean DEFAULT_RECONNECT_ENABLED = false;)
-        options.reconnectEnabled(reconnect);
+        if (stringToBool(reconnectString)) {
+            options.reconnectEnabled(true);
+        }
         options.user(connUsername);
         options.password(connPassword);
         for (AuthMechanism mech : connAuthMechanisms) {
