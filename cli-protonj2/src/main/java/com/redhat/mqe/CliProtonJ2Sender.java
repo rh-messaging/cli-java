@@ -165,6 +165,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--duration-mode"})
     private DurationModeSender durationMode;
 
+    @CommandLine.Option(names = {"--conn-reconnect"})
+    private boolean reconnect = false;
+
     public CliProtonJ2Sender() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
     }
@@ -197,6 +200,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
         final Client client = Client.create();
 
         final ConnectionOptions options = new ConnectionOptions();
+        // TODO typo in javadoc: This option enables or disables reconnection to a remote remote peer after IO errors. To control
+        // TODO API: unclear if reconnect is on or off by default (public static final boolean DEFAULT_RECONNECT_ENABLED = false;)
+        options.reconnectEnabled(reconnect);
         options.user(connUsername);
         options.password(connPassword);
         for (AuthMechanism mech : connAuthMechanisms) {
@@ -288,7 +294,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                 sender.send(message);  // TODO what's timeout for in a sender?
 
                 Map<String, Object> messageDict = messageFormatter.formatMessage(address, (Message<Object>) message, stringToBool(msgContentHashedString));
-                switch(out) {
+                switch (out) {
                     case python:
                         switch (logMsgs) {
                             case dict:
