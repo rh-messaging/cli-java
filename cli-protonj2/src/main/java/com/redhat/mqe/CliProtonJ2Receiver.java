@@ -117,6 +117,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--msg-content-to-file"})
     private String msgContentToFile;
 
+    @CommandLine.Option(names = {"--conn-reconnect"})
+    private String reconnectString = "false";
+
     public CliProtonJ2Receiver() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
     }
@@ -163,6 +166,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
         }
 
         final ConnectionOptions options = new ConnectionOptions();
+        if (stringToBool(reconnectString)) {
+            options.reconnectEnabled(true);
+        }
         options.user(connUsername);
         options.password(connPassword);
         for (AuthMechanism mech : connAuthMechanisms) {
