@@ -108,11 +108,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--process-reply-to"})
     private boolean processReplyTo = false;
 
-    @CommandLine.Option(names = {"--duration"})  // todo
-    private Integer duration;
+    @CommandLine.Option(names = {"--duration"})
+    private Float duration = 0.0f;
 
-    @CommandLine.Option(names = {"--duration-mode"}) // todo
-    private DurationModeReceiver durationMode;
+    @CommandLine.Option(names = {"--duration-mode"})
+    private DurationModeReceiver durationMode = DurationModeReceiver.afterReceive;
 
     @CommandLine.Option(names = {"--ssn-ack-mode"})
     private SsnAckMode ssnAckMode;
@@ -132,6 +132,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--conn-reconnect"})
     private String reconnectString = "false";
 
+    @CommandLine.Option(names = {"--conn-prefetch"})
+    private Integer connPrefetch;
+
     public CliProtonJ2Receiver() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
     }
@@ -145,6 +148,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
      */
     @Override
     public Integer call() throws Exception {
+        duration *= 1000;  // convert to milliseconds
+
         String prefix = "";
         if (!broker.startsWith("amqp://") && !broker.startsWith("amqps://")) {
             prefix = "amqp://";
@@ -200,6 +205,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
         // todo: another usability, little hard to figure out this is analogue of jms to browse queues
         if (stringToBool(recvBrowseString)) {
             receiverOptions.sourceOptions().distributionMode(DistributionMode.COPY);
+        }
+
+        // In AMQP, it is one credit means one message, so this matches the semantics
+        if (connPrefetch != null) {
+            receiverOptions.creditWindow(connPrefetch);
         }
 
         // TODO: API question: what is difference between autoSettle and autoAccept? why I want one but not the other?

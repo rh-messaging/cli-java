@@ -23,10 +23,7 @@ import com.google.common.truth.Truth;
 import kotlin.jvm.functions.Function0;
 import kotlin.jvm.internal.Intrinsics;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.Executable;
 import util.Broker;
@@ -164,6 +161,7 @@ class MainTest {
     }
 
     @Test
+    @Disabled("These commands take way too long to execute, now that --duration works how it should")
     @Timeout(value = 60, unit = TimeUnit.SECONDS)
     @ExtendWith(BrokerFixture.class)
     void test2(@BrokerFixture.TempBroker Broker broker) throws Throwable {
