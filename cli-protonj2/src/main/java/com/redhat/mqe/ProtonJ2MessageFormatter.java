@@ -54,6 +54,7 @@ public class ProtonJ2MessageFormatter extends MessageFormatter {
         map.put("content-type", message.contentType());
         map.put("id", message.messageId());
         map.put("reply-to", message.replyTo());
+        map.put("delivery-count", message.deliveryCount());
 
         // getPropertyNames? from JMS missing?
         Map<String, Object> propertyMap = new HashMap<>();
