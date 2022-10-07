@@ -17,25 +17,41 @@
  * limitations under the License.
  */
 
+import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
+import com.google.common.truth.TruthJUnit
 import com.redhat.mqe.ClientListener
+import org.apache.activemq.artemis.core.settings.impl.AddressFullMessagePolicy
+import org.apache.activemq.artemis.core.settings.impl.AddressSettings
+import org.awaitility.Awaitility.await
 import org.junit.jupiter.api.Assertions.assertTimeoutPreemptively
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Tags
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.jupiter.api.function.Executable
+import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
 import org.junit.jupiter.params.provider.ValueSource
 import org.junitpioneer.jupiter.SetEnvironmentVariable
 import java.io.File
+import java.lang.reflect.UndeclaredThrowableException
 import java.math.BigInteger
 import java.nio.file.Files
+import java.nio.file.Path
 import java.security.MessageDigest
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalTime
+import java.util.*
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
+import util.BrokerFixture
+import util.Broker
 
 @Tag("external")
 abstract class AbstractMainTest : AbstractTest() {
@@ -55,6 +71,11 @@ abstract class AbstractMainTest : AbstractTest() {
     abstract fun main_(listener: ClientListener, args: Array<String>)
     fun main(args: Array<String>): List<Map<String, Any>> {
         val messages = ArrayList<Map<String, Any>>()
+        main(args, messages)
+        return messages
+    }
+
+    fun main(args: Array<String>, messages: MutableList<Map<String, Any>>): List<Map<String, Any>> {
         main_(object : ClientListener {
             override fun onMessage(message: Map<String, Any>) {
                 messages.add(message)
@@ -620,5 +641,101 @@ abstract class AbstractMainTest : AbstractTest() {
             " --subscriber-unsubscribe True" +
             " --conn-clientid cliId0 --durable-subscriber-name ds0").split(" ").toTypedArray()
         )
+    }
+
+    /**
+     * Sends sufficient amount of messages to cause broker to block the sender.
+     * Then it runs a receiver and empties the queue, unblocking the queue, and receiving all messages eventually.
+     *
+     * See dTests test JAMQNode000Tests/test_broker_blocks_client_many_messages_in_queue
+     */
+    @Test
+    @ExtendWith(BrokerFixture::class)
+    fun testQueueBlockUnblockSenderResumes(@BrokerFixture.TempBroker broker: Broker, @TempDir tempDir: Path) {
+        // this does not work with qpid-jms, and we skip the test in dtests anyways
+        TruthJUnit.assume().that(this::class.java.name).endsWith("ProtonJ2MainTest")
+
+        val address = "test_broker_blocks_client_many_messages_in_queue"
+
+        broker.configuration.isSecurityEnabled = false
+        broker.configuration.bindingsDirectory = tempDir.resolve("data/bindings").toString()
+        broker.configuration.journalDirectory = tempDir.resolve("data/journal").toString()
+        broker.configuration.largeMessagesDirectory = tempDir.resolve("data/large").toString()
+        broker.configuration.pagingDirectory = tempDir.resolve("data/paging").toString()
+        val addressSettings = AddressSettings()
+            .setMaxSizeBytes(10240)
+            .setMaxSizeBytesRejectThreshold(10240)
+            .setAddressFullMessagePolicy(AddressFullMessagePolicy.BLOCK)
+        broker.configuration.addAddressSetting(address, addressSettings)
+        broker.startBroker()
+
+        val brokerUrl = "localhost:" + broker.addAMQPAcceptor()
+
+        val pool = Executors.newCachedThreadPool()
+
+        val senderMessages = Collections.synchronizedList<Map<String, Any>>(java.util.ArrayList())
+        val senderFuture = pool.submit(Callable<List<Map<String, Any>>> {
+            main(
+                arrayOf(
+                    "sender",
+                    "--timeout=60",
+                    "--log-msgs=dict",
+                    "--msg-content-hashed=true",
+                    "--broker=$brokerUrl",
+                    "--conn-auth-mechanisms=PLAIN",
+                    "--conn-username=admin",
+                    "--conn-password=admin",
+                    "--address=$address",
+                    "--count=300",
+                    "--msg-content=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcd"
+                ),
+                senderMessages
+            )
+        })
+
+        val addressControl = broker.makeAddressControl(address)
+        var previousCount: Long = -1
+        await().atMost(5, TimeUnit.SECONDS).ignoreException(UndeclaredThrowableException::class.java).until {
+            previousCount = addressControl.messageCount
+            true
+        }
+
+        val initialTime = Instant.now()
+
+        var gotBlocked = false;
+        while (Duration.between(initialTime, Instant.now()).toSeconds() < 10) {
+            TimeUnit.SECONDS.sleep(2)
+            if (addressControl.messageCount > 0
+                && addressControl.messageCount == previousCount
+                && addressControl.messageCount < 300
+            ) {
+                gotBlocked = true
+                break
+            }
+            previousCount = addressControl.messageCount
+        }
+        Truth.assertWithMessage("Sender should get blocked, $initialTime, ${Instant.now()}, $previousCount, ${senderMessages.size}")
+            .that(gotBlocked).isTrue()
+        println("Sender got blocked, $initialTime, ${Instant.now()}, $previousCount, ${senderMessages.size}")
+
+        val receivedMessages = main(
+            arrayOf(
+                "receiver",
+                "--timeout=60",
+                "--log-msgs=dict",
+                "--msg-content-hashed=true",
+                "--broker=$brokerUrl",
+                "--conn-auth-mechanisms=PLAIN",
+                "--conn-username=admin",
+                "--conn-password=admin",
+                "--address=$address",
+                "--count=300",
+            )
+        )
+
+        assertThat(receivedMessages).hasSize(300)
+
+        senderFuture.get()
+        assertThat(senderMessages).hasSize(300)
     }
 }

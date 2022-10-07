@@ -21,7 +21,6 @@ package com.redhat.mqe
 
 import AbstractMainTest
 import com.google.common.truth.Truth.assertThat
-import com.redhat.mqe.lib.MessageFormatter
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test

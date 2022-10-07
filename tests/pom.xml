@@ -48,14 +48,33 @@
             <artifactId>jmslib</artifactId>
         </dependency>
 
+        <!--do not use test scope, for easier propagation to maven submodules-->
         <dependency>
             <groupId>com.google.truth</groupId>
             <artifactId>truth</artifactId>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit-pioneer</groupId>
             <artifactId>junit-pioneer</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-server</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>broker</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+            <type>test-jar</type>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
