@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import static com.redhat.mqe.lib.ClientOptionManager.QUEUE_PREFIX;
 import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
@@ -171,6 +172,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--conn-reconnect"})
     private String reconnectString = "false";
 
+    @CommandLine.Option(names = {"--conn-heartbeat"})
+    private Long connHeartbeat;
+
     public CliProtonJ2Sender() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
     }
@@ -211,6 +215,10 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
         // TODO API: unclear if reconnect is on or off by default (public static final boolean DEFAULT_RECONNECT_ENABLED = false;)
         if (stringToBool(reconnectString)) {
             options.reconnectEnabled(true);
+        }
+        if (connHeartbeat != null) {
+            // TODO finish that 2x investigation for heartbeats and document it somewhere (jira?)
+            options.idleTimeout(2 * connHeartbeat, TimeUnit.SECONDS);
         }
         options.user(connUsername);
         options.password(connPassword);
