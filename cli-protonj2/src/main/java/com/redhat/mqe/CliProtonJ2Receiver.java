@@ -135,6 +135,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--conn-prefetch"})
     private Integer connPrefetch;
 
+    @CommandLine.Option(names = {"--conn-heartbeat"})
+    private Long connHeartbeat;
+
     public CliProtonJ2Receiver() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
     }
@@ -188,6 +191,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
         final ConnectionOptions options = new ConnectionOptions();
         if (stringToBool(reconnectString)) {
             options.reconnectEnabled(true);
+        }
+        if (connHeartbeat != null) {
+            options.idleTimeout(2 * connHeartbeat, TimeUnit.SECONDS);
         }
         options.user(connUsername);
         options.password(connPassword);
