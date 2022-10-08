@@ -79,7 +79,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private int timeout;
 
     @CommandLine.Option(names = {"--duration"})
-    private Float duration;  // TODO do something with it
+    private Float duration = 0.0f;
 
     @CommandLine.Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
     // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
@@ -166,7 +166,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private LogLib logLib;
 
     @CommandLine.Option(names = {"--duration-mode"})
-    private DurationModeSender durationMode;
+    private DurationModeSender durationMode = DurationModeSender.afterSend;
 
     @CommandLine.Option(names = {"--conn-reconnect"})
     private String reconnectString = "false";
@@ -184,6 +184,8 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
      */
     @Override
     public Integer call() throws Exception { // your business logic goes here...
+        duration *= 1000;  // convert to milliseconds
+
         String prefix = "";
         if (!broker.startsWith("amqp://") && !broker.startsWith("amqps://")) {
             prefix = "amqp://";
@@ -256,6 +258,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
         int i = 0;
         double initialTimestamp = Utils.getTime();
         while (true) {
+
             if (durationMode == DurationModeSender.beforeSend) {
                 Utils.sleepUntilNextIteration(initialTimestamp, count, duration, i + 1);
             }

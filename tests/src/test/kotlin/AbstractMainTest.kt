@@ -522,4 +522,19 @@ abstract class AbstractMainTest : AbstractTest() {
             assertThat(received.map { it["content"] as String }).containsExactlyElementsIn(listOf(expected))
         }
     }
+
+    @Tag("external")
+    @Test
+    fun testSendingReceivingWithDuration() {
+        assertNoSystemExit {
+            val senderParameters =
+                "sender --log-msgs dict --broker $brokerUrl --address $address --count=5 --duration=5".split(" ").toTypedArray()
+            val receiverParameters =
+                "receiver --log-msgs dict --broker $brokerUrl --address $address --count=5 --duration=5".split(" ").toTypedArray()
+            print("Sending:\n ")
+            main(senderParameters)
+            print("Receiving:\n ")
+            main(receiverParameters)
+        }
+    }
 }
