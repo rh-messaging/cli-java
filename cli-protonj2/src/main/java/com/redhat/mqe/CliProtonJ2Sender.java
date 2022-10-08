@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine;
 
+import javax.sound.midi.Track;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -260,7 +261,17 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
             }
 
             Message<?> message = createNewMessage();
-            sender.send(message);  // TODO what's timeout for in a sender?
+            // TODO what's timeout for in a sender?
+            Tracker tracker = sender.send(message);
+            tracker.awaitSettlement();
+            // NB: This is not a busy loop involving the network, because sooner or later the peer will drain credit,
+            // if it intends to keep blocking. And sender.send() blocks upon running out of credit.
+            while (tracker.remoteState() != DeliveryState.accepted()) {
+                // TODO: am I supposed to increment `delivery-count` of the message if I got rejected before?
+                //  as per http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-rejected
+                tracker = sender.send(message);  // resend the message
+                tracker.awaitSettlement();
+            }
 
             printMessage((Message<Object>) message);
             i++; // TODO: looks like all have the sleeps wrong, then (the + 1 in the calls)
