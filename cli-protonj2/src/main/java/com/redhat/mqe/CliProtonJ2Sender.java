@@ -249,6 +249,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                 performMessageSending(transacted, sender, null);
             }
         }
+
+        client.close();
+
         return 0;
     }
 
