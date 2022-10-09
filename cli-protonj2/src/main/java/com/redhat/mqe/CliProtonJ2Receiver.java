@@ -332,6 +332,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
             }
         }
 
+        client.close();
+
         return 0;
     }
 
