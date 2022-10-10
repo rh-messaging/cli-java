@@ -1,6 +1,5 @@
 package com.redhat.amqx.management.activemq;
 
-import com.redhat.amqx.formatters.PythonFormatter;
 import com.redhat.amqx.management.Credentials;
 import com.redhat.amqx.management.DestinationManager;
 import com.redhat.amqx.management.exception.DestinationException;
@@ -9,7 +8,6 @@ import org.json.JSONObject;
 import org.apache.activemq.broker.jmx.BrokerViewMBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.management.ObjectName;
 import java.io.IOException;
@@ -64,7 +62,7 @@ public class QueueActiveMQManager extends AbstractActiveMQManager implements Des
 
     @Override
     public void removeMessages(String destinationName, String addressName) throws Exception {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     @Override
@@ -80,7 +78,7 @@ public class QueueActiveMQManager extends AbstractActiveMQManager implements Des
 
     @Override
     public void addDestination(String destinationName, boolean durable, String addressName, String selector, int maxConsumers, boolean deleteOnNoConsumers) throws Exception {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     protected String getFormattedDestinationProperties(String destinationName) throws Exception {
