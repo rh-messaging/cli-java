@@ -25,7 +25,7 @@
         <!--AMQ 6/7 default versions-->
         <jamq6.version>5.11.0.redhat-630187</jamq6.version>
         <!--<jamq7.version>2.0.0.amq-700002-redhat-1</jamq7.version>-->
-        <jamq7.version>2.9.0.redhat-00005</jamq7.version>
+        <jamq7.version>2.19.1</jamq7.version>
 
         <!--AMQ 7 file dependencies -->
         <amq7.path>/opt/jboss-amq-7</amq7.path>
