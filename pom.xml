@@ -49,6 +49,8 @@
         <module>cli-protonj2</module>
         <module>cli-qpid-jms</module>
 
+        <module>cli-activemq-jmx</module>
+
         <module>broker</module>
 
         <module>interop-tests</module>
