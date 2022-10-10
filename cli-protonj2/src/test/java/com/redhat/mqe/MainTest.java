@@ -213,12 +213,6 @@ class MainTest {
         // tests.JAMQNode000Tests.JAMQNodeTests.test_max_consumers_queue
         // TODO: client is not started at all in the test; some issues with params mapping?
 
-        // tests.JAMQNode000Tests.JAMQNodeTests.test_node_durable_topic_subscriber
-        // topic: prefix, --conn-clientid --durable-subscriber --durable-subscriber-name
-        checkMainInvocation("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_node_durable_topic_subscriber --count 0 --durable-subscriber True --durable-subscriber-name ds0");
-        // --subscriber-unsubscribe True
-        checkMainInvocation("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address topic://test_node_durable_topic_subscriber --count 0 --subscriber-unsubscribe True --durable-subscriber-name ds0");
-
         // tests.JAMQMessage000Tests.JAMQMessageTests.test_amqp_bare_message_consistency
         // Unknown options: '--msg-subject', 'amqp_bare_message_test', '--msg-user-id', 'admin', '--msg-priority', '7', '--conn-populate-user-id', 'True', '--msg-group-seq', '1', '--msg-reply-to-group-id', 'group-a'
         checkMainInvocation("sender --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin --address test_amqp_bare_message_consistency --count 1 --msg-subject amqp_bare_message_test --msg-reply-to ExpiryQueue --msg-property PI=~3.141592 --msg-property color=red --msg-property mapKey=mapValue --msg-content amqp_bare_msg-CBJJIY --msg-durable True --msg-ttl 300000 --msg-correlation-id amqp_bare_msg-CBJJIY --msg-user-id admin --msg-priority 7 --conn-populate-user-id True --msg-group-id group-a --msg-group-seq 1 --msg-reply-to-group-id group-a");
