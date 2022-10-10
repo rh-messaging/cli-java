@@ -34,7 +34,7 @@
         <!--libraries-->
         <slf4j.version>2.0.3</slf4j.version>
         <json.version>20160810</json.version>
-        <commons-cli.version>1.4</commons-cli.version>
+        <commons-cli.version>1.5.0</commons-cli.version>
     </properties>
 
 
