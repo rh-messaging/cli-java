@@ -2,6 +2,7 @@ import com.google.common.truth.Truth;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.qpid.jms.JmsConnectionFactory;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import javax.jms.Connection;
@@ -38,6 +39,7 @@ class InteropTestJava {
      *
      * @throws Exception
      */
+    @Tag("external")
     @Test
     void testSendRhealikeMessage() throws Exception {
         sendRhealikeMessageToQueue();
