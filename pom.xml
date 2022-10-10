@@ -46,7 +46,12 @@
         <module>cli-activemq</module>
         <module>cli-artemis-jms</module>
         <module>cli-paho-java</module>
+        <module>cli-protonj2</module>
+        <module>cli-qpid-jms</module>
+
         <module>broker</module>
+
+        <module>interop-tests</module>
     </modules>
 
     <repositories>
@@ -68,22 +73,4 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <profiles>
-        <profile>
-            <id>interop-tests</id>
-            <modules>
-                <module>interop-tests</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>java11plus</id>
-            <activation>
-                <jdk>[11,)</jdk>
-            </activation>
-            <modules>
-                <module>cli-protonj2</module>
-                <module>cli-qpid-jms</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>
