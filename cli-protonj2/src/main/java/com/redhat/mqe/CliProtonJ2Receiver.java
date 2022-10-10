@@ -26,6 +26,8 @@ import org.apache.qpid.protonj2.client.Connection;
 import org.apache.qpid.protonj2.client.ConnectionOptions;
 import org.apache.qpid.protonj2.client.Delivery;
 import org.apache.qpid.protonj2.client.DistributionMode;
+import org.apache.qpid.protonj2.client.DurabilityMode;
+import org.apache.qpid.protonj2.client.ExpiryPolicy;
 import org.apache.qpid.protonj2.client.Message;
 import org.apache.qpid.protonj2.client.Receiver;
 import org.apache.qpid.protonj2.client.ReceiverOptions;
@@ -201,12 +203,27 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
             options.saslOptions().addAllowedMechanism(mech.name());
         }
 
+        // TODO: what do I actually need/want here?
+        // TODO, same problem, lib has Symbols in ClientConstants class
+        // cli proton cpp does not do this, btw
+//        options.desiredCapabilities(
+//            "sole-connection-for-container", "DELAYED_DELIVERY", "SHARED-SUBS", "ANONYMOUS-RELAY"
+//        );
+
         /*
         TODO API usability, hard to ask for queue when dealing with broker that likes to autocreate topics
          */
+        final boolean durableSubscription = stringToBool(durableSubscriberString) || stringToBool(subscriberUnsubscribeString);
+
         ReceiverOptions receiverOptions = new ReceiverOptions();
         // is it target or source? target.
         receiverOptions.sourceOptions().capabilities(destinationCapability);
+        // TODO: huh, did not know that this is configurable; and it was very hard to find in relation to durable receivers
+        if (durableSubscription) {
+            receiverOptions.sourceOptions().durabilityMode(DurabilityMode.UNSETTLED_STATE);
+            // proton cpp cli does also this
+//            receiverOptions.sourceOptions().expiryPolicy(ExpiryPolicy.NEVER);  // but that seems to happen automatically here
+        }
 
         // todo: another usability, little hard to figure out this is analogue of jms to browse queues
         if (stringToBool(recvBrowseString)) {
@@ -226,18 +243,30 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
             }
         }
 
+        // TODO: these are constants in client lib
+        //  TODO: These are symbols, not strings
+        // todo, no, these go to link Attach, I need opts for Open frame
+//        receiverOptions.desiredCapabilities(
+//            "sole-connection-for-container", "DELAYED_DELIVERY", "SHARED-SUBS", "ANONYMOUS-RELAY");
+//            ClientConstants.SOLE_CONNECTION_CAPABILITY,
+//            ClientConstants.DELAYED_DELIVERY,
+//            ClientConstants.SHARED_SUBS,
+//            ClientConstants.ANONYMOUS_RELAY);
+//        "sole-connection-for-container", "DELAYED_DELIVERY", "SHARED-SUBS", "ANONYMOUS-RELAY");
+
         boolean transacted = txSize != null || txAction != null || txEndloopAction != null;
 
         try (Connection connection = client.connect(serverHost, serverPort, options);
              Session session = connection.openSession()) {
             Receiver receiver;
-            if (stringToBool(durableSubscriberString)) {
+            if (durableSubscription) {
                 receiver = session.openDurableReceiver(address, durableSubscriberName, receiverOptions);
             } else {
                 receiver = session.openReceiver(address, receiverOptions);
             }
 
             if (stringToBool(subscriberUnsubscribeString)) {
+                receiver.openFuture().get();  // force client to perform attach, so it is forced to send detach afterwards
                 receiver.close();
                 return 0;
             }
@@ -325,7 +354,7 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 session.rollbackTransaction();
             }
 
-            if (stringToBool(durableSubscriberString)) {
+            if (durableSubscription) {
                 receiver.detach();
             } else {
                 receiver.close(); // TODO want to do autoclosable, need helper func, that's all
