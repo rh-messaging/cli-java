@@ -32,11 +32,9 @@ import java.io.File
 import java.math.BigInteger
 import java.nio.file.Files
 import java.security.MessageDigest
-import java.security.Permission
 import java.time.Duration
 import java.time.LocalTime
 import kotlin.collections.ArrayList
-import kotlin.test.fail
 
 @Tag("external")
 abstract class AbstractMainTest : AbstractTest() {
