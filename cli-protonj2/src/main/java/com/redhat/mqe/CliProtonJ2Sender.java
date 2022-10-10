@@ -23,6 +23,8 @@ import com.redhat.mqe.lib.Content;
 import com.redhat.mqe.lib.Utils;
 import org.apache.qpid.protonj2.client.*;
 import org.apache.qpid.protonj2.client.exceptions.ClientException;
+import org.apache.qpid.protonj2.client.impl.ClientDeliveryState;
+import org.apache.qpid.protonj2.types.transactions.TransactionalState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine;
@@ -276,8 +278,15 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
             Tracker tracker = sender.send(message);
             tracker.awaitSettlement();
             // NB: This is not a busy loop involving the network, because sooner or later the peer will drain credit,
-            // if it intends to keep blocking. And sender.send() blocks upon running out of credit.
-            while (tracker.remoteState() != DeliveryState.accepted()) {
+            //  if it intends to keep blocking. And sender.send() blocks upon running out of credit.
+            while (!tracker.remoteState().isAccepted()) {
+                // NB: Transacted session gives a special state that is not considered "accepted" even though it is e.g.
+                //  DeliveryState.ClientTransactional{
+                //   TransactionalState{txnId=ea51ffc4-4896-11ed-924a-d6bdd75e6e2e, outcome=Accepted{}}
+                //  Since we don't test reconnect with transactions (GAP! :shocked face:) let's bail out
+                if (tracker.remoteState().getType() == DeliveryState.Type.TRANSACTIONAL) {
+                    break;
+                }
                 // TODO: am I supposed to increment `delivery-count` of the message if I got rejected before?
                 //  as per http://docs.oasis-open.org/amqp/core/v1.0/os/amqp-core-messaging-v1.0-os.html#type-rejected
                 tracker = sender.send(message);  // resend the message
