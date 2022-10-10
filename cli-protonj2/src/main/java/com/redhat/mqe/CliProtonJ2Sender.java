@@ -23,13 +23,10 @@ import com.redhat.mqe.lib.Content;
 import com.redhat.mqe.lib.Utils;
 import org.apache.qpid.protonj2.client.*;
 import org.apache.qpid.protonj2.client.exceptions.ClientException;
-import org.apache.qpid.protonj2.client.impl.ClientDeliveryState;
-import org.apache.qpid.protonj2.types.transactions.TransactionalState;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import picocli.CommandLine;
 
-import javax.sound.midi.Track;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
