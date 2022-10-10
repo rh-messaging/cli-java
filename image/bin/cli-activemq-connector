@@ -1,0 +1,3 @@
+#!/bin/sh
+
+java ${JAVA_OPTS} ${CLI_ACTIVEMQ_OPTS} -jar /opt/cli-java/cli-activemq.jar connector $@
