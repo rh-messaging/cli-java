@@ -103,6 +103,10 @@
         <profile>
             <id>JAMQ7</id>
 
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
             <properties>
                 <library.version>${jamq7.version}</library.version>
             </properties>

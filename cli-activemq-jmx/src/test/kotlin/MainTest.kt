@@ -1,6 +1,8 @@
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 
 class AmqxMain {
+    @Tag("external")
     @Test
     fun `queue properties`() {
         com.redhat.amqx.main.Main.main(
