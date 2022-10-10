@@ -28,6 +28,7 @@ import org.junit.jupiter.api.function.Executable
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
 import org.junit.jupiter.params.provider.ValueSource
+import org.junitpioneer.jupiter.SetEnvironmentVariable
 import java.io.File
 import java.math.BigInteger
 import java.nio.file.Files
@@ -534,5 +535,90 @@ abstract class AbstractMainTest : AbstractTest() {
             print("Receiving:\n ")
             main(receiverParameters)
         }
+    }
+
+    //    void testMessageContentListItem() {
+    //        '--msg-content-list-item', '', '--msg-content-list-item', 'String', '--msg-content-list-item', '~1', '--msg-content-list-item', '~1.0', '--msg-content-list-item', '1', '--msg-content-list-item', '1.0', '--msg-content-list-item', '~-1', '--msg-content-list-item', '~-1.3', '--msg-content-list-item', '-1', '--msg-content-list-item', '~~1'
+    //    }
+
+    @Tag("external")
+    @SetEnvironmentVariable(key = "PN_TRACE_FRM", value = "true")
+    @Test
+    @Throws(
+        Throwable::class
+    )
+    open fun testDurableSubscriber() {
+
+        // tests.JAMQNode000Tests.JAMQNodeTests.test_node_durable_topic_subscriber
+        // topic: prefix, --conn-clientid --durable-subscriber --durable-subscriber-name
+        println()
+        println("Create subscriber")
+        println()
+        main(
+            ("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin" +
+                " --address topic://test_node_durable_topic_subscriber --count 0 --durable-subscriber True" +
+                " --conn-clientid cliId0 --durable-subscriber-name ds0").split(" ").toTypedArray()
+        )
+
+        println()
+        println("Send message")
+        println()
+
+        main(
+            ("sender --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin" +
+                " --address topic://test_node_durable_topic_subscriber --count 1").split(" ").toTypedArray()
+        )
+
+        println()
+        println("Recover subscription, receive message")
+        println()
+
+        main(
+            ("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin" +
+                " --address topic://test_node_durable_topic_subscriber --count 0 --durable-subscriber True" +
+                " --conn-clientid cliId0 --durable-subscriber-name ds0").split(" ").toTypedArray()
+        )
+
+        println()
+        println("Unsubscribe")
+        println()
+
+        // --subscriber-unsubscribe True
+        main(("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin" +
+            " --address topic://test_node_durable_topic_subscriber --count 0" +
+            " --subscriber-unsubscribe True" +
+            " --conn-clientid cliId0 --durable-subscriber-name ds0").split(" ").toTypedArray()
+        )
+
+        println()
+        println("Send message again")
+        println()
+
+        main(
+            ("sender --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin" +
+                " --address topic://test_node_durable_topic_subscriber --count 1").split(" ").toTypedArray()
+        )
+
+        println()
+        println("Try receiving, message should not be there")
+        println()
+
+        val rcv2 = main(
+            ("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin" +
+                " --address topic://test_node_durable_topic_subscriber --count 0 --durable-subscriber True" +
+                " --conn-clientid cliId0 --durable-subscriber-name ds0").split(" ").toTypedArray()
+        )
+        assertThat(rcv2).hasSize(0)
+
+        println()
+        println("Unsubscribe again")
+        println()
+
+        // --subscriber-unsubscribe True
+        main(("receiver --timeout 5 --log-msgs dict --broker " + brokerUrl + " --conn-auth-mechanisms PLAIN --conn-username admin --conn-password admin" +
+            " --address topic://test_node_durable_topic_subscriber --count 0" +
+            " --subscriber-unsubscribe True" +
+            " --conn-clientid cliId0 --durable-subscriber-name ds0").split(" ").toTypedArray()
+        )
     }
 }
