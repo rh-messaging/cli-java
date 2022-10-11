@@ -19,10 +19,9 @@
 
 package com.redhat.mqe.lib;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.LogManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -114,18 +113,17 @@ public class Utils {
      * specified, default level is used from *logger* properties file.
      * (As of the time writing - simplelogger.properties is used as default.)
      * <p/>
-     * NOTE: SLF4J is not capable of changing log levels programatically!
+     * NOTE: SLF4J is not capable of changing log levels programmatically!
      * We have to change the System/File property of given underlying logger.
      *
      * @param logLevel logging level to be logger set to
      */
     public static void setLogLevel(String logLevel) {
-        org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger("com.redhat.mqe.jms");
+        // for the code below to work, it must be executed before the
+        // logger is created. see note below
+
         Level level;
         switch (logLevel.toLowerCase()) {
-            case "all":
-                level = Level.ALL;
-                break;
             case "trace":
                 level = Level.TRACE;
                 break;
@@ -141,17 +139,11 @@ public class Utils {
             case "error":
                 level = Level.ERROR;
                 break;
-            case "fatal":
-                level = Level.FATAL;
-                break;
-            case "off":
-                level = Level.OFF;
-                break;
             default:
                 level = Level.INFO;
         }
-        LogManager.getRootLogger().setLevel(level);
-        logger.setLevel(level);
+        System.setProperty(org.slf4j.impl.SimpleLogger.DEFAULT_LOG_LEVEL_KEY, level.name());
+        System.setProperty("org.slf4j.simpleLogger.log.com.redhat.mqe.lib", level.name());
     }
 
     /**
