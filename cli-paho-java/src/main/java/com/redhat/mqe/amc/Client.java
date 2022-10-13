@@ -24,6 +24,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -239,7 +240,7 @@ abstract class Client {
     }
 
     protected Logger setUpLogger(String name) {
-        org.apache.logging.log4j.core.Logger log = (org.apache.logging.log4j.core.Logger) LoggerFactory.getLogger(name);
+        org.apache.logging.log4j.core.Logger log = (org.apache.logging.log4j.core.Logger) LogManager.getLogger(name);
         log.setLevel(Level.WARN);
         return log;
     }
