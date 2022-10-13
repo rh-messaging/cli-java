@@ -22,12 +22,8 @@ import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.core.config.CoreQueueConfiguration;
 import org.apache.activemq.artemis.core.server.MessageReference;
 import org.apache.activemq.artemis.core.server.Queue;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.SimpleLayout;
 import org.apache.qpid.jms.JmsConnectionFactory;
 import org.apache.qpid.jms.JmsQueue;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,12 +47,6 @@ import static org.awaitility.Awaitility.await;
 
 @Tag("issue")
 public class QPIDJMS484Test {
-    @BeforeAll
-    static void configureLogging() {
-        ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT);
-        LogManager.getRootLogger().addAppender(consoleAppender);
-    }
-
     @Test
     @ExtendWith(BrokerFixture.class)
     void testSendDispositionsAfterRecoverForUnacknowledgedMessages(@BrokerFixture.TempBroker Broker broker, @TempDir Path tempDir) throws Exception {
