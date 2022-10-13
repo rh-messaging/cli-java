@@ -1,8 +1,5 @@
 import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
 import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.SimpleLayout;
 import org.apache.qpid.jms.exceptions.JMSSecuritySaslException;
 import org.apache.qpid.jms.exceptions.JmsConnectionFailedException;
 import org.junit.jupiter.api.Assertions;
@@ -25,12 +22,6 @@ class QPIDJMS412Test {
 
     private static final String USER_NAME = "someUser";
     private static final String PASSWORD = "somePassword";
-
-    @BeforeAll
-    static void configureLogging() {
-        ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT);
-        LogManager.getRootLogger().addAppender(consoleAppender);
-    }
 
     @Test
     @Tag("issue")

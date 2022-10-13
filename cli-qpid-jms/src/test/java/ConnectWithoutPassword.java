@@ -17,11 +17,7 @@
  * limitations under the License.
  */
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.SimpleLayout;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import util.Broker;
 
@@ -32,13 +28,6 @@ import java.time.Duration;
 
 @SuppressWarnings("Duplicates")
 class ConnectWithoutPassword {
-
-    @BeforeAll
-    static void configureLogging() {
-        ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT);
-        LogManager.getRootLogger().addAppender(consoleAppender);
-    }
-
     @Test
     void reconnectOneServerNoAuthGuestNotConfigured() {
         try (Broker broker = new Broker()) {

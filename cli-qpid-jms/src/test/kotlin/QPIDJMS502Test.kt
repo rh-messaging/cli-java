@@ -19,11 +19,8 @@
 
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
-import org.apache.log4j.Level
-import org.apache.log4j.LogManager
 import org.apache.qpid.jms.JmsConnection
 import org.awaitility.Awaitility.await
-import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -35,6 +32,7 @@ import java.util.*
 import jakarta.jms.Connection
 import jakarta.jms.ConnectionFactory
 import jakarta.jms.Session
+import org.apache.logging.log4j.Level
 
 @Tag("issue")
 class QPIDJMS502Test {
@@ -59,11 +57,7 @@ class QPIDJMS502Test {
         val amqpPort1 = broker.addAMQPAcceptor()
         val amqpPort2 = broker.addAMQPAcceptor()
 
-        val ala = ArrayListAppender()
-        LogManager.getLogger(JmsConnection::class.java).let {
-            it.level = Level.INFO
-            it.addAppender(ala)
-        }
+        val ala = ArrayListAppender.installLogger(JmsConnection::class.java.name, Level.INFO)
 
         val f: ConnectionFactory = org.apache.qpid.jms.JmsConnectionFactory(
             "failover:(amqp://127.0.0.1:$amqpPort1,amqp://127.0.0.1:$amqpPort2)")
@@ -81,8 +75,7 @@ class QPIDJMS502Test {
             assertThat(connections.first().id).isNotEqualTo(oldId)
         }
 
-        val messages = ala.loggingEvents.map { it.renderedMessage }
-        assertThat(messages)
+        assertThat(ala.messages)
             .comparingElementsUsing(Correspondence.from(::regexpCorrespondence, "RegexpCorrespondence())"))
             .contains("Connection .* restored to server: .*")
 
@@ -98,13 +91,6 @@ class QPIDJMS502Test {
     }
 
     companion object {
-        @JvmStatic
-        @BeforeAll
-        internal fun configureLogging() {
-//            val consoleAppender = ConsoleAppender(SimpleLayout(), ConsoleAppender.SYSTEM_OUT)
-//            LogManager.getRootLogger().addAppender(consoleAppender)
-        }
-
         @JvmStatic
         fun regexpCorrespondence(actual: String?, expected: String?): Boolean {
             return actual!!.matches(Regex(expected!!))

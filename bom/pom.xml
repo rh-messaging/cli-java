@@ -33,7 +33,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <slfj.version>1.7.33</slfj.version>
+        <slf4j-api.version>2.0.3</slf4j-api.version>
+        <log4j-slf4j2-impl.version>2.19.0</log4j-slf4j2-impl.version>
         <jopt.version>5.0.4</jopt.version>
         <dagger.version>2.44</dagger.version>
         <jackson.version>2.13.4</jackson.version>
@@ -63,9 +64,20 @@
         <dependencies>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slfj.version}</version>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-slf4j2-impl</artifactId>
+                <version>${log4j-slf4j2-impl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-core</artifactId>
+                <version>2.19.0</version>
+            </dependency>
+
             <dependency>
                 <groupId>net.sf.jopt-simple</groupId>
                 <artifactId>jopt-simple</artifactId>
