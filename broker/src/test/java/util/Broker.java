@@ -25,9 +25,6 @@ import org.apache.activemq.artemis.core.config.ConfigurationUtils;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.spi.core.remoting.Acceptor;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.SimpleLayout;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.io.IOException;
@@ -89,11 +86,7 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
      * Configures a log4j appender if there isn't any, so that log messages flood the stdout
      */
     public static void configureLogging() {
-        if (LogManager.getRootLogger().getAllAppenders().hasMoreElements()) {
-            return;
-        }
-        ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT);
-        LogManager.getRootLogger().addAppender(consoleAppender);
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**

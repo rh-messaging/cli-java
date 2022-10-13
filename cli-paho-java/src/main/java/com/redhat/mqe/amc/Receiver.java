@@ -20,7 +20,7 @@
 package com.redhat.mqe.amc;
 
 import joptsimple.OptionParser;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
 import org.eclipse.paho.client.mqttv3.*;
 
 
