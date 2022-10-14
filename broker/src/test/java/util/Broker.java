@@ -184,6 +184,10 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
         return MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, mbeanInterface, false);
     }
 
+    /**
+     * The resulting AddressControl operations will throw java.lang.reflect.UndeclaredThrowableException
+     *  if the queried object does not exist yet. Use awaitilly to deal with that.
+     */
     public AddressControl makeAddressControl(String queueName) {
         SimpleString address = SimpleString.toSimpleString(queueName);
         try {
