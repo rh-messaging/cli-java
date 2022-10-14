@@ -46,7 +46,7 @@ class InteractionTest {
 
     @BeforeEach
     fun setUpMocks() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
 
         given(consumer.receive(anyLong()))
             .willReturn(message, null)
