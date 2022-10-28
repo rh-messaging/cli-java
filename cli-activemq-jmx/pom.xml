@@ -189,137 +189,15 @@
             </dependencies>
         </profile>
 
-        <profile>
-            <id>local</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <properties>
-                <library.version>2.0.0-SNAPSHOT</library.version>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.activemq</groupId>
-                    <artifactId>artemis-jms-client</artifactId>
-                    <version>${library.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.activemq</groupId>
-                    <artifactId>artemis-core-client</artifactId>
-                    <version>${library.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.activemq</groupId>
-                    <artifactId>artemis-commons</artifactId>
-                    <version>${library.version}</version>
-                </dependency>
-
-                <!-- ActiveMQ 6 -->
-                <dependency>
-                    <groupId>org.apache.activemq</groupId>
-                    <artifactId>activemq-broker</artifactId>
-                    <version>${activemq.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.apache.activemq</groupId>
-                    <artifactId>activemq-runtime-config</artifactId>
-                    <version>${activemq.version}</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <version>${plugin.install.version}</version>
-                        <executions>
-                            <execution>
-                                <id>install-external-artemis-jms-client</id>
-                                <phase>clean</phase>
-                                <configuration>
-                                    <file>${project.basedir}/libs/artemis-jms-client-2.0.0-SNAPSHOT.jar</file>
-                                    <repositoryLayout>default</repositoryLayout>
-                                    <groupId>org.apache.activemq</groupId>
-                                    <artifactId>artemis-jms-client</artifactId>
-                                    <version>${library.version}</version>
-                                    <packaging>jar</packaging>
-                                    <generatePom>true</generatePom>
-                                </configuration>
-                                <goals>
-                                    <goal>install-file</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>install-external-artemis-core-client</id>
-                                <phase>clean</phase>
-                                <configuration>
-                                    <file>${project.basedir}/libs/artemis-core-client-2.0.0-SNAPSHOT.jar</file>
-                                    <repositoryLayout>default</repositoryLayout>
-                                    <groupId>org.apache.activemq</groupId>
-                                    <artifactId>artemis-core-client</artifactId>
-                                    <version>${library.version}</version>
-                                    <packaging>jar</packaging>
-                                    <generatePom>true</generatePom>
-                                </configuration>
-                                <goals>
-                                    <goal>install-file</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>install-external-artemis-commons</id>
-                                <phase>clean</phase>
-                                <configuration>
-                                    <file>${project.basedir}/libs/artemis-commons-2.0.0-SNAPSHOT.jar</file>
-                                    <repositoryLayout>default</repositoryLayout>
-                                    <groupId>org.apache.activemq</groupId>
-                                    <artifactId>artemis-commons</artifactId>
-                                    <version>${library.version}</version>
-                                    <packaging>jar</packaging>
-                                    <generatePom>true</generatePom>
-                                </configuration>
-                                <goals>
-                                    <goal>install-file</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-
-        <profile>
-            <!--Not used at all. Creates tarball on demand. -->
-            <id>Delivery</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/main/assembly/dist-assembly.xml</descriptor>
-                            </descriptors>
-                            <appendAssemblyId>true</appendAssemblyId>
-                        </configuration>
-
-                        <executions>
-                            <execution>
-                                <id>dist-assembly</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
