@@ -21,6 +21,9 @@ set -x
 # limitations under the License.
 #
 
+java -jar cli-activemq-jmx/target/amqx-*.jar --help
+#java -jar cli-activemq-jmx/target/amqx-*.jar queue --host 127.0.0.1:1099 --username admin --password admin --action add --name 'test_default_username_right_password_right'
+
 java -jar cli-activemq/target/cli-activemq-1.2.2-SNAPSHOT-*.jar sender --address cli-activemq --log-msgs json --count 1
 java -jar cli-activemq/target/cli-activemq-1.2.2-SNAPSHOT-*.jar receiver --address cli-activemq --log-msgs json --count 1
 java -jar cli-activemq/target/cli-activemq-1.2.2-SNAPSHOT-*.jar sender --conn-username test --conn-ssl-verify-host false --conn-password test --msg-content msg no. %d --broker ssl://127.0.0.1:61617 --conn-auth-mechanisms PLAIN --timeout 30 --log-msgs json --log-lib trace --address message-basiccli_jms --count 10 --conn-ssl-trust-all true
@@ -32,6 +35,11 @@ java -jar cli-artemis-jms/target/cli-artemis-jms-1.2.2-SNAPSHOT-*.jar sender --c
 java -jar cli-paho-java/target/cli-paho-java-1.2.2-SNAPSHOT-*.jar sender --address cli-paho-java --log-msgs json --count 1
 
 cli_qpid_jms_jar=$(find cli-qpid-jms/target -name 'cli-qpid-jms-1.2.2-SNAPSHOT-*.jar' -not -name '*-tests.jar')
-java -jar ${cli_qpid_jms_jar} sender --address cli-qpid-jms --log-msgs json --count 1
-java -jar ${cli_qpid_jms_jar} receiver --address cli-qpid-jms --log-msgs json --count 1
-java -jar ${cli_qpid_jms_jar} sender --conn-username test --conn-ssl-verify-host false --conn-password test --msg-content msg no. %d --broker amqps://127.0.0.1:5673 --conn-auth-mechanisms PLAIN --timeout 30 --log-msgs json --log-lib trace --address message-basiccli_jms --count 10 --conn-ssl-trust-all true
+java -jar "${cli_qpid_jms_jar}" sender --address cli-qpid-jms --log-msgs json --count 1
+java -jar "${cli_qpid_jms_jar}" receiver --address cli-qpid-jms --log-msgs json --count 1
+java -jar "${cli_qpid_jms_jar}" sender --conn-username test --conn-ssl-verify-host false --conn-password test --msg-content msg no. %d --broker amqps://127.0.0.1:5673 --conn-auth-mechanisms PLAIN --timeout 30 --log-msgs json --log-lib trace --address message-basiccli_jms --count 10 --conn-ssl-trust-all true
+
+cli_protonj2=$(find cli-protonj2/target -name 'cli-protonj2-1.2.2-SNAPSHOT-*.jar')
+java -jar "${cli_protonj2}" sender --broker amqp://127.0.0.1 --address cli-qpid-jms --log-msgs dict --count 1
+java -jar "${cli_protonj2}" receiver --broker amqp://127.0.0.1 --address cli-qpid-jms --log-msgs dict --count 1
+#java -jar "${cli_protonj2}" sender --conn-username test --conn-ssl-verify-host false --conn-password test --msg-content msg no. %d --broker amqps://127.0.0.1:5673 --conn-auth-mechanisms PLAIN --timeout 30 --log-msgs json --log-lib trace --address message-basiccli_jms --count 10 --conn-ssl-trust-all true
