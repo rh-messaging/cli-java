@@ -32,7 +32,8 @@ if [ ! "$(ls -A /var/lib/amq7/etc)" ]; then
 fi
 
 # Log to tty to enable docker logs container-name
-sed -ie "s/logger.handlers=.*/logger.handlers=CONSOLE/g" ../etc/logging.properties
+# TODO: this no longer works with log4j2 logging
+#sed -ie "s/logger.handlers=.*/logger.handlers=CONSOLE/g" ../etc/logging.properties
 
 # Update min memory if the argument is passed
 if [[ "$ARTEMIS_MIN_MEMORY" ]]; then
