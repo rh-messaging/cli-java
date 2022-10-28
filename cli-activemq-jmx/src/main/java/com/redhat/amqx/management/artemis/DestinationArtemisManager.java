@@ -43,7 +43,7 @@ public class DestinationArtemisManager extends AbstractArtemisManager implements
         } else {
             reportJson = new JSONArray(queueNames.keySet()).toString();
         }
-        logger.info(formatter.convertJSON(reportJson));
+        System.out.println(formatter.convertJSON(reportJson));
     }
 
     @Override
@@ -135,7 +135,7 @@ public class DestinationArtemisManager extends AbstractArtemisManager implements
             addressName = destinationName;
         }
         if (destinationExists(destinationName)) {
-            logger.info(formatter.convertJSON(new JSONObject(getDestinationProperties(addressName, destinationName, NodeType.QUEUE)).toString()));
+            System.out.println(formatter.convertJSON(new JSONObject(getDestinationProperties(addressName, destinationName, NodeType.QUEUE)).toString()));
         } else {
             throw new DestinationException(String.format("Queue '%s' does not exist!", destinationName));
         }

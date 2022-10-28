@@ -43,7 +43,7 @@ public class AddressArtemisManager extends AbstractArtemisManager implements Des
         } else {
             reportJson = new JSONArray(addressNames).toString();
         }
-        logger.info(formatter.convertJSON(reportJson));
+        System.out.println(formatter.convertJSON(reportJson));
     }
 
     /**
@@ -102,7 +102,7 @@ public class AddressArtemisManager extends AbstractArtemisManager implements Des
     @Override
     public void getDestinationProperties(String addressName, String unused) throws Exception {
         if (destinationExists(addressName)) {
-            logger.info(formatter.convertJSON(new JSONObject(getDestinationProperties(addressName, null, NodeType.ADDRESS)).toString()));
+            System.out.println(formatter.convertJSON(new JSONObject(getDestinationProperties(addressName, null, NodeType.ADDRESS)).toString()));
         } else {
             throw new DestinationException(String.format("Address '%s' does not exist!", addressName));
         }
