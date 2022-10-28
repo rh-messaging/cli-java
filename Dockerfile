@@ -21,7 +21,3 @@ COPY cli-paho-java/target/cli-paho-java-1.2.2-SNAPSHOT-*.jar /main/cli-paho.jar
 
 COPY create_links.sh /main
 RUN bash /main/create_links.sh
-
-
-RUN groupadd cli-java && useradd -d /var/lib/cli-java -ms /bin/bash -g cli-java -G cli-java cli-java
-USER cli-java:cli-java
