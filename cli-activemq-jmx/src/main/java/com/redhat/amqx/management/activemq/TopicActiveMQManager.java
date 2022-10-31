@@ -50,9 +50,9 @@ public class TopicActiveMQManager extends AbstractActiveMQManager implements Des
     @Override
     public void listDestinations(boolean isVerbose) throws Exception {
         if (isVerbose) {
-            System.out.println(formatter.convertJSON(new JSONObject(listDestinationsWithProperties()).toString()));
+            formatter.printConvertedJson(new JSONObject(listDestinationsWithProperties()).toString());
         } else {
-            System.out.println(formatter.convertJSON(new JSONArray(listDestinationsWithoutProperties()).toString()));
+            formatter.printConvertedJson(new JSONArray(listDestinationsWithoutProperties()).toString());
         }
     }
 
@@ -92,7 +92,7 @@ public class TopicActiveMQManager extends AbstractActiveMQManager implements Des
     @Override
     public void getDestinationProperties(final String addressName, final String topicName) throws Exception {
         if (destinationExists(topicName)) {
-            System.out.println(formatter.convertJSON(getFormattedDestinationProperties(topicName)));
+            formatter.printConvertedJson(getFormattedDestinationProperties(topicName));
         } else {
             throw new DestinationException("Topic '" + topicName + "' does not exist");
         }

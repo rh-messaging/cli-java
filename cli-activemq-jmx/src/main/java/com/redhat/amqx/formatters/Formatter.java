@@ -11,4 +11,5 @@ public interface Formatter {
      * @return string format of given type
      */
     String convertJSON(String string);
+    void printConvertedJson(String json);
 }

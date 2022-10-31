@@ -43,24 +43,24 @@ public class BrokerArtemisManager extends AbstractArtemisManager implements Brok
     @Override
     public void getTransportConnectors() throws Exception {
         ActiveMQServerControl serverControl = getResolver(ArtemisResolver.class).getBrokerView();
-        System.out.println(formatter.convertJSON(serverControl.getConnectorsAsJSON()));
-        System.out.println(formatter.convertJSON(new JSONObject(serverControl.getConnectors()).toString()));
-        System.out.println(formatter.convertJSON(new JSONArray(serverControl.getAddressNames()).toString()));
+        formatter.printConvertedJson(serverControl.getConnectorsAsJSON());
+        formatter.printConvertedJson(new JSONObject(serverControl.getConnectors()).toString());
+        formatter.printConvertedJson(new JSONArray(serverControl.getAddressNames()).toString());
     }
 
     @Override
     public void getNetworkTopology() throws Exception {
         ActiveMQServerControl serverControl = getResolver(ArtemisResolver.class).getBrokerView();
-        System.out.println(formatter.convertJSON(serverControl.listNetworkTopology()));
+        formatter.printConvertedJson(serverControl.listNetworkTopology());
     }
 
     @Override
     public void getSessions(String connectionId) throws Exception {
         ActiveMQServerControl serverControl = getResolver(ArtemisResolver.class).getBrokerView();
         if (connectionId == null) {
-            System.out.println(formatter.convertJSON(serverControl.listAllSessionsAsJSON()));
+            formatter.printConvertedJson(serverControl.listAllSessionsAsJSON());
         } else {
-            System.out.println(formatter.convertJSON(serverControl.listSessionsAsJSON(connectionId)));
+            formatter.printConvertedJson(serverControl.listSessionsAsJSON(connectionId));
         }
     }
 
@@ -75,7 +75,7 @@ public class BrokerArtemisManager extends AbstractArtemisManager implements Brok
         allDestinationsMap.put("address", new JSONArray(getAddresses()));
         allDestinationsMap.put("queue", new JSONArray(getQueues().keySet()));
         allDestinationsMap.put("topic", new JSONArray(getTopics().keySet()));
-        System.out.println(formatter.convertJSON(new JSONObject(allDestinationsMap).toString()));
+        formatter.printConvertedJson(new JSONObject(allDestinationsMap).toString());
     }
 
     public void getAllBrokerDestinationsProperties() throws Exception {
@@ -94,7 +94,7 @@ public class BrokerArtemisManager extends AbstractArtemisManager implements Brok
             allDestinationsMap.put(address, getDestinationProperties(address, null, NodeType.ADDRESS));
         }
 
-        System.out.println(formatter.convertJSON(new JSONObject(allDestinationsMap).toString()));
+        formatter.printConvertedJson(new JSONObject(allDestinationsMap).toString());
     }
 
 }
