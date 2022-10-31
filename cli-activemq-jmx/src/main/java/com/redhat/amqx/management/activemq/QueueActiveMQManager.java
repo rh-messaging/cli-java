@@ -36,9 +36,9 @@ public class QueueActiveMQManager extends AbstractActiveMQManager implements Des
     @Override
     public void listDestinations(boolean isVerbose) throws Exception {
         if (isVerbose) {
-            logger.info(formatter.convertJSON(new JSONObject(listDestinationsWithProperties()).toString()));
+            formatter.printConvertedJson(new JSONObject(listDestinationsWithProperties()).toString());
         } else {
-            logger.info(formatter.convertJSON(new JSONArray(listDestinationsWithoutProperties()).toString()));
+            formatter.printConvertedJson(new JSONArray(listDestinationsWithoutProperties()).toString());
         }
 
     }
@@ -91,7 +91,7 @@ public class QueueActiveMQManager extends AbstractActiveMQManager implements Des
     @Override
     public void getDestinationProperties(final String addressName, final String queueName) throws Exception {
         if (destinationExists(queueName)) {
-            logger.info(formatter.convertJSON(getFormattedDestinationProperties(queueName)));
+            formatter.printConvertedJson(getFormattedDestinationProperties(queueName));
         } else {
             throw new DestinationException("Queue '" + queueName + "' does not exist");
         }

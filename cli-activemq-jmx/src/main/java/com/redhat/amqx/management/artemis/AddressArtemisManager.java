@@ -5,7 +5,6 @@ import com.redhat.amqx.management.Credentials;
 import com.redhat.amqx.management.DestinationManager;
 import com.redhat.amqx.management.exception.DestinationException;
 import org.apache.activemq.artemis.api.core.ActiveMQAddressDoesNotExistException;
-import org.apache.activemq.artemis.api.core.RoutingType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -43,7 +42,7 @@ public class AddressArtemisManager extends AbstractArtemisManager implements Des
         } else {
             reportJson = new JSONArray(addressNames).toString();
         }
-        logger.info(formatter.convertJSON(reportJson));
+        formatter.printConvertedJson(reportJson);
     }
 
     /**
@@ -102,7 +101,7 @@ public class AddressArtemisManager extends AbstractArtemisManager implements Des
     @Override
     public void getDestinationProperties(String addressName, String unused) throws Exception {
         if (destinationExists(addressName)) {
-            logger.info(formatter.convertJSON(new JSONObject(getDestinationProperties(addressName, null, NodeType.ADDRESS)).toString()));
+            formatter.printConvertedJson(new JSONObject(getDestinationProperties(addressName, null, NodeType.ADDRESS)).toString());
         } else {
             throw new DestinationException(String.format("Address '%s' does not exist!", addressName));
         }

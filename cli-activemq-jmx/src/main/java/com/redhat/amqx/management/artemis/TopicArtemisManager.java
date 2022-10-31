@@ -42,7 +42,7 @@ public class TopicArtemisManager extends AbstractArtemisManager implements Desti
         } else {
             reportJson = new JSONArray(topicNames.keySet()).toString();
         }
-        logger.info(formatter.convertJSON(reportJson));
+        formatter.printConvertedJson(reportJson);
     }
 
     @Override
@@ -124,7 +124,7 @@ public class TopicArtemisManager extends AbstractArtemisManager implements Desti
             addressName = destinationName;
         }
         if (destinationExists(destinationName)) {
-            logger.info(formatter.convertJSON(new JSONObject(getDestinationProperties(addressName, destinationName, NodeType.TOPIC)).toString()));
+            formatter.printConvertedJson(new JSONObject(getDestinationProperties(addressName, destinationName, NodeType.TOPIC)).toString());
         } else {
             throw new DestinationException(String.format("Topic '%s' does not exist!", destinationName));
         }
