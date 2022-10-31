@@ -194,7 +194,7 @@ abstract class AbstractMainTest : AbstractTest() {
         val senderParameters =
             "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
         val receiverParameters =
-            "receiver --log-msgs dict --broker $brokerUrl --address $address --msg-selector '' --count 1".split(" ")
+            "receiver --log-msgs dict --broker $brokerUrl --address $address --msg-selector= --count 1".split(" ")
                 .toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(10)) {
             print("Sending: ")
@@ -203,6 +203,37 @@ abstract class AbstractMainTest : AbstractTest() {
             main(receiverParameters + "--recv-browse true".split(" ").toTypedArray())
             print("Receiving: ")
             main(receiverParameters)
+        }
+    }
+
+    /**
+     * Sends two messages and then uses selector to receive the second message.
+     *
+     * If selector was (erroneously) not applied, the first message would be received here.
+     */
+    @Tag("external")
+    @Test
+    fun sendBrowseAndReceiveSingleMessageWithNonemptySelector() {
+        val senderParameters1 =
+            "sender --log-msgs dict --broker $brokerUrl --address $address --count 1 --msg-property=a~1".split(" ").toTypedArray()
+        val senderParameters2 =
+            "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
+        val receiverParameters =
+            "receiver / --log-msgs=dict / --broker=$brokerUrl / --address=$address / --msg-selector=a IS NULL / --timeout=2".split(" / ").toTypedArray()
+        assertTimeoutPreemptively(Duration.ofSeconds(10)) {
+            print("Sending: ")
+            main(senderParameters1)
+            main(senderParameters2)
+            print("Browsing: ")
+            val browsed = main(receiverParameters + "--recv-browse true".split(" ").toTypedArray())
+            assertThat(browsed).hasSize(1)
+            // can't assert empty properties, openwire adds its own,
+            //  `{__AMQ_CID=ID:fedora.jiridanek-42217-1666942674180-2:1}`
+            assertThat(browsed[0]["properties"] as Map<String, Any>).doesNotContainKey("a")
+            print("Receiving: ")
+            val received = main(receiverParameters)
+            assertThat(received).hasSize(1)
+            assertThat(received[0]["properties"] as Map<String, Any>).doesNotContainKey("a")
         }
     }
 

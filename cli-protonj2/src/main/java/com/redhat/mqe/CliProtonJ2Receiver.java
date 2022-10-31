@@ -34,6 +34,9 @@ import org.apache.qpid.protonj2.client.ReceiverOptions;
 import org.apache.qpid.protonj2.client.Sender;
 import org.apache.qpid.protonj2.client.Session;
 import org.apache.qpid.protonj2.client.exceptions.ClientException;
+import org.apache.qpid.protonj2.types.DescribedType;
+import org.apache.qpid.protonj2.types.Symbol;
+import org.apache.qpid.protonj2.types.UnknownDescribedType;
 import picocli.CommandLine;
 
 import java.io.IOException;
@@ -96,6 +99,9 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
 
     @CommandLine.Option(names = {"--recv-browse"}, description = "browse queued messages instead of receiving them")
     private String recvBrowseString = "false";
+
+    @CommandLine.Option(names = {"--msg-selector"}, description = "receive only messages matching a server-side selector")
+    private String selector;
 
     @CommandLine.Option(names = {"--count"}, description = "MD5, SHA-1, SHA-256, ...")
     private int count = 1;
@@ -223,6 +229,13 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
             receiverOptions.sourceOptions().durabilityMode(DurabilityMode.UNSETTLED_STATE);
             // proton cpp cli does also this
 //            receiverOptions.sourceOptions().expiryPolicy(ExpiryPolicy.NEVER);  // but that seems to happen automatically here
+        }
+
+        // Selectors are not part of core AMQP, Artemis supports `apache.org:selector-filter:string` extension
+        // https://www.amqp.org/specification/1.0/filters
+        if (selector != null && !selector.isEmpty()) { // other java clis ignore empty selector
+            DescribedType describedType = new UnknownDescribedType(Symbol.getSymbol("apache.org:selector-filter:string"), selector);
+            receiverOptions.sourceOptions().filters(Map.of("selector", describedType));
         }
 
         // todo: another usability, little hard to figure out this is analogue of jms to browse queues
