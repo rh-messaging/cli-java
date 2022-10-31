@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 env:
-  MAVEN_OPTS: "--settings .github/workflows/google-mirror-settings.xml"
+  MAVEN_ARGS: "--settings=.github/workflows/google-mirror-settings.xml"
 
 jobs:
   build:
