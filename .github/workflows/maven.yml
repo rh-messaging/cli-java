@@ -10,6 +10,7 @@ on:
     branches: [ main ]
 
 env:
+  # https://maven.apache.org/configure.html#maven_args-environment-variable
   MAVEN_ARGS: "-Dmaven.artifact.threads=42 --no-transfer-progress --settings=.github/workflows/google-mirror-settings.xml"
 
 jobs:
@@ -30,10 +31,10 @@ jobs:
       run: mvn -B package --file pom.xml
 
     - name: Install the qpid-jms subtree (needed for the next step)
-      run: mvn clean install -DskipTests -pl :cli-qpid-jms -am
+      run: mvn clean install -DskipTests -pl :cli-qpid-jms -am ${{env.MAVEN_ARGS}}
 
     - name: Run a single test (remember that JUnit5 issue)
-      run: mvn surefire:test -Dtest=QPIDJMS484Test -pl :cli-qpid-jms
+      run: mvn surefire:test -Dtest=QPIDJMS484Test -pl :cli-qpid-jms ${{env.MAVEN_ARGS}}
 
   test:
 
@@ -58,7 +59,7 @@ jobs:
       run: sleep 10
 
     - name: mvn package
-      run: mvn clean package -Ptests,coverage
+      run: mvn clean package -Ptests,coverage ${{env.MAVEN_ARGS}}
 
     - name: bash ./tests.sh
       run: bash ./tests.sh
