@@ -17,32 +17,15 @@
   ~ limitations under the License.
   -->
 
+<!--To make it easier not to use bintray.
+https://stackoverflow.com/questions/74258160/is-jcenter-down-permanently-31-oct-->
 <settings>
-    <profiles>
-        <profile>
-            <!--To make it easier not to use bintray.
-            https://stackoverflow.com/questions/74258160/is-jcenter-down-permanently-31-oct-->
-            <id>bintray</id>
-            <repositories>
-                <repository>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>bintray</id>
-                    <url>https://jcenter.bintray.com</url>
-                </repository>
-            </repositories>
-            <pluginRepositories>
-                <pluginRepository>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <id>bintray-plugins</id>
-                    <url>https://jcenter.bintray.com</url>
-                </pluginRepository>
-            </pluginRepositories>
-        </profile>
-
-    </profiles>
-
+    <mirrors>
+        <mirror>
+            <id>bintray-maven-central</id>
+            <name>Bintray Maven Central mirror</name>
+            <url>https://jcenter.bintray.com</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+    </mirrors>
 </settings>
