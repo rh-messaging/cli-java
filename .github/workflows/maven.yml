@@ -10,7 +10,7 @@ on:
     branches: [ main ]
 
 env:
-  MAVEN_ARGS: "--settings=.github/workflows/google-mirror-settings.xml"
+  MAVEN_ARGS: "-Dmaven.artifact.threads=42 --no-transfer-progress --settings=.github/workflows/google-mirror-settings.xml"
 
 jobs:
   build:
