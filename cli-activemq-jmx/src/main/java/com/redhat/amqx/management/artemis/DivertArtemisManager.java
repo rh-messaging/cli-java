@@ -49,7 +49,7 @@ public class DivertArtemisManager extends AbstractArtemisManager {
         } else {
             reportJson = new JSONArray(divertNames).toString();
         }
-        logger.info(formatter.convertJSON(reportJson));
+        formatter.printConvertedJson(reportJson);
     }
 
 
@@ -101,7 +101,7 @@ public class DivertArtemisManager extends AbstractArtemisManager {
             addressName = destinationName;
         }
         if (divertExists(destinationName)) {
-            logger.info(formatter.convertJSON(new JSONObject(getDestinationProperties(addressName, destinationName, NodeType.DIVERT)).toString()));
+            formatter.printConvertedJson(new JSONObject(getDestinationProperties(addressName, destinationName, NodeType.DIVERT)).toString());
         } else {
             throw new DestinationException(String.format("Divert '%s' does not exist!", destinationName));
         }
