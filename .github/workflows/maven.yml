@@ -11,7 +11,7 @@ on:
 
 env:
   # https://maven.apache.org/configure.html#maven_args-environment-variable
-  MAVEN_ARGS: "-Dmaven.artifact.threads=42 --no-transfer-progress --settings=.github/workflows/google-mirror-settings.xml"
+  MAVEN_ARGS: "-Dmaven.artifact.threads=42 --no-transfer-progress --settings=.github/workflows/google-repository-settings.xml"
 
 jobs:
   build:
