@@ -60,22 +60,22 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--msg-content-hashed"})
     private String msgContentHashedString = "false";
 
-    @CommandLine.Option(names = {"-b", "--broker"}, description = "MD5, SHA-1, SHA-256, ...")
+    @CommandLine.Option(names = {"-b", "--broker"}, description = "")
     private String broker = "MD5";
 
-    @CommandLine.Option(names = {"--conn-username"}, description = "MD5, SHA-1, SHA-256, ...")
+    @CommandLine.Option(names = {"--conn-username"}, description = "")
     private String connUsername = "MD5";
 
-    @CommandLine.Option(names = {"--conn-password"}, description = "MD5, SHA-1, SHA-256, ...")
+    @CommandLine.Option(names = {"--conn-password"}, description = "")
     private String connPassword = "MD5";
 
-    @CommandLine.Option(names = {"-a", "--address"}, description = "MD5, SHA-1, SHA-256, ...")
+    @CommandLine.Option(names = {"-a", "--address"}, description = "")
     private String address = "MD5";
 
-    @CommandLine.Option(names = {"--count"}, description = "MD5, SHA-1, SHA-256, ...")
+    @CommandLine.Option(names = {"--count"}, description = "")
     private int count = 1;
 
-    @CommandLine.Option(names = {"--timeout"}, description = "MD5, SHA-1, SHA-256, ...")
+    @CommandLine.Option(names = {"--timeout"}, description = "")
     private int timeout;
 
     @CommandLine.Option(names = {"--duration"})
@@ -106,7 +106,8 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--msg-ttl"})
     private Long msgTtl;
 
-    @CommandLine.Option(names = {"--msg-content-list-item"})
+    // e.g. `--msg-content-list-item --msg-content-list-item "String"`
+    @CommandLine.Option(names = {"--msg-content-list-item"}, arity = "0..1", fallbackValue = Main.CLI_JAVA_NULL_VALUE, converter = CliJavaNullValueConverter.class)
     private List<String> msgContentListItem;
 
     @CommandLine.Option(names = {"--msg-content-map-item"})
