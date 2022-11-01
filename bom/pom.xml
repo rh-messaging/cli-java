@@ -59,6 +59,7 @@
 
         <annotations.version>23.0.0</annotations.version>
         <checker-qual.version>3.26.0</checker-qual.version>
+        <powermock-reflect.version>2.0.9</powermock-reflect.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -241,6 +242,11 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${plugin.jacoco.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-reflect</artifactId>
+                <version>${powermock-reflect.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
