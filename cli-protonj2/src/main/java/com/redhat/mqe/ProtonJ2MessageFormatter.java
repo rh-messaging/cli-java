@@ -42,7 +42,7 @@ public class ProtonJ2MessageFormatter extends MessageFormatter {
         map.put("ttl", getTtl(message));
         map.put("absolute-expiry-time", message.absoluteExpiryTime());
         if (msgContentHashed) {
-            map.put("content", MessageFormatter.hash(formatObject(message.body())));
+            map.put("content", MessageFormatter.hash(message.body()));
         } else {
             map.put("content", message.body());
         }

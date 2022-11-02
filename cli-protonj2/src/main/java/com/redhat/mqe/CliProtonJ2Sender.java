@@ -57,8 +57,8 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--out"}, description = "MD5, SHA-1, SHA-256, ...")
     private Out out = Out.python;
 
-    @CommandLine.Option(names = {"--msg-content-hashed"})
-    private String msgContentHashedString = "false";
+    @CommandLine.Option(names = {"--msg-content-hashed"}, arity = "0..1")
+    private boolean msgContentHashed = false;
 
     @CommandLine.Option(names = {"-b", "--broker"}, description = "")
     private String broker = "MD5";
@@ -343,7 +343,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     }
 
     private void printMessage(Message<Object> message) throws ClientException {
-        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
+        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, msgContentHashed);
         switch (out) {
             case python:
                 switch (logMsgs) {

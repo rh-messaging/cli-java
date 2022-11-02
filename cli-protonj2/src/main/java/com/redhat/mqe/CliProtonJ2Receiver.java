@@ -27,7 +27,6 @@ import org.apache.qpid.protonj2.client.ConnectionOptions;
 import org.apache.qpid.protonj2.client.Delivery;
 import org.apache.qpid.protonj2.client.DistributionMode;
 import org.apache.qpid.protonj2.client.DurabilityMode;
-import org.apache.qpid.protonj2.client.ExpiryPolicy;
 import org.apache.qpid.protonj2.client.Message;
 import org.apache.qpid.protonj2.client.Receiver;
 import org.apache.qpid.protonj2.client.ReceiverOptions;
@@ -70,8 +69,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--out"}, description = "MD5, SHA-1, SHA-256, ...")
     private Out out = Out.python;
 
-    @CommandLine.Option(names = {"--msg-content-hashed"})
-    private String msgContentHashedString = "false";
+    @CommandLine.Option(names = {"--msg-content-hashed"}, arity = "0..1")
+    private boolean msgContentHashed = false;
 
     @CommandLine.Option(names = {"-b", "--broker"}, description = "MD5, SHA-1, SHA-256, ...")
     private String broker = "MD5";
@@ -382,7 +381,7 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     private void outputReceivedMessage(int i, Delivery delivery) throws ClientException, IOException {
         Message<Object> message = delivery.message();
         int messageFormat = delivery.messageFormat();
-        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, stringToBool(msgContentHashedString));
+        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, msgContentHashed);
         if (msgContentToFile != null) {
             // todo?
             Path file = Paths.get(msgContentToFile + "_" + i);
