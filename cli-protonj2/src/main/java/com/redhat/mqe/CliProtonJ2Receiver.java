@@ -75,12 +75,6 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"-b", "--broker"}, description = "MD5, SHA-1, SHA-256, ...")
     private String broker = "MD5";
 
-    @CommandLine.Option(names = {"--conn-username"}, description = "MD5, SHA-1, SHA-256, ...")
-    private String connUsername = "MD5";
-
-    @CommandLine.Option(names = {"--conn-password"}, description = "MD5, SHA-1, SHA-256, ...")
-    private String connPassword = "MD5";
-
     @CommandLine.Option(names = {"--conn-clientid"})
     private String connClientId;
 
@@ -108,10 +102,6 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--timeout"}, description = "MD5, SHA-1, SHA-256, ...")
     private int timeout;
 
-    @CommandLine.Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
-    // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
-    private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
-
     @CommandLine.Option(names = {"--process-reply-to"})
     private boolean processReplyTo = false;
 
@@ -136,14 +126,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--msg-content-to-file"})
     private String msgContentToFile;
 
-    @CommandLine.Option(names = {"--conn-reconnect"})
-    private String reconnectString = "false";
-
     @CommandLine.Option(names = {"--conn-prefetch"})
     private Integer connPrefetch;
-
-    @CommandLine.Option(names = {"--conn-heartbeat"})
-    private Long connHeartbeat;
 
     public CliProtonJ2Receiver() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
@@ -195,25 +179,10 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
             client = Client.create();
         }
 
-        final ConnectionOptions options = new ConnectionOptions();
-        if (stringToBool(reconnectString)) {
-            options.reconnectEnabled(true);
-        }
-        if (connHeartbeat != null) {
-            options.idleTimeout(2 * connHeartbeat, TimeUnit.SECONDS);
-        }
-        options.user(connUsername);
-        options.password(connPassword);
-        for (AuthMechanism mech : connAuthMechanisms) {
-            options.saslOptions().addAllowedMechanism(mech.name());
-        }
 
-        // TODO: what do I actually need/want here?
-        // TODO, same problem, lib has Symbols in ClientConstants class
-        // cli proton cpp does not do this, btw
-//        options.desiredCapabilities(
-//            "sole-connection-for-container", "DELAYED_DELIVERY", "SHARED-SUBS", "ANONYMOUS-RELAY"
-//        );
+        final ConnectionOptions options = getConnectionOptions();
+
+
 
         /*
         TODO API usability, hard to ask for queue when dealing with broker that likes to autocreate topics
