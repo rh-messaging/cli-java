@@ -167,10 +167,30 @@ class ProtonJ2MainTest : AbstractMainTest() {
     override val prefix: String
         get() = "ProtonJ2MainTest"
 
+    @Disabled("Connector for protonj2 is not implemented properly")
+    override fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {
+        return
+    }
+
+    override fun sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions: String) {
+        if (receiverDynamicOptions.contains("--tx-endloop-action recover")) {
+            return
+        }
+        super.sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions)
+    }
+
+    override fun sendAndReceiveWithAllSenderCLISwitches(senderDynamicOptions: String) {
+        if (senderDynamicOptions.contains("--tx-endloop-action recover")) {
+            return
+        }
+        super.sendAndReceiveWithAllSenderCLISwitches(senderDynamicOptions)
+    }
+
     /**
      * Large message streaming from/to java.io.{Input,Output}Stream is artemis-jms-client only
      */
     @Test
+    @Disabled("Option --msg-content-stream true is not implemented in cli-protonj2")
     fun sendLargeMessageStreamFile() {
         val file = File.createTempFile(address, null)
         val outputDirectory = Files.createTempDirectory(address)
@@ -203,7 +223,7 @@ class ProtonJ2MainTest : AbstractMainTest() {
      * Large message streaming from/to java.io.{Input,Output}Stream is artemis-jms-client only
      */
     @Test
-    @Disabled("https://github.com/rh-messaging/cli-java/issues/50")
+    @Disabled("Option --msg-content-stream true is not implemented in cli-protonj2")
     fun sendAndReceiveLargeMessageStreamFile() {
         val file = File.createTempFile(address, "input")
         val outputDirectory = Files.createTempDirectory(address)
