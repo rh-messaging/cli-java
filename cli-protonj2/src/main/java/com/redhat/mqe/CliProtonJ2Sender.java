@@ -36,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import static com.redhat.mqe.lib.ClientOptionManager.QUEUE_PREFIX;
 import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
@@ -63,12 +62,6 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"-b", "--broker"}, description = "")
     private String broker = "MD5";
 
-    @CommandLine.Option(names = {"--conn-username"}, description = "")
-    private String connUsername = "MD5";
-
-    @CommandLine.Option(names = {"--conn-password"}, description = "")
-    private String connPassword = "MD5";
-
     @CommandLine.Option(names = {"-a", "--address"}, description = "")
     private String address = "MD5";
 
@@ -80,10 +73,6 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
 
     @CommandLine.Option(names = {"--duration"})
     private Float duration = 0.0f;
-
-    @CommandLine.Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
-    // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
-    private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
 
     @CommandLine.Option(names = {"--msg-property"})  // picocli Map options works for this, sounds like
     private List<String> msgProperties = new ArrayList<>();
@@ -169,12 +158,6 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--duration-mode"})
     private DurationModeSender durationMode = DurationModeSender.afterSend;
 
-    @CommandLine.Option(names = {"--conn-reconnect"})
-    private String reconnectString = "false";
-
-    @CommandLine.Option(names = {"--conn-heartbeat"})
-    private Long connHeartbeat;
-
     public CliProtonJ2Sender() {
         this.messageFormatter = new ProtonJ2MessageFormatter();
     }
@@ -210,21 +193,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
 
         final Client client = Client.create();
 
-        final ConnectionOptions options = new ConnectionOptions();
-        // TODO typo in javadoc: This option enables or disables reconnection to a remote remote peer after IO errors. To control
-        // TODO API: unclear if reconnect is on or off by default (public static final boolean DEFAULT_RECONNECT_ENABLED = false;)
-        if (stringToBool(reconnectString)) {
-            options.reconnectEnabled(true);
-        }
-        if (connHeartbeat != null) {
-            // TODO finish that 2x investigation for heartbeats and document it somewhere (jira?)
-            options.idleTimeout(2 * connHeartbeat, TimeUnit.SECONDS);
-        }
-        options.user(connUsername);
-        options.password(connPassword);
-        for (AuthMechanism mech : connAuthMechanisms) {
-            options.saslOptions().addAllowedMechanism(mech.name());
-        }
+        final ConnectionOptions options = getConnectionOptions();
 
         /*
         TODO API usablility, hard to ask for queue when dealing with broker that likes to autocreate topics
