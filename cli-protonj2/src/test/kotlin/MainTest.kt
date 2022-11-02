@@ -35,7 +35,6 @@ class ProtonJ2ClientListener(private val clientListener: ClientListener) : Proto
     }
 }
 
-@Disabled("fails")
 @Tag("external")
 class ProtonJ2MainTest : AbstractMainTest() {
 
@@ -162,10 +161,18 @@ class ProtonJ2MainTest : AbstractMainTest() {
             else -> throw NotImplementedError(args[0])
         }
         val returnCode = main.execute(*(args.drop(1).toTypedArray()))
+        if (returnCode != 0) {
+            System.exit(returnCode);
+        }
     }
 
     override val prefix: String
         get() = "ProtonJ2MainTest"
+
+    @Test
+    @Disabled("Client does not use jms-style url parameters")
+    override fun sendLargeMessageChangingLimit() {
+    }
 
     @Disabled("Connector for protonj2 is not implemented properly")
     override fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {

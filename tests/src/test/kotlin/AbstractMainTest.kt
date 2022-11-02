@@ -240,7 +240,7 @@ abstract class AbstractMainTest : AbstractTest() {
     @Tag("external")
     @Test
     fun sendSingleMessageWithoutProtocolInBrokerUrl() {
-        val brokerUrl = brokerUrl.substringAfter(":")
+        val brokerUrl = brokerUrl.substringAfterLast("/")
         val senderParameters =
             "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
         assertTimeoutPreemptively(Duration.ofSeconds(10)) {
@@ -301,7 +301,7 @@ abstract class AbstractMainTest : AbstractTest() {
 
     @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
-    @CsvFileSource(resources = arrayOf("/receiver.csv"))
+    @CsvFileSource(resources = ["/receiver.csv"])
     open fun sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions: String) {
         println(receiverDynamicOptions)
         val senderParameters =
@@ -319,7 +319,7 @@ abstract class AbstractMainTest : AbstractTest() {
 
     @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
-    @CsvFileSource(resources = arrayOf("/sender.csv"))
+    @CsvFileSource(resources = ["/sender.csv"])
     open fun sendAndReceiveWithAllSenderCLISwitches(senderDynamicOptions: String) {
         println(senderDynamicOptions)
         val senderParameters =
@@ -594,7 +594,7 @@ abstract class AbstractMainTest : AbstractTest() {
     //    }
 
     @Tag("external")
-    @SetEnvironmentVariable(key = "PN_TRACE_FRM", value = "true")
+    // @SetEnvironmentVariable(key = "PN_TRACE_FRM", value = "true")
     @Test
     @Throws(
         Throwable::class
@@ -733,7 +733,7 @@ abstract class AbstractMainTest : AbstractTest() {
 
         val initialTime = Instant.now()
 
-        var gotBlocked = false;
+        var gotBlocked = false
         while (Duration.between(initialTime, Instant.now()).toSeconds() < 10) {
             TimeUnit.SECONDS.sleep(2)
             if (addressControl.messageCount > 0
