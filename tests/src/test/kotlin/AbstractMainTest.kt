@@ -302,7 +302,7 @@ abstract class AbstractMainTest : AbstractTest() {
     @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/receiver.csv"))
-    fun sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions: String) {
+    open fun sendAndReceiveWithAllReceiverCLISwitches(receiverDynamicOptions: String) {
         println(receiverDynamicOptions)
         val senderParameters =
             "sender --log-msgs dict --broker $brokerUrl --address $address --count 1".split(" ").toTypedArray()
@@ -320,7 +320,7 @@ abstract class AbstractMainTest : AbstractTest() {
     @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/sender.csv"))
-    fun sendAndReceiveWithAllSenderCLISwitches(senderDynamicOptions: String) {
+    open fun sendAndReceiveWithAllSenderCLISwitches(senderDynamicOptions: String) {
         println(senderDynamicOptions)
         val senderParameters =
             "sender --broker $brokerUrl --address $address".split(" ").toTypedArray()
@@ -338,7 +338,7 @@ abstract class AbstractMainTest : AbstractTest() {
     @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
     @CsvFileSource(resources = arrayOf("/connector.csv"))
-    fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {
+    open fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {
         println(senderDynamicOptions)
         val connectorPrameters =
             "connector --broker $brokerUrl --address $address".split(" ").toTypedArray()
