@@ -76,7 +76,11 @@ public class Content {
                 this.key = parsedValue.substring(0, parsedValue.indexOf(splitter));
                 val = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
             } else {
-                if (parsedValue.startsWith("~~")) {
+                if (parsedValue == null) {
+                    this.type = void.class;
+                    this.value = null;
+                    return;
+                } else if (parsedValue.startsWith("~~")) {
                     contentType = "String";
                 }
                 this.type = Utils.getClassType(contentType, parsedValue, true);
