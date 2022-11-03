@@ -46,7 +46,7 @@ import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
     version = "1.0.0",
     description = "Opens AMQP connections"
 )
-public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<Integer> {
+public class CliProtonJ2Sender extends CliProtonJ2SenderReceiverConnector implements Callable<Integer> {
 
     private final ProtonJ2MessageFormatter messageFormatter;
 

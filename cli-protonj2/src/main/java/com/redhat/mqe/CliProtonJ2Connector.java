@@ -33,7 +33,7 @@ import java.util.concurrent.Callable;
     version = "1.0.0",
     description = "Opens AMQP connections"
 )
-class CliProtonJ2Connector implements Callable<Integer> {
+class CliProtonJ2Connector extends CliProtonJ2SenderReceiverConnector implements Callable<Integer> {
     @CommandLine.Option(names = {"-b", "--broker"}, description = "")
     private String broker = "";
 
@@ -56,9 +56,7 @@ class CliProtonJ2Connector implements Callable<Integer> {
 
         final Client client = Client.create();
 
-        final ConnectionOptions options = new ConnectionOptions();
-        options.user(System.getProperty("USER"));
-        options.password(System.getProperty("PASSWORD"));
+        final ConnectionOptions options = getConnectionOptions();
 
         try (Connection connection = client.connect(serverHost, serverPort, options)) {
         }

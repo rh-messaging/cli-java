@@ -37,7 +37,7 @@ class Main implements Callable<Integer> {
     }
 }
 
-class CliProtonJ2SenderReceiver {
+class CliProtonJ2SenderReceiverConnector {
     @CommandLine.Option(names = {"--conn-username"}, description = "")
     private String connUsername = "MD5";
     @CommandLine.Option(names = {"--conn-password"}, description = "")
