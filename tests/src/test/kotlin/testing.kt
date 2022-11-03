@@ -60,7 +60,7 @@ fun assertNoSystemExit(executable: () -> Unit) {
         executable()
 
     } catch (e: SystemExitingWithStatus) {
-        fail("System.exit has been called")
+        fail("System.exit has been called", e)
     } finally {
         System.setSecurityManager(previousManager)
     }
