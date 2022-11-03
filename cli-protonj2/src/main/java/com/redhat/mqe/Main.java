@@ -11,8 +11,10 @@ import picocli.CommandLine.Command;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 @Command(
     name = "cli-protonj2",
@@ -55,10 +57,18 @@ class CliProtonJ2SenderReceiverConnector {
     private String reconnectString = "false";
     @CommandLine.Option(names = {"--conn-heartbeat"})
     private Long connHeartbeat;
-    @CommandLine.Option(names = {"--conn-ssl-verify-host"}, arity = "0..1")
-    private Boolean connSslVerifyHost;
-    @CommandLine.Option(names = {"--conn-ssl-trust-all"}, arity = "0..1")
-    private Boolean connSslTrustAll;
+    @CommandLine.Option(names = {"--conn-ssl"}, arity = "0..1")
+    private Boolean connSsl = false;
+    @CommandLine.Option(names = {"--conn-ssl-certificate"}, arity = "0..1")
+    private String connSslCertificate;
+    @CommandLine.Option(names = {"--conn-ssl-password"}, arity = "0..1")
+    private String connSslPassword;
+    @CommandLine.Option(names = {"--conn-ssl-verify-peer"}, arity = "0..1")
+    private Boolean connSslVerifyPeer;
+    @CommandLine.Option(names = {"--conn-ssl-verify-peer-skip-trust-check"}, arity = "0..1")
+    private Boolean connSslTrustCheck;
+    @CommandLine.Option(names = {"--conn-ssl-verify-peer-name"}, arity = "0..1")
+    private Boolean connSslCheckName;
 
     protected boolean stringToBool(String string) {
         boolean bool = string.equalsIgnoreCase("true") || string.equalsIgnoreCase("yes");
@@ -82,16 +92,35 @@ class CliProtonJ2SenderReceiverConnector {
         for (AuthMechanism mech : connAuthMechanisms) {
             options.saslOptions().addAllowedMechanism(mech.name());
         }
-        if (connSslVerifyHost != null || connSslTrustAll != null) {
+
+        // TODO: why is there both `options.sslEnabled and options.sslOptions().sslEnabled()`?
+        boolean anyTlsOptionSet = Stream.of(
+            connSslCertificate,
+            connSslTrustCheck,
+            connSslCheckName,
+            connSslPassword,
+            connSslVerifyPeer
+        ).anyMatch(Objects::nonNull);
+        if (connSsl || anyTlsOptionSet) {
             options.sslEnabled(true);
         }
 
-        // TODO: why is there both `options.sslEnabled and options.sslOptions().sslEnabled()`?
-        if (connSslVerifyHost != null) {
-            options.sslOptions().verifyHost(connSslVerifyHost);
+        if (connSslCertificate != null) {
+            options.sslOptions().keyStoreLocation(connSslCertificate);
         }
-        if (connSslTrustAll != null) {
-            options.sslOptions().trustAll(connSslTrustAll);
+        if (connSslPassword != null) {
+            options.sslOptions().keyStorePassword(connSslPassword);
+        }
+
+        if (connSslTrustCheck != null) {
+            options.sslOptions().verifyHost(connSslTrustCheck);
+            options.sslOptions().trustAll(!connSslTrustCheck);
+        }
+        if (connSslVerifyPeer != null) {
+            options.sslOptions().verifyHost(connSslVerifyPeer);
+        }
+        if (connSslCheckName != null) {
+            options.sslOptions().trustAll(!connSslCheckName);
         }
 
         // TODO: what do I actually need/want here?
