@@ -126,6 +126,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
      */
     @Override
     public Integer call() throws Exception {
+        configureLogging();
+
         duration *= 1000;  // convert to milliseconds
 
         String prefix = "";

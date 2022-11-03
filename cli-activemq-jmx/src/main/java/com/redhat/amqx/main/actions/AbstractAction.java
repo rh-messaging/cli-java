@@ -1,6 +1,6 @@
 package com.redhat.amqx.main.actions;
 
-import com.redhat.amqx.main.LogConfigurator;
+import com.redhat.mqe.lib.LogConfigurator;
 import com.redhat.amqx.management.Credentials;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.HelpFormatter;
