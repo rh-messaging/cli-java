@@ -20,6 +20,7 @@
 package com.redhat.mqe
 
 import AbstractMainTest
+import assertNoSystemExit
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Tag
@@ -191,6 +192,16 @@ class ProtonJ2MainTest : AbstractMainTest() {
             return
         }
         super.sendAndReceiveWithAllSenderCLISwitches(senderDynamicOptions)
+    }
+
+    override fun sendSingleMessageAllTrustingTls() {
+        assertNoSystemExit {
+            val senderParameters =
+                "sender --log-msgs dict --broker $sslBrokerUrl --address $address --conn-ssl-verify-peer false --conn-ssl-verify-peer-name false --count 1".split(" "
+                ).toTypedArray()
+            print("Sending: ")
+            main(senderParameters)
+        }
     }
 
     /**
