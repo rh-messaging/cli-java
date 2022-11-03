@@ -44,8 +44,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +57,7 @@ import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
     version = "1.0.0",
     description = "Opens AMQP connections"
 )
-public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<Integer> {
+public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiverConnector implements Callable<Integer> {
 
     private final ProtonJ2MessageFormatter messageFormatter;
 
