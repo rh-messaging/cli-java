@@ -20,5 +20,5 @@
 package com.redhat.mqe;
 
 public enum LogMsgs {
-    dict, interop
+    dict, interop, json
 }

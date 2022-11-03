@@ -46,24 +46,10 @@ import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
     version = "1.0.0",
     description = "Opens AMQP connections"
 )
-public class CliProtonJ2Sender extends CliProtonJ2SenderReceiverConnector implements Callable<Integer> {
-
-    private final ProtonJ2MessageFormatter messageFormatter;
-
-    @CommandLine.Option(names = {"--log-msgs"}, description = "message reporting style")
-    private LogMsgs logMsgs = LogMsgs.dict;
-
-    @CommandLine.Option(names = {"--out"}, description = "MD5, SHA-1, SHA-256, ...")
-    private Out out = Out.python;
-
-    @CommandLine.Option(names = {"--msg-content-hashed"}, arity = "0..1")
-    private boolean msgContentHashed = false;
+public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<Integer> {
 
     @CommandLine.Option(names = {"-b", "--broker"}, description = "")
     private String broker = "MD5";
-
-    @CommandLine.Option(names = {"-a", "--address"}, description = "")
-    private String address = "MD5";
 
     @CommandLine.Option(names = {"--count"}, description = "")
     private int count = 1;
@@ -159,11 +145,11 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiverConnector implem
     private DurationModeSender durationMode = DurationModeSender.afterSend;
 
     public CliProtonJ2Sender() {
-        this.messageFormatter = new ProtonJ2MessageFormatter();
+        super();
     }
 
     public CliProtonJ2Sender(ProtonJ2MessageFormatter messageFormatter) {
-        this.messageFormatter = messageFormatter;
+        super(messageFormatter);
     }
 
     /**
@@ -308,32 +294,6 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiverConnector implem
             }
         } else if (transacted) {
             session.rollbackTransaction();
-        }
-    }
-
-    private void printMessage(Message<Object> message) throws ClientException {
-        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, msgContentHashed);
-        switch (out) {
-            case python:
-                switch (logMsgs) {
-                    case dict:
-                        messageFormatter.printMessageAsPython(messageDict);
-                        break;
-                    case interop:
-                        messageFormatter.printMessageAsPython(messageDict);
-                        break;
-                }
-                break;
-            case json:
-                switch (logMsgs) {
-                    case dict:
-                        messageFormatter.printMessageAsJson(messageDict);
-                        break;
-                    case interop:
-                        messageFormatter.printMessageAsJson(messageDict);
-                        break;
-                }
-                break;
         }
     }
 
