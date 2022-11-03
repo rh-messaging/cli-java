@@ -1,12 +1,15 @@
 package com.redhat.mqe;
 
 import org.apache.qpid.protonj2.client.ConnectionOptions;
+import org.apache.qpid.protonj2.client.Message;
+import org.apache.qpid.protonj2.client.exceptions.ClientException;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -95,6 +98,57 @@ class CliProtonJ2SenderReceiverConnector {
 //            "sole-connection-for-container", "DELAYED_DELIVERY", "SHARED-SUBS", "ANONYMOUS-RELAY"
 //        );
         return options;
+    }
+}
+
+class CliProtonJ2SenderReceiver extends CliProtonJ2SenderReceiverConnector {
+    protected final ProtonJ2MessageFormatter messageFormatter;
+
+    // todo: what does --out=python --log-msgs=json mean?
+    @CommandLine.Option(names = {"--out"}, description = "")
+    protected Out out = Out.python;
+
+    @CommandLine.Option(names = {"--log-msgs"}, description = "message reporting style")
+    protected LogMsgs logMsgs = LogMsgs.dict;
+
+    @CommandLine.Option(names = {"--msg-content-hashed"}, arity = "0..1")
+    protected boolean msgContentHashed = false;
+
+    @CommandLine.Option(names = {"-a", "--address"}, description = "")
+    protected String address = "";
+
+    public CliProtonJ2SenderReceiver() {
+        this.messageFormatter = new ProtonJ2MessageFormatter();
+    }
+
+    public CliProtonJ2SenderReceiver(ProtonJ2MessageFormatter messageFormatter) {
+        this.messageFormatter = messageFormatter;
+    }
+
+    protected void printMessage(Message<Object> message) throws ClientException {
+        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, msgContentHashed);
+        switch (out) {
+            case python:
+                switch (logMsgs) {
+                    case dict:
+                        messageFormatter.printMessageAsPython(messageDict);
+                        break;
+                    case interop:
+                        messageFormatter.printMessageAsPython(messageDict);
+                        break;
+                }
+                break;
+            case json:
+                switch (logMsgs) {
+                    case dict:
+                        messageFormatter.printMessageAsJson(messageDict);
+                        break;
+                    case interop:
+                        messageFormatter.printMessageAsJson(messageDict);
+                        break;
+                }
+                break;
+        }
     }
 }
 

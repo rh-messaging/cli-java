@@ -57,18 +57,7 @@ import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
     version = "1.0.0",
     description = "Opens AMQP connections"
 )
-public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiverConnector implements Callable<Integer> {
-
-    private final ProtonJ2MessageFormatter messageFormatter;
-
-    @CommandLine.Option(names = {"--log-msgs"}, description = "MD5, SHA-1, SHA-256, ...")
-    private LogMsgs logMsgs = LogMsgs.dict;
-
-    @CommandLine.Option(names = {"--out"}, description = "MD5, SHA-1, SHA-256, ...")
-    private Out out = Out.python;
-
-    @CommandLine.Option(names = {"--msg-content-hashed"}, arity = "0..1")
-    private boolean msgContentHashed = false;
+public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<Integer> {
 
     @CommandLine.Option(names = {"-b", "--broker"}, description = "MD5, SHA-1, SHA-256, ...")
     private String broker = "MD5";
@@ -84,9 +73,6 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiverConnector impl
 
     @CommandLine.Option(names = {"--subscriber-unsubscribe"})
     private String subscriberUnsubscribeString = "false";
-
-    @CommandLine.Option(names = {"-a", "--address"}, description = "MD5, SHA-1, SHA-256, ...")
-    private String address = "MD5";
 
     @CommandLine.Option(names = {"--recv-browse"}, description = "browse queued messages instead of receiving them")
     private String recvBrowseString = "false";
@@ -128,11 +114,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiverConnector impl
     private Integer connPrefetch;
 
     public CliProtonJ2Receiver() {
-        this.messageFormatter = new ProtonJ2MessageFormatter();
+        super();
     }
 
     public CliProtonJ2Receiver(ProtonJ2MessageFormatter messageFormatter) {
-        this.messageFormatter = messageFormatter;
+        super(messageFormatter);
     }
 
     /**
@@ -348,33 +334,11 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiverConnector impl
     private void outputReceivedMessage(int i, Delivery delivery) throws ClientException, IOException {
         Message<Object> message = delivery.message();
         int messageFormat = delivery.messageFormat();
-        Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, msgContentHashed);
         if (msgContentToFile != null) {
             // todo?
             Path file = Paths.get(msgContentToFile + "_" + i);
             Files.write(file, message.body().toString().getBytes(StandardCharsets.UTF_8));
         }
-        switch (out) {
-            case python:
-                switch (logMsgs) {
-                    case dict:
-                        messageFormatter.printMessageAsPython(messageDict);
-                        break;
-                    case interop:
-                        messageFormatter.printMessageAsPython(messageDict);
-                        break;
-                }
-                break;
-            case json:
-                switch (logMsgs) {
-                    case dict:
-                        messageFormatter.printMessageAsJson(messageDict);
-                        break;
-                    case interop:
-                        messageFormatter.printMessageAsJson(messageDict);
-                        break;
-                }
-                break;
-        }
+        printMessage(message);
     }
 }
