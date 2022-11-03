@@ -138,9 +138,6 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     @CommandLine.Option(names = {"--sync-mode"})
     private SyncMode syncMode;
 
-    @CommandLine.Option(names = {"--log-lib"})
-    private LogLib logLib;
-
     @CommandLine.Option(names = {"--duration-mode"})
     private DurationModeSender durationMode = DurationModeSender.afterSend;
 
@@ -156,7 +153,9 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
      * This is the main function of the client, as called by the cli options handling library.
      */
     @Override
-    public Integer call() throws Exception { // your business logic goes here...
+    public Integer call() throws Exception {
+        configureLogging();
+
         duration *= 1000;  // convert to milliseconds
 
         String prefix = "";

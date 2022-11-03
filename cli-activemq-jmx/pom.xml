@@ -68,6 +68,11 @@
             <artifactId>commons-cli</artifactId>
             <version>${commons-cli.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.redhat.cli-java</groupId>
+            <artifactId>lib</artifactId>
+        </dependency>
     </dependencies>
 
     <profiles>

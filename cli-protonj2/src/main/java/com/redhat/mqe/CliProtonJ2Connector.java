@@ -45,6 +45,8 @@ class CliProtonJ2Connector extends CliProtonJ2SenderReceiverConnector implements
 
     @Override
     public Integer call() throws Exception {
+        configureLogging();
+
         String prefix = "";
         if (!broker.startsWith("amqp://") && !broker.startsWith("amqps://")) {
             prefix = "amqp://";

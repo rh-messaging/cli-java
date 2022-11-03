@@ -1,5 +1,6 @@
 package com.redhat.mqe;
 
+import com.redhat.mqe.lib.LogConfigurator;
 import org.apache.qpid.protonj2.client.ConnectionOptions;
 import org.apache.qpid.protonj2.client.Message;
 import org.apache.qpid.protonj2.client.exceptions.ClientException;
@@ -41,6 +42,8 @@ class Main implements Callable<Integer> {
 }
 
 class CliProtonJ2SenderReceiverConnector {
+    @CommandLine.Option(names = {"--log-lib"})
+    private LogLib logLib = LogLib.off;
     @CommandLine.Option(names = {"--conn-username"}, description = "")
     private String connUsername = "MD5";
     @CommandLine.Option(names = {"--conn-password"}, description = "")
@@ -98,6 +101,16 @@ class CliProtonJ2SenderReceiverConnector {
 //            "sole-connection-for-container", "DELAYED_DELIVERY", "SHARED-SUBS", "ANONYMOUS-RELAY"
 //        );
         return options;
+    }
+
+    protected void configureLogging() {
+        switch (logLib) {
+            case trace:
+                LogConfigurator.trace();
+                break;
+            case off:
+                break;
+        }
     }
 }
 
