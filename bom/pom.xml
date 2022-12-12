@@ -33,7 +33,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <slf4j-api.version>2.0.3</slf4j-api.version>
+        <slf4j-api.version>2.0.5</slf4j-api.version>
         <log4j-slf4j2-impl.version>2.19.0</log4j-slf4j2-impl.version>
         <jopt.version>5.0.4</jopt.version>
         <dagger.version>2.44.2</dagger.version>
