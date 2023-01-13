@@ -54,7 +54,7 @@
         <plugin.jar.version>3.3.0</plugin.jar.version>
         <plugin.jacoco.version>0.8.8</plugin.jacoco.version>
         <plugin.shade.version>3.4.1</plugin.shade.version>
-        <plugin.surefire.version>3.0.0-M7</plugin.surefire.version>
+        <plugin.surefire.version>3.0.0-M8</plugin.surefire.version>
         <plugin.versions.version>2.7</plugin.versions.version>
 
         <annotations.version>23.1.0</annotations.version>
