@@ -57,7 +57,7 @@
         <plugin.surefire.version>3.0.0-M8</plugin.surefire.version>
         <plugin.versions.version>2.7</plugin.versions.version>
 
-        <annotations.version>23.1.0</annotations.version>
+        <annotations.version>24.0.0</annotations.version>
         <checker-qual.version>3.28.0</checker-qual.version>
         <powermock-reflect.version>2.0.9</powermock-reflect.version>
     </properties>
