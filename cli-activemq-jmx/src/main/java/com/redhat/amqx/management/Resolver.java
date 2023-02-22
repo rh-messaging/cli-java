@@ -1,5 +1,7 @@
 package com.redhat.amqx.management;
 
+import javax.management.ObjectName;
+
 /**
  * Interface for resolving view management
  * objects like queues, topics, broker information.
@@ -17,6 +19,8 @@ public interface Resolver<T, R, S, U, V> {
     S getTopicView(String addressName, String topicName) throws Exception;
 
     U getAddressView(String addressName) throws Exception;
+
+    public ObjectName getAddressObjectName(String addressName) throws Exception;
 
     V getDivertView(String addressName, String divertName) throws Exception;
 
