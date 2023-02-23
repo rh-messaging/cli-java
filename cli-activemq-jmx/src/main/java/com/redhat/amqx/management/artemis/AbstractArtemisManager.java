@@ -8,7 +8,6 @@ import com.redhat.amqx.management.ObjectReader;
 import com.redhat.amqx.management.AbstractConnectionManager;
 import com.redhat.amqx.management.Credentials;
 import com.redhat.amqx.management.Resolver;
-import org.apache.activemq.artemis.api.core.ActiveMQAddressDoesNotExistException;
 import org.apache.activemq.artemis.api.core.management.ActiveMQServerControl;
 import org.apache.activemq.artemis.api.core.management.AddressControl;
 import org.apache.activemq.artemis.api.core.management.DivertControl;
@@ -20,6 +19,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.management.ObjectName;
 import java.io.IOException;
 import java.util.*;
 
@@ -176,8 +176,8 @@ public class AbstractArtemisManager extends AbstractConnectionManager {
             }
         }
 
-        AddressControl addressControl = (AddressControl) getResolver().getAddressView(addressName);
-        propertiesMap.putAll(objectReader.getObjectProperties(addressControl, excludeMethods));
+        ObjectName addressObjectName = getResolver().getAddressObjectName(addressName);
+        propertiesMap.putAll(objectReader.getRawObjectProperties(mBeanServerConnection, addressObjectName, excludeMethods));
         propertiesMap.put("address-settings", new JSONObject(getServerControlMBean().getAddressSettingsAsJSON(addressName)));
         return propertiesMap;
     }

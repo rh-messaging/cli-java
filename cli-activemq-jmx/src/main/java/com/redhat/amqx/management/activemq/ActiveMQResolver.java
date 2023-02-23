@@ -58,6 +58,12 @@ public class ActiveMQResolver implements Resolver<BrokerViewMBean, QueueViewMBea
     }
 
     @Override
+    public ObjectName getAddressObjectName(String addressName) throws Exception {
+        System.err.println("Does not exist for AMQ!");
+        return null;
+    }
+
+    @Override
     public QueueViewMBean getDivertView(String addressName, String divertName) throws Exception {
         System.err.println("Does not exist for AMQ!");
         return null;
