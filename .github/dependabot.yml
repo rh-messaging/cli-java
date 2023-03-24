@@ -31,7 +31,7 @@ updates:
     schedule:
       interval: "daily"
   - package-ecosystem: "docker"
-    labels: "image"
+    labels: ["image"]
     directory: "/"
     schedule:
       interval: "daily"
