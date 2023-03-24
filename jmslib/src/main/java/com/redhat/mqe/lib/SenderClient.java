@@ -79,7 +79,9 @@ public class SenderClient extends CoreClient {
             Session session = (transaction == null || transaction.equals("none")) ?
                 this.createSession(senderOptions, connection, false) : this.createSession(senderOptions, connection, true);
             connection.start();
-            MessageProducer msgProducer = session.createProducer(this.getDestination());
+
+            boolean anonymousProducer = Utils.convertOptionToBoolean(senderOptions.getOption(ClientOptions.CONN_ANONYMOUS_PRODUCER).getValue());
+            MessageProducer msgProducer = anonymousProducer ? session.createProducer(null) : session.createProducer(this.getDestination());
             setMessageProducer(senderOptions, msgProducer);
 
             // Calculate msg-rate from COUNT & DURATION
@@ -104,7 +106,11 @@ public class SenderClient extends CoreClient {
 
                 // Send messages
                 try {
-                    msgProducer.send(message);
+                    if (anonymousProducer) {
+                        msgProducer.send(getDestination(), message);
+                    } else {
+                        msgProducer.send(message);
+                    }
                 } catch (Exception e) {
                     switch (e.getCause().getClass().getName()) {
                         case "org.apache.qpid.jms.provider.exceptions.ProviderDeliveryReleasedException":

@@ -145,6 +145,7 @@ public abstract class ClientOptions {
     public static final String CONN_TCP_NO_DELAY = "conn-tcp-no-delay";                   // wireFormat.tcpNoDelayEnabled
     public static final String CONN_TIGHT_ENCODING_ENA = "conn-tight-encoding-ena";      // wireFormat.tightEncodingEnabled
     public static final String CONN_WATCH_TOPIC_ADVISORIES = "conn-watch-topic-advisories";
+    public static final String CONN_ANONYMOUS_PRODUCER = "conn-anonymous-producer";
 
     // TODO Not implemented by client libraries
 //  static final String CON_SSL_PROTOCOL = "conn-ssl-protocol";
