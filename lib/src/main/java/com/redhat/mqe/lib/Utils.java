@@ -294,4 +294,8 @@ public class Utils {
         return myObj;
     }
 
+    public static boolean convertOptionToBoolean(String optionStringValue) {
+        String optionValue = optionStringValue.toLowerCase();
+        return (optionValue.equals("true") || optionValue.equals("yes"));
+    }
 }

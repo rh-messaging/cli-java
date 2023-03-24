@@ -155,7 +155,7 @@ public class ReceiverClient extends CoreClient {
         try {
             session.unsubscribe(durableSubscriberName);
         } catch (JMSException e) {
-            LOG.error("Error while unsubscribing durable subscriptor " + durableSubscriberName);
+            LOG.error("Error while unsubscribing durable subscriber " + durableSubscriberName);
             e.printStackTrace();
         } finally {
             close(session);
