@@ -51,9 +51,36 @@ bash build_docker.sh $(date '+%Y-%m-%d')
 
 ## List of Java clis
 
-* qpid-jms (AMQP 1.0)
-* activemq-client (OpenWire)
-* artemis-jms-client (Artemis Core)
+| maven module     | messaging library                                                                                      | protocol (JMS version) | notes            |
+|------------------|--------------------------------------------------------------------------------------------------------|------------------------|------------------|
+| cli-activemq     | [activemq-client](https://deps.dev/maven/org.apache.activemq%3Aactivemq-client)                        | OpenWire (JMS v1.1)    | javax.jms API    |
+| cli-activemq-jmx | [artemis-core-client](https://deps.dev/maven/org.apache.activemq%3Aartemis-core-client)                | JMX management         |                  |
+| cli-artemis-jms  | [artemis-jms-client](https://deps.dev/maven/org.apache.activemq%3Aartemis-jms-client)                  | Artemis Core           | javax.jms API    |
+| cli-paho-java    | [eclipse.paho.client.mqttv3](https://deps.dev/maven/org.eclipse.paho%3Aorg.eclipse.paho.client.mqttv3) | MQTT v3                |                  |
+| cli-protonj2     | [protonj2-client](https://deps.dev/maven/org.apache.qpid%3Aprotonj2-client)                            | AMQP 1.0               | "imperative API" |
+| cli-qpid-jms     | [qpid-jms-client](https://deps.dev/maven/org.apache.qpid%3Aqpid-jms-client)                            | AMQP 1.0 (JMS v2.0)    | jakarta.jms API  |
+
+## Additional maven modules
+
+| maven module |                                                                             |
+|--------------|-----------------------------------------------------------------------------|
+| parent       | common maven configuration for child modules, parent of all other modules   |
+| bom          | contains dependencyManagement pom section with dependency versions          |
+| broker       | embedded artemis-server broker for use in selftests                         |
+| tests        | test dependency of cli-* projects, contains shared test code                |
+| lib          | shared code that does not depend on JMS                                     |
+| jmslib       | shared code that depends on javax.jms API                                   |
+| jakartalib   | shared code that depends on jakarta.jmx API                                 |
+| cli          | the ClientListener interface for use in client selftests (messages as Maps) |
+
+## Directories
+
+| directory |                                                            |
+|-----------|------------------------------------------------------------|
+| .github   | GitHub Actions CI configurations, dependabot.yml file      |
+| image     | helper scripts for Dockerfile/Containerfile to build image |
+| scripts   | helper scripts for CI jobs                                 |
+
 
 ## Related projects
 
