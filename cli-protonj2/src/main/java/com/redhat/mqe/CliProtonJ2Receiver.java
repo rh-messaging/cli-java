@@ -83,8 +83,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
     @CommandLine.Option(names = {"--count"}, description = "MD5, SHA-1, SHA-256, ...")
     private int count = 1;
 
-    @CommandLine.Option(names = {"--timeout"}, description = "MD5, SHA-1, SHA-256, ...")
-    private int timeout;
+    @CommandLine.Option(names = {"--timeout"}, description = "Timeout in seconds to wait before exiting, it is reset after every successful send/receive/connect")
+    private int timeout = -1;
 
     @CommandLine.Option(names = {"--process-reply-to"})
     private boolean processReplyTo = false;
@@ -251,11 +251,8 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 }
 
                 final Delivery delivery;
-                if (timeout == 0) {
-                    delivery = receiver.receive();  // todo: can default it to -1
-                } else {
-                    delivery = receiver.receive(timeout, TimeUnit.SECONDS);
-                }
+                // workaround https://issues.apache.org/jira/browse/PROTON-2697
+                delivery = receiver.receive(timeout, (timeout == -1) ? TimeUnit.MILLISECONDS : TimeUnit.SECONDS);
 
                 if (delivery == null) {
                     break;
