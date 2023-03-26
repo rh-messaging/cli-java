@@ -8,6 +8,14 @@
 
 cli-java is a collection of commandline messaging clients suitable for interacting with Message Oriented Middleware.
 
+## Requirements
+
+* Java 11+
+* Maven 3
+* for [tcnative](https://netty.io/wiki/forked-tomcat-native.html) dynamic library, [outdated openssl 1.0 is required](https://github.com/netty/netty-tcnative/issues/551)
+  * on Fedora 37, execute `sudo dnf install -y apr https://kojipkgs.fedoraproject.org//packages/compat-openssl10/1.0.2o/11.fc33/x86_64/compat-openssl10-1.0.2o-11.fc33.x86_64.rpm`
+  * or, enable use of [BoringSSL](https://github.com/google/boringssl) static library instead of the dynamic one, with `-P tcnative-boringssl-static` profile to maven
+
 ## Getting started
 
     mvn clean package  # compile without executing external tests (tests that require broker)
