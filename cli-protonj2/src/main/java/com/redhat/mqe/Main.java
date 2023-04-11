@@ -28,8 +28,6 @@ import java.util.stream.Stream;
     }
 )
 class Main implements Callable<Integer> {
-    public static final String CLI_JAVA_NULL_VALUE = "CLI_JAVA_" + CommandLine.Option.NULL_VALUE;
-
     @Override
     public Integer call() throws Exception { // your business logic goes here...
         return 0;
