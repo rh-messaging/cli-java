@@ -47,6 +47,7 @@ public class SenderOptions extends ClientOptions {
             new Option(PROPERTY_TYPE, "", "PTYPE", "String", "specify the type of message property"),
             new Option(MSG_PROPERTY, "", "KEY=PVALUE", "", "specify message property as KEY=VALUE (use '~' instead of '=' for auto-casting)"),
             new Option(CONTENT_TYPE, "", "CTYPE", "String", "specify type of the actual content type"),
+            new Option(CONN_ANONYMOUS_PRODUCER, "", "ANONYMOUS", "no", "create anonymous (no queue specified) producer"),
             new Option(MSG_CONTENT_TYPE, "", "MSGTYPE", "", "type of JMSMessageBody to use in header"),
             new Option(MSG_CONTENT_FROM_FILE, "", "PATH", "", "specify filename to load content from"),
             new Option(MSG_CONTENT, "", "CONTENT", "", "actual content fed to message body"),

@@ -79,7 +79,9 @@ public class SenderClient extends CoreClient {
             Session session = (transaction == null || transaction.equals("none")) ?
                 this.createSession(senderOptions, connection, false) : this.createSession(senderOptions, connection, true);
             connection.start();
-            MessageProducer msgProducer = session.createProducer(this.getDestination());
+
+            boolean anonymousProducer = Utils.convertOptionToBoolean(senderOptions.getOption(ClientOptions.CONN_ANONYMOUS_PRODUCER).getValue());
+            MessageProducer msgProducer = anonymousProducer ? session.createProducer(null) : session.createProducer(this.getDestination());
             setMessageProducer(senderOptions, msgProducer);
 
             // Calculate msg-rate from COUNT & DURATION
@@ -104,7 +106,11 @@ public class SenderClient extends CoreClient {
 
                 // Send messages
                 try {
-                    msgProducer.send(message);
+                    if (anonymousProducer) {
+                        msgProducer.send(getDestination(), message);
+                    } else {
+                        msgProducer.send(message);
+                    }
                 } catch (Exception e) {
                     switch (e.getCause().getClass().getName()) {
                         case "org.apache.qpid.jms.provider.exceptions.ProviderDeliveryReleasedException":
@@ -165,7 +171,7 @@ public class SenderClient extends CoreClient {
                 doTransaction(session, senderOptions.getOption(ClientOptions.TX_ENDLOOP_ACTION).getValue());
             }
         } catch (JMSException | IllegalArgumentException jmse) {
-            LOG.error("Error while sending a message!", jmse.getMessage());
+            LOG.error("Error while sending a message! {}", jmse.getMessage());
             jmse.printStackTrace();
             System.exit(1);
         } finally {
@@ -185,8 +191,7 @@ public class SenderClient extends CoreClient {
     protected static void setMessageProducer(ClientOptions senderOptions, MessageProducer producer) {
         try {
             // set delivery mode - durable/non-durable
-            String deliveryModeArg = senderOptions.getOption(ClientOptions.MSG_DURABLE).getValue().toLowerCase();
-            int deliveryMode = (deliveryModeArg.equals("true") || deliveryModeArg.equals("yes"))
+            int deliveryMode = Utils.convertOptionToBoolean(senderOptions.getOption(ClientOptions.MSG_DURABLE).getValue())
                 ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT;
             producer.setDeliveryMode(deliveryMode);
             // set time to live of message if provided

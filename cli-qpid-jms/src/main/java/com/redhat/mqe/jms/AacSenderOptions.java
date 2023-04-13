@@ -75,7 +75,8 @@ public class AacSenderOptions extends AacClientOptions {
             // TODO
             new Option(SYNC_MODE, "", "SYNCMODE", "action", "synchronization mode: none/session/action/persistent/transient"),
             new Option(CAPACITY, "", "CAPACITY", "-1", "sender|receiver capacity (no effect in jms atm)"),
-            new Option(ON_RELEASE, "", "ACTION", "fail", "fail|ignore|retry action to perform if message is released by receiver")
+            new Option(ON_RELEASE, "", "ACTION", "fail", "fail|ignore|retry action to perform if message is released by receiver"),
+            new Option(CONN_ANONYMOUS_PRODUCER, "", "ANONYMOUS", "no", "create anonymous (no queue specified) producer")
         ));
     }
 
