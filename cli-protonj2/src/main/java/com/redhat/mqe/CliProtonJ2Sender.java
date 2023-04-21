@@ -82,7 +82,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private Long msgTtl;
 
     // e.g. `--msg-content-list-item --msg-content-list-item "String"`
-    @CommandLine.Option(names = {"--msg-content-list-item"}, arity = "0..1", fallbackValue = Main.CLI_JAVA_NULL_VALUE, converter = CliJavaNullValueConverter.class)
+    @CommandLine.Option(names = {"--msg-content-list-item"}, arity = "0..1", fallbackValue = CommandLine.Option.NULL_VALUE)
     private List<String> msgContentListItem;
 
     @CommandLine.Option(names = {"--msg-content-map-item"})
