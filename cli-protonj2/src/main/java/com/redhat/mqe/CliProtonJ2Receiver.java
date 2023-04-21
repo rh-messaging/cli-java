@@ -251,8 +251,7 @@ public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Ca
                 }
 
                 final Delivery delivery;
-                // workaround https://issues.apache.org/jira/browse/PROTON-2697
-                delivery = receiver.receive(timeout, (timeout == -1) ? TimeUnit.MILLISECONDS : TimeUnit.SECONDS);
+                delivery = receiver.receive(timeout, TimeUnit.SECONDS);
 
                 if (delivery == null) {
                     break;
