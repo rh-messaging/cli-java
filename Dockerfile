@@ -32,6 +32,11 @@ LABEL name="Red Hat Messagign QE - Java CLI Image" \
 
 USER root
 
+# install fallocate for use by claire tests
+RUN microdnf -y --setopt=install_weak_deps=0 --setopt=tsflags=nodocs install \
+    util-linux \
+    && microdnf clean all -y
+
 RUN mkdir /licenses 
 COPY ./LICENSE /licenses/LICENSE.txt
 COPY ./image/bin /usr/local/bin
