@@ -165,7 +165,7 @@ public class SenderClient extends CoreClient {
                 doTransaction(session, senderOptions.getOption(ClientOptions.TX_ENDLOOP_ACTION).getValue());
             }
         } catch (JMSException | IllegalArgumentException jmse) {
-            LOG.error("Error while sending a message!", jmse.getMessage());
+            LOG.error("Error while sending a message! {}", jmse.getMessage());
             jmse.printStackTrace();
             System.exit(1);
         } finally {
@@ -185,8 +185,7 @@ public class SenderClient extends CoreClient {
     protected static void setMessageProducer(ClientOptions senderOptions, MessageProducer producer) {
         try {
             // set delivery mode - durable/non-durable
-            String deliveryModeArg = senderOptions.getOption(ClientOptions.MSG_DURABLE).getValue().toLowerCase();
-            int deliveryMode = (deliveryModeArg.equals("true") || deliveryModeArg.equals("yes"))
+            int deliveryMode = Utils.convertOptionToBoolean(senderOptions.getOption(ClientOptions.MSG_DURABLE).getValue())
                 ? DeliveryMode.PERSISTENT : DeliveryMode.NON_PERSISTENT;
             producer.setDeliveryMode(deliveryMode);
             // set time to live of message if provided
