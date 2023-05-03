@@ -32,9 +32,16 @@
     <artifactId>cli-protonj2</artifactId>
     <packaging>jar</packaging>
 
+       <repositories>
+     <repository>
+       <id>staging</id>
+<url>https://repository.apache.org/content/repositories/orgapacheqpid-1258</url>
+     </repository>
+   </repositories>
+
     <properties>
         <bundle.symbolic.name.suffix>jms</bundle.symbolic.name.suffix>
-        <protonj2.version>1.0.0-M14</protonj2.version>
+        <protonj2.version>1.0.0-M15</protonj2.version>
         <jar.main.class>com.redhat.mqe.Main</jar.main.class>
         <library.version>${protonj2.version}</library.version>
         <tcnative.version>2.0.39.Final</tcnative.version>
