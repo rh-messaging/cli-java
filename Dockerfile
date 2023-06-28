@@ -7,7 +7,7 @@ ARG IMAGE_BUILD=registry.access.redhat.com/ubi${UBI_VERSION}/openjdk-${OPENJDK_V
 ARG IMAGE_BASE=registry.access.redhat.com/ubi${UBI_VERSION}/openjdk-${OPENJDK_VERSION}-runtime:${UBI_RUNTIME_TAG}
 
 #DEV FROM $IMAGE_BUILD AS build
-FROM registry.access.redhat.com/ubi9/openjdk-17:1.15-1 AS build
+FROM registry.access.redhat.com/ubi9/openjdk-17:1.15-1.1686736679 AS build
 
 USER root
 COPY . /app
