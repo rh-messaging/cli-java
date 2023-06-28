@@ -25,7 +25,7 @@ RUN mkdir targets && \
     echo "package info:("$(ls cli-*/target/cli-*.jar)")" >> VERSION.txt
 
 #DEV FROM $IMAGE_BASE
-FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:1.15-1
+FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:1.15-1.1686736681
 
 LABEL name="Red Hat Messagign QE - Java CLI Image" \
       run="podman run --rm -ti <image_name:tag> /bin/bash cli-*"
