@@ -5,9 +5,10 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, qpid-jms-1.x ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, qpid-jms-1.x ]
+  workflow_dispatch:
 
 jobs:
   build:
