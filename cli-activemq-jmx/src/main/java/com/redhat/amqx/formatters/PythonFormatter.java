@@ -22,7 +22,9 @@ public class PythonFormatter implements Formatter {
         json = json.replaceAll("'?[Ff]alse'?", "False");
         return json;
     }
-
+    public void printConvertedJson(String json) {
+        System.out.println(convertJSON(json));
+    }
 }
 
 

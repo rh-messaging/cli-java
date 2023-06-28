@@ -20,18 +20,21 @@
 package util;
 
 import org.apache.activemq.artemis.api.core.SimpleString;
+import org.apache.activemq.artemis.api.core.management.AddressControl;
+import org.apache.activemq.artemis.api.core.management.ObjectNameBuilder;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.ConfigurationUtils;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.activemq.artemis.spi.core.remoting.Acceptor;
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.SimpleLayout;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+import javax.management.MBeanServer;
+import javax.management.MBeanServerInvocationHandler;
+import javax.management.ObjectName;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.nio.file.Files;
@@ -41,6 +44,8 @@ import java.nio.file.StandardCopyOption;
 
 // https://activemq.apache.org/artemis/docs/latest/embedding-activemq.html
 public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableResource {
+    // Use same MBeanServer instance that broker is using (don't create new)
+    private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
     public Path tempDir;
     public EmbeddedActiveMQ embeddedBroker = new EmbeddedActiveMQ();
     public Configuration configuration = new ConfigurationImpl();
@@ -89,11 +94,7 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
      * Configures a log4j appender if there isn't any, so that log messages flood the stdout
      */
     public static void configureLogging() {
-        if (LogManager.getRootLogger().getAllAppenders().hasMoreElements()) {
-            return;
-        }
-        ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT);
-        LogManager.getRootLogger().addAppender(consoleAppender);
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     /**
@@ -174,6 +175,22 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
             socket.setReuseAddress(true);
             socket.bind(new InetSocketAddress(0));
             return socket.getLocalPort();
+        }
+    }
+
+    protected Object createProxy(final ObjectName objectName,
+                                 final Class mbeanInterface,
+                                 final MBeanServer mbeanServer) {
+        return MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, mbeanInterface, false);
+    }
+
+    public AddressControl makeAddressControl(String queueName) {
+        SimpleString address = SimpleString.toSimpleString(queueName);
+        try {
+            AddressControl addressControl = (AddressControl) createProxy(ObjectNameBuilder.DEFAULT.getAddressObjectName(address), AddressControl.class, mBeanServer);
+            return addressControl;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

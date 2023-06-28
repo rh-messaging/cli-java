@@ -17,11 +17,7 @@
  * limitations under the License.
  */
 
-import org.apache.log4j.ConsoleAppender;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.SimpleLayout;
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -39,12 +35,6 @@ import javax.jms.TopicSubscriber;
 import java.nio.file.Path;
 
 class QPIDJMS451Test {
-    @BeforeAll
-    static void configureLogging() {
-        ConsoleAppender consoleAppender = new ConsoleAppender(new SimpleLayout(), ConsoleAppender.SYSTEM_OUT);
-        LogManager.getRootLogger().addAppender(consoleAppender);
-    }
-
     @Test
     @ExtendWith(BrokerFixture.class)
     void testSessionRecoverWithDurableSub(@BrokerFixture.TempBroker Broker broker, @TempDir Path tempDir) throws Exception {

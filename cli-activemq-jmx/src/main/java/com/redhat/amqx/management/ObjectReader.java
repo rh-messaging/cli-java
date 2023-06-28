@@ -6,6 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanAttributeInfo;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -100,7 +108,10 @@ public class ObjectReader {
             throw new DestinationException(
                     String.format("Unable to access '%s' of '%s' object!", object.getClass(), method.getName()));
         } catch (Throwable e) {
-            logger.debug(e.getCause().toString());
+            logger.debug(e.toString());
+            if (e.getCause() != null) {
+                logger.debug(e.getCause().toString());
+            }
         }
         return methodPropertyMap;
     }
@@ -167,6 +178,37 @@ public class ObjectReader {
                 propertiesMap.putAll(tmpMap);
             }
         }
+        return propertiesMap;
+    }
+
+    public Map<String, Object> getRawObjectProperties(MBeanServerConnection mBeanServerConnection, ObjectName objectName, List<String> excludeMethodList) throws DestinationException {
+        Map<String, Object> propertiesMap = new HashMap<>();
+
+        MBeanInfo info;
+        try {
+            info = mBeanServerConnection.getMBeanInfo(objectName);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+        for (MBeanAttributeInfo attributeInfo : info.getAttributes()) {
+            String attributeName = attributeInfo.getName();
+
+            // get rid of get/is+lowercase first letter
+            String propertyName = getPropertyNameByMethod(attributeName, 0);
+
+            Object value = null;
+            try {
+                value = mBeanServerConnection.getAttribute(objectName, attributeName);
+                propertiesMap.put(propertyName, value);
+            } catch (MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException |
+                     IOException e) {
+
+                e.printStackTrace();
+            } catch (Throwable e) {
+                logger.debug(e.toString());
+            }
+        }
+
         return propertiesMap;
     }
 }

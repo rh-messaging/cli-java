@@ -1,0 +1,44 @@
+name: Build and Push Image
+on:
+  push:
+    branches:
+      - 'main'
+
+env:
+  IMAGE_NAME: cli-java
+  IMAGE_REGISTRY: quay.io
+  IMAGE_NAMESPACE: rhmessagingqe
+
+jobs:
+  build:
+    name: Build and push image
+    runs-on: ubuntu-22.04
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Build Image
+      id: build-image
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image: ${{ env.IMAGE_NAME }}
+        tags: latest ${{ github.sha }} ${{ github.ref_name }}
+        archs: amd64, arm64, ppc64le, s390x
+        containerfiles: |
+          ./Dockerfile
+
+    - name: Push To quay.io
+      id: push-to-quay
+      uses: redhat-actions/push-to-registry@v2
+      with:
+        image: ${{ steps.build-image.outputs.image }}
+        tags: ${{ steps.build-image.outputs.tags }}
+        registry: ${{ env.IMAGE_REGISTRY }}/${{ env.IMAGE_NAMESPACE }}
+        username: ${{ secrets.QUAY_USER }}
+        password: ${{ secrets.QUAY_TOKEN }}
+
+    - name: Print images URL
+      run: echo "Images pushed to ${{ steps.push-to-quay.outputs.registry-paths }}"

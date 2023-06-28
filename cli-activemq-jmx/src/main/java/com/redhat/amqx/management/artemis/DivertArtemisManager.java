@@ -2,22 +2,14 @@ package com.redhat.amqx.management.artemis;
 
 import com.redhat.amqx.main.NodeType;
 import com.redhat.amqx.management.Credentials;
-import com.redhat.amqx.management.DestinationManager;
 import com.redhat.amqx.management.exception.DestinationException;
-import org.apache.activemq.artemis.api.core.ActiveMQAddressDoesNotExistException;
-import org.apache.activemq.artemis.api.core.ActiveMQNonExistentQueueException;
-import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.api.core.management.AddressControl;
-import org.apache.activemq.artemis.api.core.management.DivertControl;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Destination object management for Apache Artemis/AMQ7 broker.
@@ -57,7 +49,7 @@ public class DivertArtemisManager extends AbstractArtemisManager {
         } else {
             reportJson = new JSONArray(divertNames).toString();
         }
-        logger.info(formatter.convertJSON(reportJson));
+        formatter.printConvertedJson(reportJson);
     }
 
 
@@ -109,7 +101,7 @@ public class DivertArtemisManager extends AbstractArtemisManager {
             addressName = destinationName;
         }
         if (divertExists(destinationName)) {
-            logger.info(formatter.convertJSON(new JSONObject(getDestinationProperties(addressName, destinationName, NodeType.DIVERT)).toString()));
+            formatter.printConvertedJson(new JSONObject(getDestinationProperties(addressName, destinationName, NodeType.DIVERT)).toString());
         } else {
             throw new DestinationException(String.format("Divert '%s' does not exist!", destinationName));
         }

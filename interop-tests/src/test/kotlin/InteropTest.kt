@@ -20,6 +20,8 @@
 import com.google.common.truth.Truth
 import com.google.common.truth.Truth.assertThat
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -28,6 +30,7 @@ import java.util.stream.Stream
 import kotlin.reflect.full.companionObject
 
 
+@Disabled("This no longer works, esp due to jmslib/jakartalib clashes")
 class InteropTest : AbstractTest() {
     override val prefix: String = "interopTestAddress"
 
@@ -44,6 +47,7 @@ class InteropTest : AbstractTest() {
         randomSuffix = generateRandomSuffix()
     }
 
+    @Tag("external")
     @ParameterizedTest(name = "{0} -> {1}")
     @MethodSource("clientCombinationsProvider")
     fun `send browse receive empty message`(senderName: String, receiverName: String) {
@@ -57,6 +61,7 @@ class InteropTest : AbstractTest() {
         assertMessagesAreIdentical(address, s, b, r)
     }
 
+    @Tag("external")
     @ParameterizedTest(name = "{0} -> {1}")
     @MethodSource("clientCombinationsProvider")
     fun `send browse receive empty transient message`(senderName: String, receiverName: String) {
@@ -70,6 +75,7 @@ class InteropTest : AbstractTest() {
         assertMessagesAreIdentical(address, s, b, r)
     }
 
+    @Tag("external")
     @ParameterizedTest(name = "{0} -> {1}")
     @MethodSource("clientCombinationsProvider")
     fun `send receive empty message on topic`(senderName: String, receiverName: String) {
@@ -91,6 +97,7 @@ class InteropTest : AbstractTest() {
         Truth.assertThat(mapOf("key" to "null")).containsExactlyEntriesIn(mapOf("key" to null))
     }
 
+    @Tag("external")
     @ParameterizedTest(name = "{0} -> {1}")
     @MethodSource("clientCombinationsProvider")
     fun `send browse receive expired durable message`(senderName: String, receiverName: String) {
@@ -117,6 +124,7 @@ class InteropTest : AbstractTest() {
     //acc-aac -> send two woth content, autocreate, use 616161... 3:26 Dec 11 2016
 
     /// You'd have to configure lvq for this to work
+    @Tag("external")
     @ParameterizedTest(name = "{0} -> {1}")
     @MethodSource("clientCombinationsProvider")
     fun `send receive with LVQ`(senderName: String, receiverName: String) {
