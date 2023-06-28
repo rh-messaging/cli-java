@@ -19,9 +19,6 @@
 
 import com.google.common.truth.Correspondence
 import com.google.common.truth.Truth.assertThat
-import jakarta.jms.Connection
-import jakarta.jms.ConnectionFactory
-import jakarta.jms.Session
 import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration
 import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager
 import org.apache.logging.log4j.*
