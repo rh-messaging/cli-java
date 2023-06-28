@@ -34,13 +34,20 @@
 
     <properties>
         <bundle.symbolic.name.suffix>jms</bundle.symbolic.name.suffix>
-        <protonj2.version>1.0.0-M15</protonj2.version>
+        <protonj2.version>1.0.0-M16</protonj2.version>
         <jar.main.class>com.redhat.mqe.Main</jar.main.class>
         <library.version>${protonj2.version}</library.version>
         <tcnative.version>2.0.39.Final</tcnative.version>
         <tcnative.classifier>linux-x86_64-fedora</tcnative.classifier>
         <jaeger-client.version>1.6.0</jaeger-client.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>staging</id>
+            <url>https://repository.apache.org/content/repositories/orgapacheqpid-1261</url>
+        </repository>
+    </repositories>
 
     <!--TODO: find out correct tcnative version to be used here (depends on version of netty)-->
 
