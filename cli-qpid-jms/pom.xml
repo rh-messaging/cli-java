@@ -35,7 +35,7 @@
     <properties>
         <bundle.symbolic.name.suffix>jms</bundle.symbolic.name.suffix>
         <jar.main.class>com.redhat.mqe.jms.Main</jar.main.class>
-        <qpid.jms.client.version>2.3.0</qpid.jms.client.version>
+        <qpid.jms.client.version>2.4.0</qpid.jms.client.version>
         <library.version>${qpid.jms.client.version}</library.version>
         <tcnative.version>2.0.61.Final</tcnative.version>
         <tcnative.classifier>linux-x86_64-fedora</tcnative.classifier>
