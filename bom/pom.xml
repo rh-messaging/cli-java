@@ -58,7 +58,7 @@
         <plugin.versions.version>2.7</plugin.versions.version>
 
         <annotations.version>24.0.1</annotations.version>
-        <checker-qual.version>3.35.0</checker-qual.version>
+        <checker-qual.version>3.36.0</checker-qual.version>
         <powermock-reflect.version>2.0.9</powermock-reflect.version>
     </properties>
     <dependencyManagement>
