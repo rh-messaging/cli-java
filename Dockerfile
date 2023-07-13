@@ -13,8 +13,13 @@ USER root
 COPY . /app
 WORKDIR /app
 
+# install fallocate for use by claire tests
+RUN microdnf -y --setopt=install_weak_deps=0 --setopt=tsflags=nodocs install \
+    git util-linux \
+    && microdnf clean all -y
+
 ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Dmaven.repo.local=/app/.m2 -Dmaven.artifact.threads=42"
-RUN mvn -T 1C package -DskipTests=true --no-transfer-progress
+RUN mvn clean && mvn -T 1C package -DskipTests=true --no-transfer-progress
 
 RUN mkdir targets && \
     cp cli-qpid-jms/target/cli-qpid-jms-*[0-9].jar targets/cli-qpid.jar && \
@@ -22,20 +27,23 @@ RUN mkdir targets && \
     cp cli-paho-java/target/cli-paho-java-*[0-9].jar targets/cli-paho.jar && \
     cp cli-activemq/target/cli-activemq-*[0-9].jar targets/cli-activemq.jar && \
     cp cli-protonj2/target/cli-protonj2-*[0-9].jar targets/cli-protonj2.jar && \
-    echo "package info:("$(ls cli-*/target/cli-*.jar)")" >> VERSION.txt
+    ls -1 cli-*/target/cli-*.jar > VERSION.txt
+
+WORKDIR /tmp
+RUN git clone https://github.com/hivemq/mqtt-cli.git mqtt-cli && \
+    cd mqtt-cli && ./gradlew clean build -x test -x systemTestNative -x systemTest -x nativeTest -x integrationTest -x forbiddenApis && \
+    cp build/libs/mqtt-cli-*[0-9].jar /app/targets/cli-mqtt.jar && \
+    ls -1 build/libs/mqtt-cli-*[0-9].jar >> /app/VERSION.txt
+
+WORKDIR /app
 
 #DEV FROM $IMAGE_BASE
 FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:1.15-1.1686736681
 
-LABEL name="Red Hat Messagign QE - Java CLI Image" \
+LABEL name="Red Hat Messaging QE - Java CLI Image" \
       run="podman run --rm -ti <image_name:tag> /bin/bash cli-*"
 
 USER root
-
-# install fallocate for use by claire tests
-RUN microdnf -y --setopt=install_weak_deps=0 --setopt=tsflags=nodocs install \
-    util-linux \
-    && microdnf clean all -y
 
 RUN mkdir /licenses 
 COPY ./LICENSE /licenses/LICENSE.txt
