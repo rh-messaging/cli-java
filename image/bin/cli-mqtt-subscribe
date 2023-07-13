@@ -1,3 +1,0 @@
-#!/bin/sh
-
-java ${JAVA_OPTS} ${CLI_ACTIVEMQ_OPTS} -jar /opt/cli-java/cli-mqtt.jar subscribe $@

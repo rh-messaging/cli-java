@@ -3,11 +3,11 @@ ARG UBI_VERSION=9
 ARG OPENJDK_VERSION=17
 ARG UBI_BUILD_TAG=latest
 ARG UBI_RUNTIME_TAG=latest
-ARG IMAGE_BUILD=registry.access.redhat.com/ubi${UBI_VERSION}/openjdk-${OPENJDK_VERSION}:${UBI_TAG}
+ARG IMAGE_BUILD=registry.access.redhat.com/ubi${UBI_VERSION}/openjdk-${OPENJDK_VERSION}:${UBI_BUILD_TAG}
 ARG IMAGE_BASE=registry.access.redhat.com/ubi${UBI_VERSION}/openjdk-${OPENJDK_VERSION}-runtime:${UBI_RUNTIME_TAG}
 
 #DEV FROM $IMAGE_BUILD AS build
-FROM registry.access.redhat.com/ubi9/openjdk-17:1.15-1.1686736679 AS build
+FROM ${IMAGE_BUILD} AS build
 
 USER root
 COPY . /app
@@ -15,7 +15,7 @@ WORKDIR /app
 
 # install fallocate for use by claire tests
 RUN microdnf -y --setopt=install_weak_deps=0 --setopt=tsflags=nodocs install \
-    git util-linux \
+    jq util-linux \
     && microdnf clean all -y
 
 ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Dmaven.repo.local=/app/.m2 -Dmaven.artifact.threads=42"
@@ -30,15 +30,16 @@ RUN mkdir targets && \
     ls -1 cli-*/target/cli-*.jar > VERSION.txt
 
 WORKDIR /tmp
-RUN git clone https://github.com/hivemq/mqtt-cli.git mqtt-cli && \
-    cd mqtt-cli && ./gradlew clean build -x test -x systemTestNative -x systemTest -x nativeTest -x integrationTest -x forbiddenApis && \
-    cp build/libs/mqtt-cli-*[0-9].jar /app/targets/cli-mqtt.jar && \
-    ls -1 build/libs/mqtt-cli-*[0-9].jar >> /app/VERSION.txt
+RUN mkdir hivemq-mqtt && \
+    cd hivemq-mqtt && \
+    curl -sLO $(curl -s https://api.github.com/repos/hivemq/mqtt-cli/releases/latest | jq -r '.assets[] | select(.name | endswith(".jar")) | .browser_download_url') && \
+    cp mqtt-cli-*[0-9].jar /app/targets/cli-hivemq-mqtt.jar && \
+    ls -1 mqtt-cli-*[0-9].jar | sed -e 's/mqtt-cli/cli-hivemq-mqtt/'>> /app/VERSION.txt
 
 WORKDIR /app
 
 #DEV FROM $IMAGE_BASE
-FROM registry.access.redhat.com/ubi9/openjdk-17-runtime:1.15-1.1686736681
+FROM ${IMAGE_BASE}
 
 LABEL name="Red Hat Messaging QE - Java CLI Image" \
       run="podman run --rm -ti <image_name:tag> /bin/bash cli-*"
