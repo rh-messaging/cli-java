@@ -13,9 +13,8 @@ USER root
 COPY . /app
 WORKDIR /app
 
-# install fallocate for use by claire tests
 RUN microdnf -y --setopt=install_weak_deps=0 --setopt=tsflags=nodocs install \
-    jq util-linux \
+    jq \
     && microdnf clean all -y
 
 ENV MAVEN_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -Dmaven.repo.local=/app/.m2 -Dmaven.artifact.threads=42"
@@ -45,6 +44,11 @@ LABEL name="Red Hat Messaging QE - Java CLI Image" \
       run="podman run --rm -ti <image_name:tag> /bin/bash cli-*"
 
 USER root
+
+# install fallocate for use by claire tests
+RUN microdnf -y --setopt=install_weak_deps=0 --setopt=tsflags=nodocs install \
+    util-linux \
+    && microdnf clean all -y
 
 RUN mkdir /licenses 
 COPY ./LICENSE /licenses/LICENSE.txt
