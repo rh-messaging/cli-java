@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2017 Red Hat, Inc.
+  ~ Copyright (c) 2023 Red Hat, Inc.
   ~
   ~ Licensed to the Apache Software Foundation (ASF) under one or more
   ~ contributor license agreements. See the NOTICE file distributed with
@@ -31,6 +31,9 @@
     </parent>
 
     <artifactId>jmslib</artifactId>
+    <properties>
+        <transformer-tools-mvn.version>1.0.15.Final</transformer-tools-mvn.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -71,6 +74,32 @@
 
     <build>
         <plugins>
+            <!--https://github.com/wildfly-extras/batavia/blob/master/tools/mvn/src/main/java/org/wildfly/extras/transformer/tool/maven/MavenPluginTransformer.java-->
+            <plugin>
+                <groupId>org.wildfly.extras.batavia</groupId>
+                <artifactId>transformer-tools-mvn</artifactId>
+                <version>${transformer-tools-mvn.version}</version>
+                <executions>
+                    <execution>
+                        <id>transform-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>transform-sources</goal>
+                        </goals>
+                        <configuration>
+                            <source-project>${project.basedir}/../jakartalib</source-project>
+                            <invert>true</invert>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.wildfly.extras.batavia</groupId>
+                        <artifactId>transformer-impl-eclipse</artifactId>
+                        <version>${transformer-tools-mvn.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <plugin>
                 <!-- https://stackoverflow.com/questions/174560/sharing-test-code-in-maven#174670 -->
                 <artifactId>maven-jar-plugin</artifactId>
