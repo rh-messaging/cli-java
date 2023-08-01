@@ -297,6 +297,8 @@
                             <sourceDirs>
                                 <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
                                 <sourceDir>${project.basedir}/src/test/java</sourceDir>
+                                <!--https://youtrack.jetbrains.com/issue/KT-13995/Maven-Kotlin-compiler-plugin-should-respect-models-compile-source-roots#focus=Comments-27-4632001.0-0-->
+                                <sourceDir>${project.build.directory}/generated-test-sources/transformed</sourceDir>
                             </sourceDirs>
                         </configuration>
                     </execution>
