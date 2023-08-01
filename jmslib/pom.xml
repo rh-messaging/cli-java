@@ -31,9 +31,6 @@
     </parent>
 
     <artifactId>jmslib</artifactId>
-    <properties>
-        <transformer-tools-mvn.version>1.0.15.Final</transformer-tools-mvn.version>
-    </properties>
 
     <dependencies>
         <dependency>
@@ -78,7 +75,7 @@
             <plugin>
                 <groupId>org.wildfly.extras.batavia</groupId>
                 <artifactId>transformer-tools-mvn</artifactId>
-                <version>${transformer-tools-mvn.version}</version>
+                <version>${plugin.transformer-tools-mvn.version}</version>
                 <executions>
                     <execution>
                         <id>transform-sources</id>
@@ -96,7 +93,7 @@
                     <dependency>
                         <groupId>org.wildfly.extras.batavia</groupId>
                         <artifactId>transformer-impl-eclipse</artifactId>
-                        <version>${transformer-tools-mvn.version}</version>
+                        <version>${plugin.transformer-tools-mvn.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

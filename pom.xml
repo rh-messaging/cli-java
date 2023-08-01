@@ -49,6 +49,7 @@
         <module>cli-paho-java</module>
         <module>cli-protonj2</module>
         <module>cli-qpid-jms</module>
+        <module>cli-qpid-jms-1x</module>
 
         <module>cli-activemq-jmx</module>
 
