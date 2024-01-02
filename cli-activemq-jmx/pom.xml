@@ -33,7 +33,7 @@
 
         <!--libraries-->
         <slf4j.version>2.0.10</slf4j.version>
-        <json.version>20160810</json.version>
+        <json.version>20231013.0.0.redhat-00001</json.version>
         <commons-cli.version>1.5.0.redhat-00001</commons-cli.version>
     </properties>
 
