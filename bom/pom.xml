@@ -58,7 +58,7 @@
         <plugin.versions.version>2.7</plugin.versions.version>
         <plugin.transformer-tools-mvn.version>1.0.15.Final</plugin.transformer-tools-mvn.version>
 
-        <annotations.version>24.0.1</annotations.version>
+        <annotations.version>24.1.0</annotations.version>
         <checker-qual.version>3.42.0</checker-qual.version>
         <powermock-reflect.version>2.0.9</powermock-reflect.version>
     </properties>
