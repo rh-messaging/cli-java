@@ -37,7 +37,7 @@
         <log4j-slf4j2-impl.version>2.22.1</log4j-slf4j2-impl.version>
         <jopt.version>5.0.4</jopt.version>
         <dagger.version>2.50</dagger.version>
-        <jackson.version>2.15.2</jackson.version>
+        <jackson.version>2.16.1</jackson.version>
 
         <kotlin.version>1.9.22</kotlin.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
