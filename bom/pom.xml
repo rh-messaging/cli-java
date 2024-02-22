@@ -53,7 +53,7 @@
         <plugin.enforcer.version>3.4.1</plugin.enforcer.version>
         <plugin.jar.version>3.3.0</plugin.jar.version>
         <plugin.jacoco.version>0.8.11</plugin.jacoco.version>
-        <plugin.shade.version>3.5.1</plugin.shade.version>
+        <plugin.shade.version>3.5.2</plugin.shade.version>
         <plugin.surefire.version>3.2.5</plugin.surefire.version>
         <plugin.versions.version>2.7</plugin.versions.version>
         <plugin.transformer-tools-mvn.version>1.0.15.Final</plugin.transformer-tools-mvn.version>
