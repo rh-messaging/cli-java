@@ -43,7 +43,7 @@ public class Content {
      * Content can be created from single item (value), list of items or
      * a list of items as map (key=value).
      * If content type is explicitly provided no casting is done and content type is used.
-     * Otherwise we use String as default content type.
+     * Otherwise, we use String as default content type.
      * Special scenario is when value is prepended with '~'. In this case, we try to
      * auto-typecast the value to some of the basic data types (see field Utils.CLASSES).
      *
@@ -65,7 +65,7 @@ public class Content {
                         splitValue = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
                     }
                 } else if (parsedValue.contains("=")) {
-                    // last argument 'allowExplicitlyRetype' can be omitted as parsedValue will not by autotypecasted - no '~'
+                    // last argument 'allowExplicitlyRetype' can be omitted as parsedValue will not be autotypecasted - no '~'
                     splitValue = parsedValue.substring(parsedValue.indexOf(splitter) + 1);
                 } else {
                     splitter = "~";

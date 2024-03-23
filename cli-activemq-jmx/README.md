@@ -4,12 +4,12 @@ ActiveMQ / JBoss Active MQ command-line JMX utility
 Introduction
 ----
 
-This is an utility that access Apache ActiveMQ, Apache Artemis and Red Hat A-MQ6 and A-MQ7 remotely.
+This is a utility that access Apache ActiveMQ, Apache Artemis and Red Hat A-MQ6 and A-MQ7 remotely.
 It can be used to manage queues and topics, destinations and obtain various information.
 
 Building and Installing: with ActiveMQ and Artemis libraries
 ----
-Note: Maven commands are always accompanied with 'pom.xml' file. If you do not execute mvn within directory where pom.xml resides,
+Note: Maven commands are always accompanied by 'pom.xml' file. If you do not execute mvn within directory where pom.xml resides,
 please supply -f <path/to/pom.xml> file. pom.xml file is a main building file for any maven project.
 To compile and package the code using upstream libraries (using default upstream profile)
 ```
@@ -105,11 +105,11 @@ org.apache.activemq.Broker=bypass
 ```
 
 In addition to being the correct way, it also enables several different configuration options (eg: port, listen address,
- etc) by just changing the file org.apache.karaf.management.cfg on broker's etc directory. 
+ etc.) by just changing the file org.apache.karaf.management.cfg on broker's `etc` directory.
  
 Please keep in mind that JMX access is made through a different JMX connector root in this case: it uses karaf-root 
 instead of jmxrmi, which was previously used in the older method 
-(eg.: service:jmx:rmi:///jndi/rmi://<host>:<port>/karaf-root). It also uses port 1099 by default, instead of 1616.
+(e.g.: service:jmx:rmi:///jndi/rmi://<host>:<port>/karaf-root). It also uses port 1099 by default, instead of 1616.
 
 For artemis use following uri (by default port 3000 is used, we prefer 1099):
 ```
@@ -181,7 +181,7 @@ configuration must be added to the activemq.xml configuration file:
 
 Setting up for JBoss usage with libraries
 ----
-If you're planning to use amqx with JBoss libraries, you have add the appropriate activemq core library in the endorsed
+If you're planning to use amqx with JBoss libraries, you have added the appropriate activemq core library in the endorsed
 directory. To do so, go to the endorsed directory within amqx library dir and run:
 
 ```
@@ -226,15 +226,15 @@ On **broker** object, you can call following actions:
 
 On **queue** and **destination** objects, supported actions are:
 
-* add    - create an queue with (--name/n <queuename>, --durable/d [True/False], --address <addrname>, --selector <expression>)
-* remove - delete an queue with given name (--name <queuename>) if address is not specified or is same as queue name, address is removed as well
+* add    - create a queue with (--name/n <queuename>, --durable/d [True/False], --address <addrname>, --selector <expression>)
+* remove - delete a queue with given name (--name <queuename>) if address is not specified or is same as queue name, address is removed as well
 * list   - list queues with properties (by default properties are displayed) (--list-properties/p [True/False])
 * properties - print properties of given queue only (--name <queuename>)
 
 On **topic** objects, supported actions are:
 
-* add    - create an topic with (--name <topicname>, --address <addrname> --jndiBindings* <bind1,bind2,..> (jndiBindings not impl yet) )
-* remove - delete an topic with given name (--name <topicname>) if address is not specified or is same as queue name, address is removed as well
+* add    - create a topic with (--name <topicname>, --address <addrname> --jndiBindings* <bind1,bind2,..> (jndiBindings not impl yet) )
+* remove - delete a topic with given name (--name <topicname>) if address is not specified or is same as queue name, address is removed as well
 * list   - list topics with properties (by default properties are displayed) (--list-properties [True/False])
 * properties - print properties of given topic only (--name <topicname>)
 
@@ -344,7 +344,7 @@ amqx topic -u service:jmx:rmi:///jndi/rmi://<host>:<port>/karaf-root --username 
 ```
 
 Note: please note that admin/admin username and password are implied by default and therefore, are not required command 
-line parameters unless some other username/password are setup. 
+line parameters unless some other username/password are set up.
 
 Running: completely disabling authentication support
 ----

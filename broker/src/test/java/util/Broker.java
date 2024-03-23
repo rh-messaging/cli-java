@@ -166,7 +166,7 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
     }
 
     /**
-     * @return port number (there is a race so it may not be available anymore)
+     * @return port number (there is a race, so it may not be available anymore)
      * @throws IOException
      */
     // https://stackoverflow.com/questions/2675362/how-to-find-an-available-port

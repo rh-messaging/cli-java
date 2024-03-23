@@ -46,7 +46,7 @@ public class ObjectReader {
         String propertyName = Character.toLowerCase(methodName.substring(prefixLength).charAt(0))
                 + methodName.substring(prefixLength + 1);
 
-        // if the remaining part has 2 or less chars, then treat it as an acronym
+        // if the remaining part has 2 or fewer chars, then treat it as an acronym
         if (methodName.length() <= 2) {
             propertyName = methodName.toLowerCase();
         }
