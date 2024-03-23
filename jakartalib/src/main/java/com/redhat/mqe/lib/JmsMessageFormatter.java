@@ -214,7 +214,7 @@ public abstract class JmsMessageFormatter extends MessageFormatter {
                 format.put(pVal, msg.getObjectProperty(pVal));
             }
         } catch (JMSException jmse) {
-            LOG.error("Error while getting message properties!", jmse.getMessage());
+            LOG.error("Error while getting message properties! {}", jmse.getMessage());
             jmse.printStackTrace();
             System.exit(1);
         }
