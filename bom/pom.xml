@@ -44,7 +44,7 @@
         <junit.pioneer.version>2.2.0</junit.pioneer.version>
         <truth.version>1.4.2</truth.version>
         <mockito.version>5.11.0</mockito.version>
-        <awaitility.version>4.2.0</awaitility.version>
+        <awaitility.version>4.2.1</awaitility.version>
 
         <artemis.broker.version>2.32.0</artemis.broker.version>
 
