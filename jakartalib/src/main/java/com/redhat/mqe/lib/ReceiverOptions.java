@@ -33,7 +33,7 @@ import java.util.List;
  */
 public class ReceiverOptions extends ClientOptions {
     private List<Option> options = null;
-    private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
+    private final Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
     private final List<Option> receiverDefaultOptions = new ArrayList<Option>();
 
     {

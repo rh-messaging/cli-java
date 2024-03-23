@@ -98,7 +98,7 @@ public class ReceiverClient extends CoreClient {
     protected void setReceiverClient(ClientOptions options) {
         // TODO add support for noLocal to ClientOptions
         if (options != null) {
-            msgCount = Integer.parseInt(options.getOption(COUNT).getValue()) > 0 ? Integer.parseInt(options.getOption(COUNT).getValue()) : 0;
+            msgCount = Math.max(Integer.parseInt(options.getOption(COUNT).getValue()), 0);
             msgListener = Boolean.parseBoolean(options.getOption(MSG_LISTENER).getValue());
             durableSubscriber = Boolean.parseBoolean(options.getOption(DURABLE_SUBSCRIBER).getValue());
             durableSubscriberPrefix = options.getOption(DURABLE_SUBSCRIBER_PREFIX).getValue();
@@ -231,7 +231,7 @@ public class ReceiverClient extends CoreClient {
                         file = writeMessageContentFile;
                     }
                     if (file != null) {
-                        if (Boolean.valueOf(rcvrOpts.getOption(ClientOptions.MSG_CONTENT_STREAM).getValue())) {
+                        if (Boolean.parseBoolean(rcvrOpts.getOption(ClientOptions.MSG_CONTENT_STREAM).getValue())) {
                             JmsUtils.streamMessageContentToFile(file, msg, i);
                         } else {
                             JmsUtils.writeMessageContentToFile(file, msg, i);
@@ -293,10 +293,10 @@ public class ReceiverClient extends CoreClient {
     private void createSubscriptionName(String customPrefix) {
         if (durableSubscriberName == null) {
             UUID uuid = UUID.randomUUID();
-            if (customPrefix == null || customPrefix.equals(""))
-                durableSubscriberName = "qpid-jms-" + uuid.toString();
+            if (customPrefix == null || customPrefix.isEmpty())
+                durableSubscriberName = "qpid-jms-" + uuid;
             else
-                durableSubscriberName = customPrefix + uuid.toString();
+                durableSubscriberName = customPrefix + uuid;
         }
         LOG.debug("DurableSubscriptionName=" + durableSubscriberName);
     }

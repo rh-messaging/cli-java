@@ -33,8 +33,6 @@ public class MessagingException extends RuntimeException {
         super(message);
     }
 
-    ;
-
     public MessagingException(String message, Throwable cause) {
         super(message, cause);
     }

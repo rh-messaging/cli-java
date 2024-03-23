@@ -71,7 +71,7 @@ class QPIDJMS502Test {
 
         await().untilAsserted {
             val connections = broker.embeddedBroker.activeMQServer.remotingService.connections
-            assertThat(connections).hasSize(1);
+            assertThat(connections).hasSize(1)
             assertThat(connections.first().id).isNotEqualTo(oldId)
         }
 

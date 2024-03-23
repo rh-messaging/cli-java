@@ -3,15 +3,12 @@ package com.redhat.amqx.main.actions;
 import com.redhat.amqx.main.BrokerType;
 import com.redhat.amqx.management.ManagerFactory;
 import com.redhat.amqx.management.artemis.DivertArtemisManager;
-import com.redhat.amqx.management.exception.DestinationException;
-import org.apache.activemq.artemis.api.core.RoutingType;
 import org.apache.activemq.artemis.core.server.ComponentConfigurationRoutingType;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
 
-import javax.print.attribute.standard.Destination;
 import java.io.IOException;
 
 /**

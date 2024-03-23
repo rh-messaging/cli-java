@@ -36,10 +36,10 @@ import java.util.Properties;
 class AocConnectionManager extends ConnectionManager {
     private static final String EXTERNAL_JNDI_PROPERTY = "aoc7.jndi";
     protected InitialContext initialContext;
-    private String queueOrTopic = "amqQueue";
-    private String amqConnectionFactoryJNDI = "amqFactory";
+    private final String queueOrTopic = "amqQueue";
+    private final String amqConnectionFactoryJNDI = "amqFactory";
     private Properties properties;
-    private Logger LOG = LoggerFactory.getLogger(AocConnectionManager.class.getName());
+    private final Logger LOG = LoggerFactory.getLogger(AocConnectionManager.class.getName());
 
     AocConnectionManager(ClientOptions clientOptions, String connectionFactory) {
         if (clientOptions.getOption(ClientOptions.USERNAME).hasParsedValue()) {

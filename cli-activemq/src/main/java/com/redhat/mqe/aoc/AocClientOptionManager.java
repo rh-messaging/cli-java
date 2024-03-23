@@ -205,7 +205,7 @@ public class AocClientOptionManager extends ClientOptionManager {
     /**
      * Does not do any checking. Trusts all certificates.
      */
-    private class TrustingTrustManager implements X509TrustManager {
+    private static class TrustingTrustManager implements X509TrustManager {
         @Override
         public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
             // trust anything

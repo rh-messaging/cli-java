@@ -9,7 +9,7 @@ public enum NodeType {
     QUEUE("Queue"),
     DIVERT("Divert");
 
-    private String nodeTypeString;
+    private final String nodeTypeString;
 
     NodeType(final String nodeTypeString) {
         this.nodeTypeString = nodeTypeString;

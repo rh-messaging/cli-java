@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class ConnectorOptions extends ClientOptions {
     private List<Option> options = new LinkedList<Option>();
-    private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
+    private final Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
     private final List<Option> connectorDefaultOptions = new LinkedList<Option>();
 
     {

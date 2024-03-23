@@ -64,7 +64,7 @@ public class AddressAction extends AbstractAction {
         setCredentials(cmdLine);
         setLogLevel(cmdLine.getOptionValue("log-level", DEFAULT_LOGGING_LEVEL));
 
-        if (routingType.toLowerCase().equals("multicast")) {
+        if (routingType.equalsIgnoreCase("multicast")) {
             routingType = RoutingType.MULTICAST.toString();
         } else {
             routingType = RoutingType.ANYCAST.toString();

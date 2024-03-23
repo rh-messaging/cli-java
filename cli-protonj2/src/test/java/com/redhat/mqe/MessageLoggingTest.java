@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class PreviousImplementation {
-    void logMessage(String address, Message message, boolean msgContentHashed) throws ClientException {
+    <E> void logMessage(String address, Message<E> message, boolean msgContentHashed) throws ClientException {
         StringBuilder sb = new StringBuilder();
 
         sb.append("{");

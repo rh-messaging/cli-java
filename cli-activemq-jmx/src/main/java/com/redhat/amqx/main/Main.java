@@ -19,7 +19,7 @@ public class Main {
     private static void help(int code) {
         System.out.println("Usage: amqx <object> --host <brokerIp>:<port> --action <action> [--name <destinationName>]\n");
 
-        System.out.printf("Objects:    {%s, %s, %s, %s}\n", DESTINATION, JMS_TOPIC, ADDRESS, BROKER, DIVERT);
+        System.out.printf("Objects:    {%s, %s, %s, %s, %s}\n", DESTINATION, JMS_TOPIC, ADDRESS, BROKER, DIVERT);
         System.out.printf("Actions:    Destination {%s, %s, %s, %s}\n", QueueAction.ADD_ACTION,
             QueueAction.REMOVE_ACTION, QueueAction.LIST_ACTION, QueueAction.PROPERTIES_ACTION);
         // TODO finish broker actions

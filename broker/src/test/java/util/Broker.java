@@ -46,9 +46,9 @@ import java.nio.file.StandardCopyOption;
 public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableResource {
     // Use same MBeanServer instance that broker is using (don't create new)
     private final MBeanServer mBeanServer = ManagementFactory.getPlatformMBeanServer();
-    public Path tempDir;
-    public EmbeddedActiveMQ embeddedBroker = new EmbeddedActiveMQ();
-    public Configuration configuration = new ConfigurationImpl();
+    public final Path tempDir;
+    public final EmbeddedActiveMQ embeddedBroker = new EmbeddedActiveMQ();
+    public final Configuration configuration = new ConfigurationImpl();
 
     public Broker() {
         this(null);
@@ -178,9 +178,9 @@ public class Broker implements AutoCloseable, ExtensionContext.Store.CloseableRe
         }
     }
 
-    protected Object createProxy(final ObjectName objectName,
-                                 final Class mbeanInterface,
-                                 final MBeanServer mbeanServer) {
+    protected <T> Object createProxy(final ObjectName objectName,
+                                     final Class<T> mbeanInterface,
+                                     final MBeanServer mbeanServer) {
         return MBeanServerInvocationHandler.newProxyInstance(mbeanServer, objectName, mbeanInterface, false);
     }
 

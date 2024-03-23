@@ -31,7 +31,7 @@ import javax.naming.NamingException;
 import java.util.Hashtable;
 
 public class JndiConnectionManager extends ConnectionManager {
-    private Logger LOG = LoggerFactory.getLogger(JndiConnectionManager.class.getName());
+    private final Logger LOG = LoggerFactory.getLogger(JndiConnectionManager.class.getName());
     private Context context = null;
 
     JndiConnectionManager(ClientOptions clientOptions, String brokerUrl) {

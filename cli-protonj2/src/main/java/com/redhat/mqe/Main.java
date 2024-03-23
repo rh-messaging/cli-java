@@ -43,20 +43,20 @@ class Main implements Callable<Integer> {
 
 class CliProtonJ2SenderReceiverConnector {
     @CommandLine.Option(names = {"--log-lib"})
-    private LogLib logLib = LogLib.off;
+    private final LogLib logLib = LogLib.off;
     @CommandLine.Option(names = {"--conn-username"}, description = "")
-    private String connUsername = "MD5";
+    private final String connUsername = "MD5";
     @CommandLine.Option(names = {"--conn-password"}, description = "")
-    private String connPassword = "MD5";
+    private final String connPassword = "MD5";
     @CommandLine.Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
     // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
-    private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
+    private final List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
     @CommandLine.Option(names = {"--conn-reconnect"})
-    private String reconnectString = "false";
+    private final String reconnectString = "false";
     @CommandLine.Option(names = {"--conn-heartbeat"})
     private Long connHeartbeat;
     @CommandLine.Option(names = {"--conn-ssl"}, arity = "0..1")
-    private Boolean connSsl = false;
+    private final Boolean connSsl = false;
     @CommandLine.Option(names = {"--conn-ssl-certificate"}, arity = "0..1")
     private String connSslCertificate;
     @CommandLine.Option(names = {"--conn-ssl-password"}, arity = "0..1")
@@ -146,13 +146,13 @@ class CliProtonJ2SenderReceiver extends CliProtonJ2SenderReceiverConnector {
 
     // todo: what does --out=python --log-msgs=json mean?
     @CommandLine.Option(names = {"--out"}, description = "")
-    protected Out out = Out.python;
+    protected final Out out = Out.python;
 
     @CommandLine.Option(names = {"--log-msgs"}, description = "message reporting style")
-    protected LogMsgs logMsgs = LogMsgs.dict;
+    protected final LogMsgs logMsgs = LogMsgs.dict;
 
     @CommandLine.Option(names = {"--msg-content-hashed"}, arity = "0..1")
-    protected boolean msgContentHashed = false;
+    protected final boolean msgContentHashed = false;
 
     @CommandLine.Option(names = {"-a", "--address"}, description = "")
     protected String address = "";
@@ -165,7 +165,7 @@ class CliProtonJ2SenderReceiver extends CliProtonJ2SenderReceiverConnector {
         this.messageFormatter = messageFormatter;
     }
 
-    protected void printMessage(Message<Object> message) throws ClientException {
+    protected <E> void printMessage(Message<E> message) throws ClientException {
         Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, msgContentHashed);
         switch (out) {
             case python:

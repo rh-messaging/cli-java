@@ -33,9 +33,9 @@ import java.util.List;
  */
 public class ConnectorClient extends CoreClient {
 
-    private ClientOptions connectorOptions;
+    private final ClientOptions connectorOptions;
     private int connectionsOpened = 0;
-    private static List<Throwable> exceptions = new ArrayList<>();
+    private static final List<Throwable> exceptions = new ArrayList<>();
 
     @Inject
     public ConnectorClient(ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter, @Named("Connector") ClientOptions options) {
@@ -61,7 +61,7 @@ public class ConnectorClient extends CoreClient {
         }
         closeConnObjects(this,
             Double.parseDouble(this.getClientOptions().getOption(ClientOptions.CLOSE_SLEEP).getValue()));
-        if (exceptions.size() > 0) {
+        if (!exceptions.isEmpty()) {
             System.exit(exceptions.size());
         }
     }

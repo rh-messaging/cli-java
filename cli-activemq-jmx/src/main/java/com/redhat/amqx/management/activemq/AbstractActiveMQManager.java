@@ -28,7 +28,7 @@ import org.apache.activemq.broker.jmx.DestinationViewMBean;
 abstract class AbstractActiveMQManager extends AbstractConnectionManager {
     private static final Logger logger = LoggerFactory.getLogger(AbstractActiveMQManager.class);
     private static final ObjectReader objectReader = new ObjectReader();
-    protected Formatter formatter = new PythonFormatter();
+    protected final Formatter formatter = new PythonFormatter();
 
     public AbstractActiveMQManager(String url, final Credentials credentials, String brokerName, String hostname) throws IOException {
         super(url, credentials, brokerName, BrokerType.ACTIVEMQ, hostname);

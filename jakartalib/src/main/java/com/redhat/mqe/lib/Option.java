@@ -21,6 +21,7 @@ package com.redhat.mqe.lib;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class representing one option for client.
@@ -28,17 +29,17 @@ import java.util.List;
  * parsed value, whether it has argument or not, etc..
  */
 public class Option {
-    private String name;
-    private String defaultValue;
-    private String longOptionName;
-    private String shortOptionName;
-    private String argumentExample;
-    private String description;
+    private final String name;
+    private final String defaultValue;
+    private final String longOptionName;
+    private final String shortOptionName;
+    private final String argumentExample;
+    private final String description;
     private boolean isCliArgument = true;
     private boolean hasArgument = false;
     private String parsedValue = null;
     private List<String> parsedValuesList;
-    private static String pattern = "-?\\d+(.\\d+)?";
+    private static final String pattern = "-?\\d+(.\\d+)?";
 
     /**
      * Special case, for broker host, port, client username, password
@@ -64,7 +65,7 @@ public class Option {
      */
     public Option(String longOptionName, String shortOptionName, String argumentExample, String defaultValue, String description) {
         this.name = longOptionName;
-        if (longOptionName == null || longOptionName.equals("")) {
+        if (longOptionName == null || longOptionName.isEmpty()) {
             throw new IllegalArgumentException("Long option can not be empty");
         }
         this.longOptionName = longOptionName;
@@ -72,7 +73,7 @@ public class Option {
         this.argumentExample = argumentExample;
         this.defaultValue = defaultValue;
         this.description = description;
-        if (argumentExample != null && !argumentExample.equals("")) {
+        if (argumentExample != null && !argumentExample.isEmpty()) {
             this.hasArgument = true;
         }
 
@@ -180,14 +181,11 @@ public class Option {
         if (o == null || getClass() != o.getClass()) return false;
 
         Option option = (Option) o;
-        if (description != null ? !description.equals(option.description) : option.description != null) return false;
-        if (longOptionName != null ? !longOptionName.equals(option.longOptionName) : option.longOptionName != null)
-            return false;
-        if (name != null ? !name.equals(option.name) : option.name != null) return false;
-        if (shortOptionName != null ? !shortOptionName.equals(option.shortOptionName) : option.shortOptionName != null)
-            return false;
-        if (defaultValue != null ? !defaultValue.equals(option.defaultValue) : option.defaultValue != null)
-            return false;
+        if (!Objects.equals(description, option.description)) return false;
+        if (!Objects.equals(longOptionName, option.longOptionName)) return false;
+        if (!Objects.equals(name, option.name)) return false;
+        if (!Objects.equals(shortOptionName, option.shortOptionName)) return false;
+        if (!Objects.equals(defaultValue, option.defaultValue)) return false;
 
         return true;
     }

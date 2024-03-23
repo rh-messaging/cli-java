@@ -186,7 +186,7 @@ class ClientFormatterSpy(private val formatter: JmsMessageFormatter) : JmsMessag
             messageFormatterSpy.client = CommandLine(CliProtonJ2Sender(messageFormatterSpy))
             messageFormatterSpy.args = args
 
-            return messageFormatterSpy;
+            return messageFormatterSpy
         }
 
         fun makeProtonj2ReceiverClient(args: Array<String>): ProtonJ2ClientFormatterSpy {

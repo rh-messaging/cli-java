@@ -19,7 +19,7 @@
 
 import org.apache.activemq.artemis.core.server.Queue;
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
@@ -82,7 +82,7 @@ class ENTMQCL1860 {
                     .that(message).isNotNull();
                 connection.close();
                 if (i > 0) {
-                    Assert.assertTrue(message.getJMSRedelivered());
+                    Assertions.assertTrue(message.getJMSRedelivered());
                 }
             }
             connection = connectionFactory.createConnection();
@@ -90,7 +90,7 @@ class ENTMQCL1860 {
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
             MessageConsumer consumer = session.createConsumer(session.createQueue(getQueueName()));
             Message message = consumer.receiveNoWait();
-            Assert.assertNull(message);
+            Assertions.assertNull(message);
             connection.close();
         } finally {
             connection.close();

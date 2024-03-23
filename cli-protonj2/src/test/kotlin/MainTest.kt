@@ -163,7 +163,7 @@ class ProtonJ2MainTest : AbstractMainTest() {
         }
         val returnCode = main.execute(*(args.drop(1).toTypedArray()))
         if (returnCode != 0) {
-            System.exit(returnCode);
+            System.exit(returnCode)
         }
     }
 

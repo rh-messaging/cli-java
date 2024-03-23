@@ -37,7 +37,7 @@ import java.util.List;
  */
 
 public class Utils {
-    private static Logger LOG = LoggerFactory.getLogger(Utils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 
     public static final List<? extends Class<?>> CLASSES = Collections.unmodifiableList(Arrays.asList(
         Integer.class, Long.class, Float.class, Double.class, Boolean.class, String.class));
@@ -96,9 +96,7 @@ public class Utils {
         if ((duration > 0) && (msgCount > 0)) {
             // initial overall duration approximation of whole loop (sender/receiver)
             double cummulative_dur = (1.0 * nextCountIndex * duration) / msgCount;
-            while (true) {
-                if (getTime() - initialTimestamp - cummulative_dur > -0.05)
-                    break;
+            while (!(getTime() - initialTimestamp - cummulative_dur > -0.05)) {
                 try {
                     LOG.trace("sleeping");
                     Thread.sleep(100);
@@ -284,7 +282,7 @@ public class Utils {
         Class<?> argType;
         // if it is a subclass of Number
         if (Number.class.isAssignableFrom(clazz)
-            || object.toLowerCase().equals("true") || object.toLowerCase().equals("false")) {
+            || object.equalsIgnoreCase("true") || object.equalsIgnoreCase("false")) {
             argType = String.class;
         } else {
             argType = Object.class;

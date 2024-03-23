@@ -46,7 +46,7 @@ import java.util.Map;
  * Core implementation of creating various connections to brokers using clients.
  */
 public abstract class CoreClient {
-    protected static Logger LOG = LoggerFactory.getLogger(CoreClient.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(CoreClient.class);
     private ConnectionManager connectionManager;
     private static final Map<String, Integer> SESSION_ACK_MAP = new HashMap<>(5);
 
@@ -319,7 +319,7 @@ public abstract class CoreClient {
     protected void close(Connection connection) {
         try {
             if (connection != null) {
-                LOG.trace("Closing connection " + connection.toString());
+                LOG.trace("Closing connection " + connection);
                 connection.close();
             }
         } catch (JMSException e) {
@@ -338,7 +338,7 @@ public abstract class CoreClient {
             session.close();
         } catch (JMSException e) {
             e.printStackTrace();
-            if (getClientOptions().getOption(ClientOptions.CON_IGNORE_REMOTE_CLOSE).getValue().toLowerCase().equals("true")
+            if (getClientOptions().getOption(ClientOptions.CON_IGNORE_REMOTE_CLOSE).getValue().equalsIgnoreCase("true")
                 && e.getClass().getName().toString().equals("org.apache.qpid.jms.JmsConnectionRemotelyClosedException")) {
                 return;  // suppress error, explained at https://issues.redhat.com/browse/MSGQE-8155
             }
@@ -377,7 +377,7 @@ public abstract class CoreClient {
     protected void printMessage(ClientOptions clientOptions, Message message) {
         final String logMsgs = clientOptions.getOption(ClientOptions.LOG_MSGS).getValue();
         final String out = clientOptions.getOption(ClientOptions.OUT).getValue();
-        boolean hashContent = Boolean.valueOf(clientOptions.getOption(ClientOptions.MSG_CONTENT_HASHED).getValue());
+        boolean hashContent = Boolean.parseBoolean(clientOptions.getOption(ClientOptions.MSG_CONTENT_HASHED).getValue());
         Map<String, Object> messageData = null;
         try {
             switch (logMsgs) {
@@ -468,7 +468,7 @@ public abstract class CoreClient {
      */
     static String formBrokerUrl(ClientOptions clientOptions) {
         StringBuilder brkCon = new StringBuilder();
-        if (!clientOptions.getOption(ClientOptions.PROTOCOL).getValue().equals("")) {
+        if (!clientOptions.getOption(ClientOptions.PROTOCOL).getValue().isEmpty()) {
             brkCon.append(clientOptions.getOption(ClientOptions.PROTOCOL).getValue()).append(":");
         }
 
@@ -480,7 +480,7 @@ public abstract class CoreClient {
             brkCon.append(clientOptions.getOption(ClientOptions.BROKER_HOST).getValue()).append(":")
                 .append(clientOptions.getOption(ClientOptions.BROKER_PORT).getValue());
         }
-        LOG.trace("BrokerUrl=" + brkCon.toString());
+        LOG.trace("BrokerUrl=" + brkCon);
         return brkCon.toString();
     }
 }

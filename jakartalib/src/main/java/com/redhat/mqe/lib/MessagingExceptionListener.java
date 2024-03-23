@@ -29,7 +29,7 @@ import jakarta.jms.JMSException;
  * MessagingExceptionListener is created for each connection made.
  */
 public class MessagingExceptionListener implements ExceptionListener {
-    private Logger LOG = LoggerFactory.getLogger(ConnectionManager.class.getName());
+    private final Logger LOG = LoggerFactory.getLogger(ConnectionManager.class.getName());
 
     @Override
     public void onException(JMSException e) {

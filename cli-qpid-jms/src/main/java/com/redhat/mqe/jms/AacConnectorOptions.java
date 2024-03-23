@@ -34,7 +34,7 @@ import java.util.List;
  */
 public class AacConnectorOptions extends AacClientOptions {
     private List<Option> options = new LinkedList<>();
-    private Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
+    private final Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
     private final List<Option> connectorDefaultOptions = new LinkedList<>();
 
     {

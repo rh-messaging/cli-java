@@ -39,9 +39,9 @@ public abstract class AacClientOptions extends ClientOptions {
     private static final Map<String, String> translationDtestJmsMap = new HashMap<>();
     private final List<Option> defaultOptions = new ArrayList<>();
     private List<Option> updatedOptions = new ArrayList<>();
-    static List<String> argsAcceptingMultipleValues = new ArrayList<>();
-    static List<String> failoverProtocols = new ArrayList<>();
-    static List<Option> numericArgumentValueOptionList = new ArrayList<>();
+    static final List<String> argsAcceptingMultipleValues = new ArrayList<>();
+    static final List<String> failoverProtocols = new ArrayList<>();
+    static final List<Option> numericArgumentValueOptionList = new ArrayList<>();
 
     /* Mapping of client option to jms client is done in CoreClient.CONNECTION_TRANSLATION_MAP */
     static final String BROKER = "broker";
@@ -336,7 +336,7 @@ public abstract class AacClientOptions extends ClientOptions {
     /**
      * Method for getting default values for given client.
      *
-     * @return Map of default options for given client
+     * @return List of default options for given client
      */
     public abstract List<Option> getClientDefaultOptions();
 

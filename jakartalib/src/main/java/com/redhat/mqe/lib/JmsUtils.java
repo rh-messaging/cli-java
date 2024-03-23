@@ -86,7 +86,7 @@ public class JmsUtils {
 
     static File getFilePath(String filePath, int msgCounter) throws IOException {
         File file;
-        if (filePath == null || filePath.equals("")) {
+        if (filePath == null || filePath.isEmpty()) {
             file = File.createTempFile("recv_msg_", Long.toString(System.currentTimeMillis()));
         } else {
             file = new File(filePath + "_" + msgCounter);

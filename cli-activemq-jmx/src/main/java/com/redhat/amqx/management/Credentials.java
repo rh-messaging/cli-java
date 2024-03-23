@@ -4,8 +4,8 @@ package com.redhat.amqx.management;
  * Implements basic credentials used for authentication
  */
 public class Credentials {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
     public Credentials(String username, String password) {
         this.username = username;

@@ -36,7 +36,7 @@ import jakarta.jms.Topic;
 public class AacConnectionManager extends ConnectionManager {
     static final String QUEUE_OBJECT = "javax.jms.Queue";
     static final String TOPIC_OBJECT = "javax.jms.Topic";
-    private Logger LOG = LoggerFactory.getLogger(AacConnectionManager.class.getName());
+    private final Logger LOG = LoggerFactory.getLogger(AacConnectionManager.class.getName());
 
     AacConnectionManager(String serviceName, ClientOptions clientOptions, String brokerUrl) {
         if (Boolean.parseBoolean(clientOptions.getOption(ClientOptions.TRACE_MESSAGES).getValue())) {

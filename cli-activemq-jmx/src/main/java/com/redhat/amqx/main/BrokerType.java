@@ -8,9 +8,9 @@ public enum BrokerType {
     ARTEMIS("service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi", "amq", "artemis"),
     ACTIVEMQ("service:jmx:rmi:///jndi/rmi://localhost:1099/karaf-root", "amq", "activemq");
 
-    private String defaultJMXURL;
-    private String defaultBrokerName;
-    private String defaultUpstreamName;
+    private final String defaultJMXURL;
+    private final String defaultBrokerName;
+    private final String defaultUpstreamName;
 
     BrokerType(String defaultJMXURL, String defaultBrokerName, String upstreamName) {
         this.defaultJMXURL = defaultJMXURL;

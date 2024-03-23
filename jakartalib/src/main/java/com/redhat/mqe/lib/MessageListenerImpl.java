@@ -24,7 +24,7 @@ import jakarta.jms.MessageListener;
 
 public class MessageListenerImpl implements MessageListener {
 
-    private ReceiverClient rcvrClient;
+    private final ReceiverClient rcvrClient;
 
     MessageListenerImpl(ReceiverClient rcvrClient) {
         this.rcvrClient = rcvrClient;

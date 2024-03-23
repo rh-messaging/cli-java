@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class AacReceiverOptions extends AacClientOptions {
     private List<Option> options = null;
-    private Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
+    private final Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
     private final List<Option> receiverDefaultOptions = new ArrayList<>();
 
     {

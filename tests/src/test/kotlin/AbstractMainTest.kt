@@ -35,7 +35,8 @@ import org.junit.jupiter.api.io.TempDir
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
 import org.junit.jupiter.params.provider.ValueSource
-import org.junitpioneer.jupiter.SetEnvironmentVariable
+import util.Broker
+import util.BrokerFixture
 import java.io.File
 import java.lang.reflect.UndeclaredThrowableException
 import java.math.BigInteger
@@ -49,9 +50,6 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
-import kotlin.collections.ArrayList
-import util.BrokerFixture
-import util.Broker
 
 @Tag("external")
 abstract class AbstractMainTest : AbstractTest() {
@@ -100,7 +98,7 @@ abstract class AbstractMainTest : AbstractTest() {
 
     @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
-    @ValueSource(strings = arrayOf("sender", "receiver", "connector"))
+    @ValueSource(strings = ["sender", "receiver", "connector"])
     fun printHelp(client: String) {
         val parameters =
             "$client --help".split(" ").toTypedArray()
@@ -337,7 +335,7 @@ abstract class AbstractMainTest : AbstractTest() {
 
     @Tags(Tag("pairwise"), Tag("external"))
     @ParameterizedTest
-    @CsvFileSource(resources = arrayOf("/connector.csv"))
+    @CsvFileSource(resources = ["/connector.csv"])
     open fun connectConnectorWithAllSenderCLISwitches(senderDynamicOptions: String) {
         println(senderDynamicOptions)
         val connectorPrameters =

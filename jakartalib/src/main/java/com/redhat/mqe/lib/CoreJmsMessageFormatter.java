@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class CoreJmsMessageFormatter extends JmsMessageFormatter {
     /**
-     * Openwire -> AMQP mapping http://activemq.apache.org/amqp.html
+     * Openwire -> AMQP mapping <a href="http://activemq.apache.org/amqp.html">...</a>
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> formatMessage(Message msg, boolean hashContent) throws JMSException {
