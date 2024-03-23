@@ -60,40 +60,40 @@ import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
 public class CliProtonJ2Receiver extends CliProtonJ2SenderReceiver implements Callable<Integer> {
 
     @CommandLine.Option(names = {"-b", "--broker"}, description = "MD5, SHA-1, SHA-256, ...")
-    private final String broker = "MD5";
+    private String broker = "MD5";
 
     @CommandLine.Option(names = {"--conn-clientid"})
     private String connClientId;
 
     @CommandLine.Option(names = {"--durable-subscriber"})
-    private final String durableSubscriberString = "false";
+    private String durableSubscriberString = "false";
 
     @CommandLine.Option(names = {"--durable-subscriber-name"})
     private String durableSubscriberName;
 
     @CommandLine.Option(names = {"--subscriber-unsubscribe"})
-    private final String subscriberUnsubscribeString = "false";
+    private String subscriberUnsubscribeString = "false";
 
     @CommandLine.Option(names = {"--recv-browse"}, description = "browse queued messages instead of receiving them")
-    private final String recvBrowseString = "false";
+    private String recvBrowseString = "false";
 
     @CommandLine.Option(names = {"--msg-selector"}, description = "receive only messages matching a server-side selector")
     private String selector;
 
     @CommandLine.Option(names = {"--count"}, description = "MD5, SHA-1, SHA-256, ...")
-    private final int count = 1;
+    private int count = 1;
 
     @CommandLine.Option(names = {"--timeout"}, description = "Timeout in seconds to wait before exiting, it is reset after every successful send/receive/connect")
-    private final int timeout = -1;
+    private int timeout = -1;
 
     @CommandLine.Option(names = {"--process-reply-to"})
-    private final boolean processReplyTo = false;
+    private boolean processReplyTo = false;
 
     @CommandLine.Option(names = {"--duration"})
     private Float duration = 0.0f;
 
     @CommandLine.Option(names = {"--duration-mode"})
-    private final DurationModeReceiver durationMode = DurationModeReceiver.afterReceive;
+    private DurationModeReceiver durationMode = DurationModeReceiver.afterReceive;
 
     @CommandLine.Option(names = {"--ssn-ack-mode"})
     private SsnAckMode ssnAckMode;

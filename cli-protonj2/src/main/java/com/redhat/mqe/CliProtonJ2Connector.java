@@ -35,13 +35,13 @@ import java.util.concurrent.Callable;
 )
 class CliProtonJ2Connector extends CliProtonJ2SenderReceiverConnector implements Callable<Integer> {
     @CommandLine.Option(names = {"-b", "--broker"}, description = "")
-    private final String broker = "";
+    private String broker = "";
 
     @CommandLine.Option(names = {"-a", "--address"}, description = "")
-    private final String address = "";
+    private String address = "";
 
     @CommandLine.Option(names = {"--count"}, description = "")
-    private final int count = 1;
+    private int count = 1;
 
     @Override
     public Integer call() throws Exception {

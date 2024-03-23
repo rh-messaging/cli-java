@@ -49,10 +49,10 @@ import static com.redhat.mqe.lib.ClientOptionManager.TOPIC_PREFIX;
 public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Callable<Integer> {
 
     @CommandLine.Option(names = {"-b", "--broker"}, description = "")
-    private final String broker = "MD5";
+    private String broker = "MD5";
 
     @CommandLine.Option(names = {"--count"}, description = "")
-    private final int count = 1;
+    private int count = 1;
 
     @CommandLine.Option(names = {"--timeout"}, description = "")
     private int timeout;
@@ -61,7 +61,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private Float duration = 0.0f;
 
     @CommandLine.Option(names = {"--msg-property"})  // picocli Map options works for this, sounds like
-    private final List<String> msgProperties = new ArrayList<>();
+    private List<String> msgProperties = new ArrayList<>();
 
     @CommandLine.Option(names = {"--msg-content"})
     private String msgContent;
@@ -70,13 +70,13 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private String msgContentFromFile;
 
     @CommandLine.Option(names = {"--content-type"})
-    private final ContentType contentType = ContentType.STRING;
+    private ContentType contentType = ContentType.STRING;
 
     @CommandLine.Option(names = {"--property-type"})
-    private final PropertyType propertyType = PropertyType.String;
+    private PropertyType propertyType = PropertyType.String;
 
     @CommandLine.Option(names = {"--msg-durable"})
-    private final String msgDurableString = "false";
+    private String msgDurableString = "false";
 
     @CommandLine.Option(names = {"--msg-ttl"})
     private Long msgTtl;
@@ -89,7 +89,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private List<String> msgContentMapItems;
 
     @CommandLine.Option(names = {"--msg-content-binary"})
-    private final String msgContentBinaryString = "false";
+    private String msgContentBinaryString = "false";
 
     @CommandLine.Option(names = {"--msg-correlation-id"})
     private String msgCorrelationId;
@@ -115,7 +115,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     // jms.populateJMSXUserID opt in qpid-jms
     // TODO: does not seem to have equivalent; what is the threat model for "prevent spoofing" in JMS docs?
     @CommandLine.Option(names = {"--conn-populate-user-id"})
-    private final String connPopulateUserIdString = "false";
+    private String connPopulateUserIdString = "false";
 
     @CommandLine.Option(names = {"--msg-group-seq"})
     private Integer msgGroupSeq;
@@ -139,7 +139,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
     private SyncMode syncMode;
 
     @CommandLine.Option(names = {"--duration-mode"})
-    private final DurationModeSender durationMode = DurationModeSender.afterSend;
+    private DurationModeSender durationMode = DurationModeSender.afterSend;
 
     public CliProtonJ2Sender() {
         super();

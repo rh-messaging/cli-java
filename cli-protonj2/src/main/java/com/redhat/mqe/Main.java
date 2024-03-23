@@ -43,20 +43,20 @@ class Main implements Callable<Integer> {
 
 class CliProtonJ2SenderReceiverConnector {
     @CommandLine.Option(names = {"--log-lib"})
-    private final LogLib logLib = LogLib.off;
+    private LogLib logLib = LogLib.off;
     @CommandLine.Option(names = {"--conn-username"}, description = "")
-    private final String connUsername = "MD5";
+    private String connUsername = "MD5";
     @CommandLine.Option(names = {"--conn-password"}, description = "")
-    private final String connPassword = "MD5";
+    private String connPassword = "MD5";
     @CommandLine.Option(names = {"--conn-auth-mechanisms"}, description = "MD5, SHA-1, SHA-256, ...")
     // todo, want to accept comma-separated lists; there is https://picocli.info/#_split_regex
-    private final List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
+    private List<AuthMechanism> connAuthMechanisms = new ArrayList<>();
     @CommandLine.Option(names = {"--conn-reconnect"})
-    private final String reconnectString = "false";
+    private String reconnectString = "false";
     @CommandLine.Option(names = {"--conn-heartbeat"})
     private Long connHeartbeat;
     @CommandLine.Option(names = {"--conn-ssl"}, arity = "0..1")
-    private final Boolean connSsl = false;
+    private Boolean connSsl = false;
     @CommandLine.Option(names = {"--conn-ssl-certificate"}, arity = "0..1")
     private String connSslCertificate;
     @CommandLine.Option(names = {"--conn-ssl-password"}, arity = "0..1")
@@ -146,13 +146,13 @@ class CliProtonJ2SenderReceiver extends CliProtonJ2SenderReceiverConnector {
 
     // todo: what does --out=python --log-msgs=json mean?
     @CommandLine.Option(names = {"--out"}, description = "")
-    protected final Out out = Out.python;
+    protected Out out = Out.python;
 
     @CommandLine.Option(names = {"--log-msgs"}, description = "message reporting style")
-    protected final LogMsgs logMsgs = LogMsgs.dict;
+    protected LogMsgs logMsgs = LogMsgs.dict;
 
     @CommandLine.Option(names = {"--msg-content-hashed"}, arity = "0..1")
-    protected final boolean msgContentHashed = false;
+    protected boolean msgContentHashed = false;
 
     @CommandLine.Option(names = {"-a", "--address"}, description = "")
     protected String address = "";
