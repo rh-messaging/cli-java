@@ -38,8 +38,8 @@ import org.apache.logging.log4j.Logger;
  */
 public class Sender extends Client {
     OptionSpec<String> content;
-    MemoryPersistence persistence = new MemoryPersistence();
-    private Logger log = setUpLogger("Sender");
+    final MemoryPersistence persistence = new MemoryPersistence();
+    private final Logger log = setUpLogger("Sender");
 
     private MqttClient sender = null;
 

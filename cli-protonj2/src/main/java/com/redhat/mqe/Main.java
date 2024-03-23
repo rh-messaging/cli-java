@@ -165,7 +165,7 @@ class CliProtonJ2SenderReceiver extends CliProtonJ2SenderReceiverConnector {
         this.messageFormatter = messageFormatter;
     }
 
-    protected void printMessage(Message<Object> message) throws ClientException {
+    protected <E> void printMessage(Message<E> message) throws ClientException {
         Map<String, Object> messageDict = messageFormatter.formatMessage(address, message, msgContentHashed);
         switch (out) {
             case python:

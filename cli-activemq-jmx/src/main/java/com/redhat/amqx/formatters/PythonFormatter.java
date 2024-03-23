@@ -14,7 +14,7 @@ public class PythonFormatter implements Formatter {
      */
     public String convertJSON(String json) {
         // TODO for serialization from JSON to java object use jackson json library
-        json = json.replaceAll("\"", "\'");
+        json = json.replaceAll("\"", "'");
         json = json.replaceAll(":", ": ");
         json = json.replaceAll(",'", ", '");
         json = json.replaceAll("'?[Nn]one'?", "None");

@@ -15,9 +15,9 @@ import javax.management.ObjectName;
  */
 public class ArtemisResolver implements Resolver<ActiveMQServerControl, QueueControl, QueueControl, AddressControl, DivertControl> {
     private final String DEFAULT_DOMAIN = "org.apache.activemq.artemis";
-    private MBeanServerConnection mBeanServerConnection;
-    private String brokerName;
-    private ObjectNameBuilder objectNameBuilder;
+    private final MBeanServerConnection mBeanServerConnection;
+    private final String brokerName;
+    private final ObjectNameBuilder objectNameBuilder;
 
     public ArtemisResolver(MBeanServerConnection mBeanServerConnection, String brokerName) {
         this.mBeanServerConnection = mBeanServerConnection;

@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class ProtonJ2MessageFormatter extends MessageFormatter {
 
-    public Map<String, Object> formatMessage(String address, Message<Object> message, boolean msgContentHashed) throws ClientException {
+    public <E> Map<String, Object> formatMessage(String address, Message<E> message, boolean msgContentHashed) throws ClientException {
         Map<String, Object> map = new HashMap<>();
         map.put("address", address);
         map.put("group-id", message.groupId());
@@ -80,7 +80,7 @@ public class ProtonJ2MessageFormatter extends MessageFormatter {
      * @param message calculate TTL for this message
      * @return positive long number if TTL was calculated. Long.MIN_VALUE if error.
      */
-    public static long getTtl(Message<Object> message) {
+    public static <E> long getTtl(Message<E> message) {
         long ttl = 0;
         try {
             long expiration = message.absoluteExpiryTime();

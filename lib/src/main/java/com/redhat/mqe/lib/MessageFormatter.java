@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -41,7 +40,7 @@ import java.util.UUID;
  * JSON, and so on.
  */
 public abstract class MessageFormatter {
-    static Logger LOG = LoggerFactory.getLogger(MessageFormatter.class);
+    static final Logger LOG = LoggerFactory.getLogger(MessageFormatter.class);
     private final ObjectMapper json = new ObjectMapper();
 
     protected StringBuilder formatBool(Boolean in_data) {

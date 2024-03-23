@@ -248,7 +248,7 @@ public class CliProtonJ2Sender extends CliProtonJ2SenderReceiver implements Call
                 tracker.awaitSettlement();
             }
 
-            printMessage((Message<Object>) message);
+            printMessage(message);
             i++; // TODO: looks like all have the sleeps wrong, then (the + 1 in the calls)
 
             if (durationMode == DurationModeSender.afterSend) {

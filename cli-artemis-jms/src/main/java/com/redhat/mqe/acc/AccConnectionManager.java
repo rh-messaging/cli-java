@@ -37,7 +37,7 @@ import javax.jms.Topic;
 
 public class AccConnectionManager extends ConnectionManager {
     // TODO remove initialcontext from the superclass
-    private Logger LOG = LoggerFactory.getLogger(AccConnectionManager.class.getName());
+    private final Logger LOG = LoggerFactory.getLogger(AccConnectionManager.class.getName());
 
     AccConnectionManager(final ClientOptions clientOptions, String brokerUrl) {
         super();

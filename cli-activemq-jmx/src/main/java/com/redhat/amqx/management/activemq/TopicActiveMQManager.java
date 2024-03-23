@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class TopicActiveMQManager extends AbstractActiveMQManager implements DestinationManager {
     private static final Logger logger = LoggerFactory.getLogger(TopicActiveMQManager.class);
-    private NodeType topicType = NodeType.TOPIC;
+    private final NodeType topicType = NodeType.TOPIC;
 
     public TopicActiveMQManager(final String url, final Credentials credentials,
                                 final String brokerName, final String host) throws IOException {

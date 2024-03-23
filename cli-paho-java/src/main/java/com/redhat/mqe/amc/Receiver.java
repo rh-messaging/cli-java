@@ -25,7 +25,7 @@ import org.eclipse.paho.client.mqttv3.*;
 
 
 public class Receiver extends Client implements MqttCallback {
-    private Logger log = setUpLogger("Receiver");
+    private final Logger log = setUpLogger("Receiver");
 
     private MqttClient receiver = null;
 

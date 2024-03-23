@@ -39,7 +39,7 @@ import java.security.InvalidParameterException;
 import java.util.List;
 
 public class MessageProvider implements AutoCloseable {
-    static Logger LOG = LoggerFactory.getLogger(MessageProvider.class);
+    static final Logger LOG = LoggerFactory.getLogger(MessageProvider.class);
     private final ClientOptions senderOptions;
     private final Session session;
 
@@ -294,7 +294,7 @@ public class MessageProvider implements AutoCloseable {
      */
     static boolean isEmptyMessage(List<String> values) {
         return (values.size() == 1
-            && (values.get(0).equals("") || values.get(0).equals("\"\"") || values.get(0).equals("\'\'")));
+            && (values.get(0).isEmpty() || values.get(0).equals("\"\"") || values.get(0).equals("''")));
     }
 
     @Override

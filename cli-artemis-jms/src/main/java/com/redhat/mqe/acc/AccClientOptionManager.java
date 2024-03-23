@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AccClientOptionManager extends ClientOptionManager {
-    private Map<String, String> CTL_SSL_OPTIONS = new HashMap<>();
+    private final Map<String, String> CTL_SSL_OPTIONS = new HashMap<>();
 
     {
         // Core

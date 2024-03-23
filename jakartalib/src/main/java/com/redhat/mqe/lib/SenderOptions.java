@@ -33,7 +33,7 @@ import java.util.List;
 public class SenderOptions extends ClientOptions {
 
     private List<Option> options = new LinkedList<Option>();
-    private Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
+    private final Logger LOG = LoggerFactory.getLogger(ReceiverOptions.class);
     private final List<Option> senderDefaultOptions = new LinkedList<Option>();
 
     {
@@ -43,7 +43,7 @@ public class SenderOptions extends ClientOptions {
             new Option(COUNT, "c", "MESSAGES", "1", "stop after count messages have been sent, zero disables"),
             new Option(DURATION, "d", "DURATION", "0", "message actions total duration in seconds (defines msg-rate together with count)"),
             new Option(DURATION_MODE, "", "VALUE", "after-send", "specifies where to wait (before-send/after-send/after-send-tx-action"),
-            new Option(MSG_ID, "i", "MSG_ID", "", "use the supplied id instead of generating one. use \'noid\' to not generate IDs"),
+            new Option(MSG_ID, "i", "MSG_ID", "", "use the supplied id instead of generating one. use 'noid' to not generate IDs"),
             new Option(PROPERTY_TYPE, "", "PTYPE", "String", "specify the type of message property"),
             new Option(MSG_PROPERTY, "", "KEY=PVALUE", "", "specify message property as KEY=VALUE (use '~' instead of '=' for auto-casting)"),
             new Option(CONTENT_TYPE, "", "CTYPE", "String", "specify type of the actual content type"),

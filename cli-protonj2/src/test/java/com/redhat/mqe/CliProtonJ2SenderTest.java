@@ -33,8 +33,8 @@ class CliProtonJ2SenderTest {
     // https://stackoverflow.com/questions/74273941/how-do-i-get-picocli-to-parse-item-item-foo-as-null-foo-listst
     @Nested
     class MsgContentListItem {
-        CliProtonJ2Sender sender = new CliProtonJ2Sender();
-        CommandLine commandLine = new CommandLine(sender);
+        final CliProtonJ2Sender sender = new CliProtonJ2Sender();
+        final CommandLine commandLine = new CommandLine(sender);
 
         @Test
         void test_msgContentListItem__null() {

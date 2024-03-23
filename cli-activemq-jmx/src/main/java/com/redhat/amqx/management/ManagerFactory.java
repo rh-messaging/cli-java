@@ -49,7 +49,7 @@ public class ManagerFactory {
     }
 
     private String checkBrokerName(String brokerName, BrokerType brokerType) {
-        if (brokerName == null || brokerName.equals("")) {
+        if (brokerName == null || brokerName.isEmpty()) {
             brokerName = brokerType.getDefaultBrokerName();
         }
         return brokerName;
@@ -62,7 +62,7 @@ public class ManagerFactory {
      * @return brokerType to be used from parameters
      */
     private BrokerType resolveBrokerType(String brokerTypeName) {
-        if (brokerTypeName == null || brokerTypeName.equals("")) {
+        if (brokerTypeName == null || brokerTypeName.isEmpty()) {
             return BrokerType.ARTEMIS;
         } else {
             brokerTypeName = brokerTypeName.toUpperCase().trim();

@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,8 +56,8 @@ public abstract class ClientOptionManager {
      * Null value means key should not become connection factory property.
      */
     protected final Map<String, String> CONNECTION_TRANSLATION_MAP = new HashMap<>();
-    protected Map<String, String> connectionOptionsUrlMap = new HashMap<>();
-    private List<Option> updatedOptions = new ArrayList<>();
+    protected final Map<String, String> connectionOptionsUrlMap = new HashMap<>();
+    private final List<Option> updatedOptions = new ArrayList<>();
     public static final String QUEUE_PREFIX = "queue://";
     public static final String TOPIC_PREFIX = "topic://";
 
@@ -106,10 +107,10 @@ public abstract class ClientOptionManager {
                 }
 
                 OptionSpecBuilder optionSpecBuilder;
-                if (!opt.getShortOptionName().equals("") && !opt.getLongOptionName().equals("")) {
+                if (!opt.getShortOptionName().isEmpty() && !opt.getLongOptionName().isEmpty()) {
                     optionSpecBuilder = parser.acceptsAll(Arrays.asList(opt.getShortOptionName(),
                         opt.getLongOptionName()), opt.getDescription());
-                } else if (opt.getLongOptionName().equals("")) {
+                } else if (opt.getLongOptionName().isEmpty()) {
                     optionSpecBuilder = parser.accepts(opt.getShortOptionName(), opt.getDescription());
                 } else {
                     optionSpecBuilder = parser.accepts(opt.getLongOptionName(), opt.getDescription());
@@ -118,7 +119,7 @@ public abstract class ClientOptionManager {
                 if (opt.hasArgument()) {
                     ArgumentAcceptingOptionSpec<String> optionSpec = optionSpecBuilder.withRequiredArg().describedAs(opt.getArgumentExample());
                     // TODO possibly all options with arguments should have default values(?)
-                    if (!opt.getDefaultValue().equals("")) {
+                    if (!opt.getDefaultValue().isEmpty()) {
                         optionSpec.defaultsTo(opt.getDefaultValue());
                     }
                 }
@@ -163,8 +164,8 @@ public abstract class ClientOptionManager {
 
                 clientOptions.setUpdatedOptions(updatedOptions);
                 createConnectionOptions(clientOptions);
-                if (clientOptions.getUpdatedOptionsMap().keySet().contains(ClientOptions.BROKER)
-                    || !clientOptions.getUpdatedOptionsMap().keySet().contains(ClientOptions.BROKER_URI)) {
+                if (clientOptions.getUpdatedOptionsMap().containsKey(ClientOptions.BROKER)
+                    || !clientOptions.getUpdatedOptionsMap().containsKey(ClientOptions.BROKER_URI)) {
                     checkAndSetOption(ClientOptions.BROKER,
                         clientOptions.getOption(ClientOptions.BROKER).getValue() + getConnectionOptionsAsUrl(),
                         clientOptions);
@@ -207,7 +208,7 @@ public abstract class ClientOptionManager {
     private static String getOptionName(List<String> options) {
         List<String> tmp = new ArrayList<>(options);
         if (options.size() > 1) {
-            Collections.sort(tmp, new StringLengthComparator());
+            tmp.sort(new StringLengthComparator());
         }
         return tmp.get(0);
     }
@@ -246,7 +247,7 @@ public abstract class ClientOptionManager {
                     clientOption.setParsedValue(options.valueOf(clientOption.getName()));
                     break;
             }
-        } else if (options.valuesOf(clientOption.getName()).size() == 0) {
+        } else if (options.valuesOf(clientOption.getName()).isEmpty()) {
             if (clientOption.getName().equals(ClientOptions.USERNAME)
                 || clientOption.getName().equals(ClientOptions.PASSWORD)) {
                 clientOption.setParsedValue(clientOption.getDefaultValue());
@@ -335,7 +336,7 @@ public abstract class ClientOptionManager {
             }
         }
         newBrokerUrl.deleteCharAt(newBrokerUrl.length() - 1);
-        LOG.trace("FinalBrokerUrl=" + newBrokerUrl.toString());
+        LOG.trace("FinalBrokerUrl=" + newBrokerUrl);
         return newBrokerUrl.toString();
     }
 
@@ -401,37 +402,36 @@ public abstract class ClientOptionManager {
             String jmsConOptionNames = CONNECTION_TRANSLATION_MAP.get(option.getName());
             if (jmsConOptionNames != null) {
                 for (String jmsConOptionName : jmsConOptionNames.split(";")) {
-                    if (jmsConOptionName.equals("")) {
+                    if (jmsConOptionName.isEmpty()) {
                         System.out.println("ignored option: " + option.getName());
                         continue;
                     }
                     if (option.getName().equals(ClientOptions.CON_HEARTBEAT)) {
-                        Integer value = Math.round(Float.parseFloat(option.getValue()) * 1000);
-                        connectionOptionsUrlMap.put(jmsConOptionName, value.toString());
+                        int value = Math.round(Float.parseFloat(option.getValue()) * 1000);
+                        connectionOptionsUrlMap.put(jmsConOptionName, Integer.toString(value));
                     } else {
                         connectionOptionsUrlMap.put(jmsConOptionName, option.getValue());
                     }
                 }
             }
         } else {
-            if (option.getName().equals(ClientOptions.CON_RECONNECT)) {
-                // use failover mechanism, conn-reconnect does not perform nor add any other action to the client
-                return;
+            switch (option.getName()) {
+                case ClientOptions.CON_RECONNECT:
+                    // use failover mechanism, conn-reconnect does not perform nor add any other action to the client
+                    return;
+                case ClientOptions.CON_FAILOVER_URLS:
+                    // add CSV of broker urls failover mechanism, conn-reconnect
+                    return;
+                case ClientOptions.CONN_USE_CONFIG_FILE:
+                    // will use jndi connection factory, nothing to do here
+                    return;
+                case ClientOptions.CON_IGNORE_REMOTE_CLOSE:
+                    // ignore remote connection close, nothing to do here
+                    return;
+                default:
+                    LOG.error("Connection option {} is not recognized! ", option.getName());
+                    System.exit(2);
             }
-            if (option.getName().equals(ClientOptions.CON_FAILOVER_URLS)) {
-                // add CSV of broker urls failover mechanism, conn-reconnect
-                return;
-            }
-            if (option.getName().equals(ClientOptions.CONN_USE_CONFIG_FILE)) {
-                // will use jndi connection factory, nothing to do here
-                return;
-            }
-            if (option.getName().equals(ClientOptions.CON_IGNORE_REMOTE_CLOSE)) {
-                // ignore remote connection close, nothing to do here
-                return;
-            }
-            LOG.error("Connection option {} is not recognized! ", option.getName());
-            System.exit(2);
         }
     }
 
@@ -461,15 +461,11 @@ public abstract class ClientOptionManager {
         StringBuilder conOptUrl = new StringBuilder();
         for (String optionName : connectionOptionsUrlMap.keySet()) {
             String divider = (conOptUrl.length() == 0) ? "?" : "&";
-            try {
-                conOptUrl
-                    .append(divider)
-                    .append(URLEncoder.encode(optionName, "UTF-8"))
-                    .append("=")
-                    .append(URLEncoder.encode(connectionOptionsUrlMap.get(optionName), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalArgumentException("Encoding 'UTF-8' is not supported", e);
-            }
+            conOptUrl
+                .append(divider)
+                .append(URLEncoder.encode(optionName, StandardCharsets.UTF_8))
+                .append("=")
+                .append(URLEncoder.encode(connectionOptionsUrlMap.get(optionName), StandardCharsets.UTF_8));
         }
         return conOptUrl.toString();
     }

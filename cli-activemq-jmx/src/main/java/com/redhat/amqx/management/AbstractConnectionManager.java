@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractConnectionManager {
     private static final Logger logger = LoggerFactory.getLogger(AbstractConnectionManager.class);
-    private Resolver<?, ?, ?, ?, ?> resolver;
-    private String brokerName;
+    private final Resolver<?, ?, ?, ?, ?> resolver;
+    private final String brokerName;
     private JMXServiceURL jmxServiceURL;
     protected MBeanServerConnection mBeanServerConnection;
 
@@ -34,7 +34,7 @@ public abstract class AbstractConnectionManager {
         // else { use default url};
         jmxServiceURL = new JMXServiceURL(url);
 
-        if (brokerName == null || brokerName.equals("")) {
+        if (brokerName == null || brokerName.isEmpty()) {
             this.brokerName = brokerType.getDefaultBrokerName();
         } else {
             this.brokerName = brokerName;

@@ -20,7 +20,7 @@ public interface Resolver<T, R, S, U, V> {
 
     U getAddressView(String addressName) throws Exception;
 
-    public ObjectName getAddressObjectName(String addressName) throws Exception;
+    ObjectName getAddressObjectName(String addressName) throws Exception;
 
     V getDivertView(String addressName, String divertName) throws Exception;
 

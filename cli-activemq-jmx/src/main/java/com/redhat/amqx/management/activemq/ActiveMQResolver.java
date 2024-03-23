@@ -14,9 +14,9 @@ import javax.management.ObjectName;
  */
 public class ActiveMQResolver implements Resolver<BrokerViewMBean, QueueViewMBean, TopicViewMBean, QueueViewMBean, QueueViewMBean> {
     private static final String DEFAULT_DOMAIN = "org.apache.activemq";
-    private String brokerDomain;
-    private String brokerName;
-    private MBeanServerConnection mBeanServerConnection;
+    private final String brokerDomain;
+    private final String brokerName;
+    private final MBeanServerConnection mBeanServerConnection;
 
     public ActiveMQResolver(MBeanServerConnection mBeanServerConnection, String brokerName) {
         this.mBeanServerConnection = mBeanServerConnection;

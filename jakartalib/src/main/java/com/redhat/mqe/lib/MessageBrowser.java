@@ -31,7 +31,7 @@ public class MessageBrowser extends CoreClient {
 
     private boolean transacted;
     private String msgSelector;
-    ClientOptions clientOptions;
+    final ClientOptions clientOptions;
 
     @Inject
     public MessageBrowser(@Named("Receiver") ClientOptions clientOptions, ConnectionManagerFactory connectionManagerFactory, JmsMessageFormatter jmsMessageFormatter) {

@@ -33,9 +33,7 @@ import jakarta.jms.MessageFormatException;
 import jakarta.jms.ObjectMessage;
 import jakarta.jms.StreamMessage;
 import jakarta.jms.TextMessage;
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -49,17 +47,17 @@ import java.util.Map;
  * JSON, and so on.
  */
 public abstract class JmsMessageFormatter extends MessageFormatter {
-    static Logger LOG = LoggerFactory.getLogger(JmsMessageFormatter.class);
+    static final Logger LOG = LoggerFactory.getLogger(JmsMessageFormatter.class);
 
-    String AMQP_CONTENT_TYPE = "JMS_AMQP_ContentType";
-    String OWIRE_AMQP_FIRST_ACQUIRER = "JMS_AMQP_FirstAcquirer";
-    String OWIRE_AMQP_SUBJECT = "JMS_AMQP_Subject";
-    String OWIRE_AMQP_CONTENT_ENCODING = "JMS_AMQP_ContentEncoding";
-    String OWIRE_AMQP_REPLY_TO_GROUP_ID = "JMS_AMQP_ReplyToGroupID";
-    String AMQP_JMSX_GROUP_SEQ = "JMSXGroupSeq";
-    String JMSX_DELIVERY_COUNT = "JMSXDeliveryCount";
-    String JMSX_USER_ID = "JMSXUserID";
-    String JMSX_GROUP_ID = "JMSXGroupID";
+    final String AMQP_CONTENT_TYPE = "JMS_AMQP_ContentType";
+    final String OWIRE_AMQP_FIRST_ACQUIRER = "JMS_AMQP_FirstAcquirer";
+    final String OWIRE_AMQP_SUBJECT = "JMS_AMQP_Subject";
+    final String OWIRE_AMQP_CONTENT_ENCODING = "JMS_AMQP_ContentEncoding";
+    final String OWIRE_AMQP_REPLY_TO_GROUP_ID = "JMS_AMQP_ReplyToGroupID";
+    final String AMQP_JMSX_GROUP_SEQ = "JMSXGroupSeq";
+    final String JMSX_DELIVERY_COUNT = "JMSXDeliveryCount";
+    final String JMSX_USER_ID = "JMSXUserID";
+    final String JMSX_GROUP_ID = "JMSXGroupID";
 
     /**
      * Print message body as text.

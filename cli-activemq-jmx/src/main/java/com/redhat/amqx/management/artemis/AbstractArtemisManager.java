@@ -30,7 +30,7 @@ import java.util.*;
 public class AbstractArtemisManager extends AbstractConnectionManager {
     protected static final Logger logger = LoggerFactory.getLogger(AbstractArtemisManager.class);
     private static final ObjectReader objectReader = new ArtemisObjectReader();
-    protected Formatter formatter = new PythonFormatter();
+    protected final Formatter formatter = new PythonFormatter();
 
     public AbstractArtemisManager(String url, Credentials credentials, String brokerName, String hostname) throws IOException {
         super(url, credentials, brokerName, BrokerType.ARTEMIS, hostname);
@@ -66,7 +66,7 @@ public class AbstractArtemisManager extends AbstractConnectionManager {
     /**
      * Get topics MULTICAST routing type "queues" from Artemis broker
      *
-     * @return List of multicast addresses
+     * @return Map of multicast addresses
      * @throws Exception
      */
     protected Map<String, String> getTopics() throws Exception {
@@ -74,7 +74,7 @@ public class AbstractArtemisManager extends AbstractConnectionManager {
 
         for (String addr : getAddresses()) {
             AddressControl ac = (AddressControl) getResolver().getAddressView(addr);
-            for (String queue : Arrays.asList(ac.getQueueNames())) {
+            for (String queue : ac.getQueueNames()) {
                 if (getServerControlMBean().getAddressInfo(addr).contains(RoutingType.MULTICAST.toString())) {
                     topics.put(queue, addr);
                 }
@@ -94,7 +94,7 @@ public class AbstractArtemisManager extends AbstractConnectionManager {
 
         for (String addr : getAddresses()) {
             AddressControl ac = (AddressControl) getResolver().getAddressView(addr);
-            for (String queue : Arrays.asList(ac.getQueueNames())) {
+            for (String queue : ac.getQueueNames()) {
                 if (getServerControlMBean().getAddressInfo(addr).contains(RoutingType.ANYCAST.toString())) {
                     queues.put(queue, addr);
                 }

@@ -29,8 +29,8 @@ import java.util.function.Consumer;
 /**
  * Utility class to configure log messages
  * <p>
- * https://logging.apache.org/log4j/2.x/manual/api.html
- * https://logging.apache.org/log4j/2.x/manual/customconfig.html
+ * <a href="https://logging.apache.org/log4j/2.x/manual/api.html">...</a>
+ * <a href="https://logging.apache.org/log4j/2.x/manual/customconfig.html">...</a>
  */
 public class LogConfigurator {
     /**

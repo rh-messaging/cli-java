@@ -78,7 +78,7 @@ class NoExitSecurityManager extends SecurityManager {
         }
     }
 
-    public static void assertNoSystemExit(@NotNull Function0 executable) {
+    public static <R> void assertNoSystemExit(@NotNull Function0<R> executable) {
         Intrinsics.checkNotNullParameter(executable, "executable");
         SecurityManager previousManager = System.getSecurityManager();
 

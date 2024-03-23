@@ -26,7 +26,7 @@ import java.util.*;
 public class ObjectReader {
     protected static final Logger logger = LoggerFactory.getLogger(ObjectReader.class);
 
-    private static List<String> explicitMethodExcludeList;
+    private static final List<String> explicitMethodExcludeList;
 
     static {
         explicitMethodExcludeList = Arrays.asList("getClass", "getProxyClass", "isProxyClass", "getInvocationHandler");
@@ -174,7 +174,7 @@ public class ObjectReader {
 
         for (Method method : object.getClass().getMethods()) {
             tmpMap = extractMethodProperty(method, object, excludeMethodList);
-            if (tmpMap != null && tmpMap.size() != 0) {
+            if (tmpMap != null && !tmpMap.isEmpty()) {
                 propertiesMap.putAll(tmpMap);
             }
         }
@@ -215,7 +215,7 @@ public class ObjectReader {
 
 class ProxyHandler implements InvocationHandler {
 
-    private Object delegate;
+    private final Object delegate;
 
     public ProxyHandler(Object delegate) {
         this.delegate = delegate;

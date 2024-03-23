@@ -35,7 +35,7 @@ import java.util.List;
 public class AacSenderOptions extends AacClientOptions {
 
     private List<Option> options = new LinkedList<>();
-    private Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
+    private final Logger LOG = LoggerFactory.getLogger(AacReceiverOptions.class);
     private final List<Option> senderDefaultOptions = new LinkedList<>();
 
     {
@@ -45,7 +45,7 @@ public class AacSenderOptions extends AacClientOptions {
             new Option(COUNT, "c", "MESSAGES", "1", "stop after count messages have been sent, zero disables"),
             new Option(DURATION, "d", "DURATION", "0", "message actions total duration in seconds (defines msg-rate together with count)"),
             new Option(DURATION_MODE, "", "VALUE", "after-send", "specifies where to wait (before-send/after-send/after-send-tx-action"),
-            new Option(MSG_ID, "i", "MSG_ID", "", "use the supplied id instead of generating one. use \'noid\' to not generate IDs"),
+            new Option(MSG_ID, "i", "MSG_ID", "", "use the supplied id instead of generating one. use 'noid' to not generate IDs"),
             new Option(PROPERTY_TYPE, "", "PTYPE", "String", "specify the type of message property"),
             new Option(MSG_PROPERTY, "", "KEY=PVALUE", "", "specify message property as KEY=VALUE (use '~' instead of '=' for auto-casting)"),
             new Option(CONTENT_TYPE, "", "CTYPE", "String", "specify type of the actual content type"),

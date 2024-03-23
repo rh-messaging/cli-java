@@ -30,7 +30,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Map;
@@ -38,9 +37,9 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 
 abstract class Client {
-    private Logger log = setUpLogger("Client");
+    private final Logger log = setUpLogger("Client");
 
-    OptionParser parser = new OptionParser();
+    final OptionParser parser = new OptionParser();
 
     OptionSpec<String> destination;
     OptionSpec<String> clientId;
@@ -78,7 +77,7 @@ abstract class Client {
     Integer cliKeepAlive;
     Boolean cliReconnect;
 
-    AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
+    final AmcMessageFormatter messageFormatter = new AmcMessageFormatter();
 
     Client(String[] args) {
         populateOptionParser(parser);
