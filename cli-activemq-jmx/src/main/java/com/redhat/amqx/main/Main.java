@@ -71,7 +71,7 @@ public class Main {
                 System.exit(ret);
                 break;
             default:
-                System.out.println(String.format("Invalid action '%s'. Exiting", first));
+                System.out.printf("Invalid action '%s'. Exiting%n", first);
                 help(2);
                 break;
         }

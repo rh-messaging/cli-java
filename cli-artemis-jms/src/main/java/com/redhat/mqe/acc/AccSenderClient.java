@@ -103,7 +103,7 @@ public class AccSenderClient extends com.redhat.mqe.lib.SenderClient {
                         // Resend missed messages due to unblocking blocking call.
                         // See "Handling Blocking Calls During Failover" in link below
                         // https://activemq.apache.org/artemis/docs/latest/ha.html
-                        LOG.warn("Resending message %d due to unblocking a blocking send.", msgCounter);
+                        LOG.warn("Resending message {} due to unblocking a blocking send.", msgCounter);
                         msgProducer.send(message);
                     } else {
                         throw jex;
@@ -153,7 +153,7 @@ public class AccSenderClient extends com.redhat.mqe.lib.SenderClient {
                 doTransaction(session, senderOptions.getOption(ClientOptions.TX_ENDLOOP_ACTION).getValue());
             }
         } catch (JMSException | IllegalArgumentException jmse) {
-            LOG.error("Error while sending a message!", jmse.getMessage());
+            LOG.error("Error while sending a message! {}", jmse.getMessage());
             jmse.printStackTrace();
             System.exit(1);
         } finally {

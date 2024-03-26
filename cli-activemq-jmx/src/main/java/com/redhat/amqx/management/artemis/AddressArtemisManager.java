@@ -73,7 +73,7 @@ public class AddressArtemisManager extends AbstractArtemisManager implements Des
 
     @Override
     /**
-     * Create address. None of the parameters other then destinationName are valid.
+     * Create address. None of the parameters other than destinationName are valid.
      */
     public void addDestination(String destinationName, boolean durable, String routingType, String selector) throws Exception {
         if (destinationExists(destinationName)) {

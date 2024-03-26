@@ -393,7 +393,7 @@ public abstract class ClientOptionManager {
 
     /**
      * Fill connectionOptionsUrlMap with the data.
-     * If needed convert the client input connection option
+     * If needed, convert the client input connection option
      * to the appropriate jms connection option.
      * Also, if needed, change seconds to milliseconds.
      */

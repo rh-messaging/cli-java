@@ -33,7 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-class AocConnectionManager extends ConnectionManager {
+public class AocConnectionManager extends ConnectionManager {
     private static final String EXTERNAL_JNDI_PROPERTY = "aoc7.jndi";
     protected InitialContext initialContext;
     private final String queueOrTopic = "amqQueue";

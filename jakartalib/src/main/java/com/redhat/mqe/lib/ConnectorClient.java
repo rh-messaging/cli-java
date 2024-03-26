@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ConnectorClient is an Messaging QE client, which is able to
+ * ConnectorClient is a Messaging QE client, which is able to
  * create connections to provided brokers. Connector can create multiple
  * Connection, Session, MessageProducer, MessageConsumer and TemporaryQueue objects.
  * It can wait for given time

@@ -25,7 +25,7 @@ import java.util.Objects;
 
 /**
  * Class representing one option for client.
- * Option has it's name, default value, short (optional) and long option argument,
+ * Option has its name, default value, short (optional) and long option argument,
  * parsed value, whether it has argument or not, etc..
  */
 public class Option {
@@ -132,7 +132,7 @@ public class Option {
     /**
      * The method sets the user input value to the Option.
      * If argument accepts multiple values, set it as parsedValuesList
-     * and parsedValue is null. Otherwise set content as parsedValue.
+     * and parsedValue is null. Otherwise, set content as parsedValue.
      *
      * @param parsedValue parsed user input for argument value
      */
