@@ -181,7 +181,7 @@ configuration must be added to the activemq.xml configuration file:
 
 Setting up for JBoss usage with libraries
 ----
-If you're planning to use amqx with JBoss libraries, you have added the appropriate activemq core library in the endorsed
+If you're planning to use amqx with JBoss libraries, you have to add the appropriate activemq core library in the endorsed
 directory. To do so, go to the endorsed directory within amqx library dir and run:
 
 ```
