@@ -34,10 +34,10 @@
 
     <properties>
         <bundle.symbolic.name.suffix>jms</bundle.symbolic.name.suffix>
-        <protonj2.version>1.0.0-M20</protonj2.version>
+        <protonj2.version>1.0.0-M23</protonj2.version>
         <jar.main.class>com.redhat.mqe.Main</jar.main.class>
         <library.version>${protonj2.version}</library.version>
-        <tcnative.version>2.0.39.Final</tcnative.version>
+        <tcnative.version>2.0.70.Final</tcnative.version>
         <tcnative.classifier>linux-x86_64-fedora</tcnative.classifier>
         <jaeger-client.version>1.6.0</jaeger-client.version>
     </properties>
