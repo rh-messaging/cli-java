@@ -88,6 +88,8 @@ class QPIDJMS451Test {
         topicSession.close();
 
         topicConnection.close();
+
+        broker.close();
     }
 
     private void configureBroker(Broker broker, Path tempDir) {

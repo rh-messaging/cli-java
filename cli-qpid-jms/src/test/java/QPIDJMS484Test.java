@@ -109,6 +109,7 @@ public class QPIDJMS484Test {
                 }
             }
         }
+        broker.close();
     }
 
     private void configureBroker(Broker broker, Path tempDir) {
