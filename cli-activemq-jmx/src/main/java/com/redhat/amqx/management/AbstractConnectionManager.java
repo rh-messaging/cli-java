@@ -51,11 +51,6 @@ public abstract class AbstractConnectionManager {
 
             String[] creds = {username, password};
             env.put(JMXConnector.CREDENTIALS, creds);
-
-            // For Java 25+ compatibility: Create a Subject and use it for the connection
-            // This avoids the deprecated Subject.getSubject() call on the server side
-            Subject subject = new Subject();
-            env.put(JMXConnector.SUBJECT_DELEGATION_ENABLED, "true");
         }
         logger.debug("Connecting to '" + url + "'");
 
