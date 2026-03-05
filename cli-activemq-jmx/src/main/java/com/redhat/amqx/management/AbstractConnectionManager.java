@@ -9,7 +9,9 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import javax.security.auth.Subject;
 import java.io.IOException;
+import java.security.PrivilegedAction;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +42,7 @@ public abstract class AbstractConnectionManager {
             this.brokerName = brokerName;
         }
 
-        Map<String, String[]> env = null;
+        Map<String, Object> env = null;
 
         if (credentials != null) {
             env = new HashMap<>();
@@ -49,9 +51,34 @@ public abstract class AbstractConnectionManager {
 
             String[] creds = {username, password};
             env.put(JMXConnector.CREDENTIALS, creds);
+
+            // For Java 25+ compatibility: Create a Subject and use it for the connection
+            // This avoids the deprecated Subject.getSubject() call on the server side
+            Subject subject = new Subject();
+            env.put(JMXConnector.SUBJECT_DELEGATION_ENABLED, "true");
         }
         logger.debug("Connecting to '" + url + "'");
-        JMXConnector jmxc = JMXConnectorFactory.connect(jmxServiceURL, env);
+
+        // Connect with proper subject context for Java 25+ compatibility
+        final JMXServiceURL finalUrl = jmxServiceURL;
+        final Map<String, Object> finalEnv = env;
+
+        JMXConnector jmxc;
+        if (credentials != null) {
+            // Create a Subject with credentials for Java 17-25 compatibility
+            // Using doAs() which works across Java 17-25 (deprecated but functional)
+            Subject subject = new Subject();
+            jmxc = Subject.doAs(subject, (PrivilegedAction<JMXConnector>) () -> {
+                try {
+                    return JMXConnectorFactory.connect(finalUrl, finalEnv);
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to connect to JMX", e);
+                }
+            });
+        } else {
+            jmxc = JMXConnectorFactory.connect(jmxServiceURL, env);
+        }
+
         mBeanServerConnection = jmxc.getMBeanServerConnection();
         this.resolver = initializeResolver();
     }

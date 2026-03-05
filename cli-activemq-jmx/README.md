@@ -7,6 +7,18 @@ Introduction
 This is an utility that access Apache ActiveMQ, Apache Artemis and Red Hat A-MQ6 and A-MQ7 remotely.
 It can be used to manage queues and topics, destinations and obtain various information.
 
+Java 17-25 Compatibility
+----
+
+This tool supports Java 17 through Java 25. The main change involves handling the deprecated `Subject.getSubject()` method
+which was removed in Java 25. The JMX connection now uses `Subject.doAs()` for proper authentication context, ensuring
+compatibility across Java 17-25.
+
+If you encounter authentication issues, ensure that:
+- Your broker is properly configured for JMX authentication
+- The credentials are correctly provided via `--username` and `--password` parameters
+- The JMX URL is correct for your broker type
+
 Building and Installing: with ActiveMQ and Artemis libraries
 ----
 Note: Maven commands are always accompanied with 'pom.xml' file. If you do not execute mvn within directory where pom.xml resides,
