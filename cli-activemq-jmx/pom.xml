@@ -16,7 +16,7 @@
     <properties>
         <jar.main.class>com.redhat.amqx.main.Main</jar.main.class>
         <!--Upstream dependencies-->
-        <activemq.version>6.2.1</activemq.version>
+        <activemq.version>6.2.4</activemq.version>
         <artemis.version>LATEST</artemis.version>
 
         <!-- AMQ6/7 version (parameter -Dlibrary.version) -->
